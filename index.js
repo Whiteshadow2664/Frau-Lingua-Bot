@@ -282,16 +282,13 @@ const resultEmbed = new EmbedBuilder()
         `**Language:** ${language.charAt(0).toUpperCase() + language.slice(1)}\n\n` +
         `**Detailed Results:**\n${detailedResultsText}`
     )
-    .setColor('#f4ed09');
+    .setColor('#f4ed09'); // Yellow color for result
 
-// Send the result once
+// Send the result message once
 if (activeQuizzes[message.author.id]) {
     await message.channel.send({ embeds: [resultEmbed] });
     delete activeQuizzes[message.author.id];
 }
-            return message.channel.send('An error occurred. Please try again.');
-        }
-    }
 
     if (message.content.toLowerCase() === '!help') {
         help.execute(message);
