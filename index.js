@@ -4,7 +4,6 @@ const { Client, GatewayIntentBits, Partials, EmbedBuilder } = require('discord.j
 const express = require('express');
 const cron = require('node-cron');
 // Import quiz data
-// Correct the import paths
 const { russianQuizData, russianWordList } = require('./russianData');
 const { germanQuizData, germanWordList } = require('./germanData');
 const { frenchQuizData, frenchWordList } = require('./frenchData');
@@ -84,7 +83,7 @@ const sendWordOfTheDay = async (language) => {
       .setColor(embedColors[language]); // Set the color based on language
 
     await channel.send({ embeds: [embed] });
-    
+
   } catch (error) {
     console.error(`Error sending Word of the Day for ${language}:`, error);
   }
@@ -118,201 +117,181 @@ client.on('messageCreate', async (message) => {
 
     // Handle the quiz command
     if (message.content.toLowerCase() === '!q') {
-        // Check if the user is already participating in a quiz
         if (activeQuizzes[message.author.id]) {
             return message.channel.send('You are already participating in a quiz! Please finish it before starting a new one.');
         }
 
         try {
             // Step 1: Select Language
-const languageEmbed = new EmbedBuilder()
-    .setTitle('Choose a Language for the Quiz')
-    .setDescription('React to select the language:\n\n🇩🇪: German\n🇫🇷: French\n🇷🇺: Russian')
-    .setColor(embedColors.default);
+            const languageEmbed = new EmbedBuilder()
+                .setTitle('Choose a Language for the Quiz')
+                .setDescription('React to select the language:\n\n🇩🇪: German\n🇫🇷: French\n🇷🇺: Russian')
+                .setColor(embedColors.default);
 
-const languageMessage = await message.channel.send({ embeds: [languageEmbed] });
-const languageEmojis = ['🇩🇪', '🇫🇷', '🇷🇺'];
-const languages = ['german', 'french', 'russian'];
+            const languageMessage = await message.channel.send({ embeds: [languageEmbed] });
+            const languageEmojis = ['🇩🇪', '🇫🇷', '🇷🇺'];
+            const languages = ['german', 'french', 'russian'];
 
-for (const emoji of languageEmojis) {
-    await languageMessage.react(emoji);
-}
+            for (const emoji of languageEmojis) {
+                await languageMessage.react(emoji);
+            }
 
-const languageReaction = await languageMessage.awaitReactions({
-    filter: (reaction, user) => languageEmojis.includes(reaction.emoji.name) && user.id === message.author.id,
-    max: 1,
-    time: 15000,
+            const languageReaction = await languageMessage.awaitReactions({
+                filter: (reaction, user) => languageEmojis.includes(reaction.emoji.name) && user.id === message.author.id,
+                max: 1,
+                time: 15000,
+            });
+
+            if (!languageReaction.size) {
+                try {
+                    await languageMessage.delete();  // Ensure the message is deleted after timeout
+                } catch (err) {
+                    console.error('Error deleting message:', err);  // Catch potential errors
+                }
+                return message.channel.send('No language selected. Quiz cancelled.');
+            }
+
+            const selectedLanguage = languages[languageEmojis.indexOf(languageReaction.first().emoji.name)];
+            await languageMessage.delete();
+
+            // Step 2: Select Level
+            const levelEmbed = new EmbedBuilder()
+                .setTitle(`Choose Your Level for the ${selectedLanguage.charAt(0).toUpperCase() + selectedLanguage.slice(1)} Quiz`)
+                .setDescription('React to select your level:\n\n🇦: A1\n🇧: A2\n🇨: B1\n🇩: B2\n🇪: C1\n🇫: C2')
+                .setColor(embedColors[selectedLanguage]);
+
+            const levelMessage = await message.channel.send({ embeds: [levelEmbed] });
+            const levelEmojis = ['🇦', '🇧', '🇨', '🇩', '🇪', '🇫'];
+            const levels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
+
+            for (const emoji of levelEmojis) {
+                await levelMessage.react(emoji);
+            }
+
+            const levelReaction = await levelMessage.awaitReactions({
+                filter: (reaction, user) => levelEmojis.includes(reaction.emoji.name) && user.id === message.author.id,
+                max: 1,
+                time: 15000,
+            }).catch(() => null);
+
+            if (!levelReaction || !levelReaction.size) {
+                await levelMessage.delete();
+                return message.channel.send('No level selected or time expired. Quiz cancelled.');
+            }
+
+            const userReaction = levelReaction.first();
+            if (!userReaction || !levelEmojis.includes(userReaction.emoji.name)) {
+                await levelMessage.delete();
+                return message.channel.send('Invalid reaction. Quiz cancelled.');
+            }
+
+            const selectedLevel = levels[levelEmojis.indexOf(userReaction.emoji.name)];
+            await levelMessage.delete();
+
+            // Step 3: Start Quiz
+            let quizData;
+            if (selectedLanguage === 'german') {
+                quizData = germanQuizData;
+            } else if (selectedLanguage === 'french') {
+                quizData = frenchQuizData;
+            } else if (selectedLanguage === 'russian') {
+                quizData = russianQuizData;
+            } else {
+                return message.channel.send('Invalid language selected. Quiz cancelled.');
+            }
+
+            if (!quizData || !quizData[selectedLevel]) {
+                console.log(`No quiz data found for level: ${selectedLevel} in ${selectedLanguage}`);
+                return message.channel.send(`No quiz data available for level ${selectedLevel} in ${selectedLanguage}.`);
+            }
+
+            const questions = quizData[selectedLevel];
+            shuffleArray(questions);
+
+            const questionsToAsk = questions.slice(0, 5);
+            if (questionsToAsk.length === 0) {
+                return message.channel.send('No questions available for this level. Quiz cancelled.');
+            }
+
+            activeQuizzes[message.author.id] = { language: selectedLanguage, level: selectedLevel, score: 0, detailedResults: [] };
+
+            for (const question of questionsToAsk) {
+                const embed = new EmbedBuilder()
+                    .setTitle(`**${selectedLanguage.charAt(0).toUpperCase() + selectedLanguage.slice(1)} Vocabulary Quiz**`)
+                    .setDescription(
+                        `What is the English meaning of **"${question.word}"**?\n\n` +
+                        `${question.options[0]}\n\n` +
+                        `${question.options[1]}\n\n` +
+                        `${question.options[2]}\n\n` +
+                        `${question.options[3]}`
+                    )
+                    .setColor(embedColors[selectedLanguage])
+                    .setFooter({ text: 'React with the emoji corresponding to your answer.' });
+
+                const quizMessage = await message.channel.send({ embeds: [embed] });
+                const emojis = ['🇦', '🇧', '🇨', '🇩'];
+
+                for (const emoji of emojis) {
+                    await quizMessage.react(emoji);
+                }
+
+                const answerReaction = await quizMessage.awaitReactions({
+                    filter: (reaction, user) => emojis.includes(reaction.emoji.name) && user.id === message.author.id,
+                    max: 1,
+                    time: 15000,
+                }).catch(() => null);
+
+                if (answerReaction && answerReaction.size) {
+                    const selectedAnswer = answerReaction.first().emoji.name;
+                    const answerIndex = emojis.indexOf(selectedAnswer);
+                    const isCorrect = question.correctAnswer === answerIndex;
+                    activeQuizzes[message.author.id].score += isCorrect ? 1 : 0;
+                    activeQuizzes[message.author.id].detailedResults.push({
+                        word: question.word,
+                        userAnswer: question.options[answerIndex],
+                        correctAnswer: question.options[question.correctAnswer],
+                        isCorrect: isCorrect,
+                    });
+                } else {
+                    activeQuizzes[message.author.id].detailedResults.push({
+                        word: question.word,
+                        userAnswer: 'No Answer',
+                        correctAnswer: question.options[question.correctAnswer],
+                        isCorrect: false,
+                    });
+                }
+            }
+
+            // Final Results
+            const resultsEmbed = new EmbedBuilder()
+                .setTitle(`**Quiz Results for ${selectedLanguage.charAt(0).toUpperCase() + selectedLanguage.slice(1)} Quiz**`)
+                .setDescription(`You scored ${activeQuizzes[message.author.id].score} out of 5!`)
+                .setColor(embedColors[selectedLanguage]);
+
+            activeQuizzes[message.author.id].detailedResults.forEach(result => {
+                resultsEmbed.addFields({
+                    name: `Word: ${result.word}`,
+                    value: `Your Answer: ${result.userAnswer}\nCorrect Answer: ${result.correctAnswer}\nCorrect: ${result.isCorrect ? 'Yes' : 'No'}`,
+                    inline: false
+                });
+            });
+
+            await message.channel.send({ embeds: [resultsEmbed] });
+            delete activeQuizzes[message.author.id]; // Remove the user from active quizzes after completion
+        } catch (error) {
+            console.error('Error handling quiz:', error);
+        }
+    }
+
+    // Handle !help and !resources commands
+    if (message.content.toLowerCase() === '!help') {
+        help.execute(message);
+    }
+
+    if (message.content.toLowerCase() === '!resources') {
+        resources.execute(message);
+    }
 });
 
-if (!languageReaction.size) {
-    try {
-        await languageMessage.delete();  // Ensure the message is deleted after timeout
-    } catch (err) {
-        console.error('Error deleting message:', err);  // Catch potential errors
-    }
-    return message.channel.send('No language selected. Quiz cancelled.');
-}
-
-const selectedLanguage = languages[languageEmojis.indexOf(languageReaction.first().emoji.name)];
-await languageMessage.delete();
-
-// Step 2: Select Level
-const levelEmbed = new EmbedBuilder()
-    .setTitle(`Choose Your Level for the ${selectedLanguage.charAt(0).toUpperCase() + selectedLanguage.slice(1)} Quiz`)
-    .setDescription('React to select your level:\n\n🇦: A1\n🇧: A2\n🇨: B1\n🇩: B2\n🇪: C1\n🇫: C2')
-    .setColor(embedColors[selectedLanguage]);
-
-const levelMessage = await message.channel.send({ embeds: [levelEmbed] });
-const levelEmojis = ['🇦', '🇧', '🇨', '🇩', '🇪', '🇫'];
-const levels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
-
-for (const emoji of levelEmojis) {
-    await levelMessage.react(emoji);
-}
-
-const levelReaction = await levelMessage.awaitReactions({
-    filter: (reaction, user) => levelEmojis.includes(reaction.emoji.name) && user.id === message.author.id,
-    max: 1,
-    time: 15000,
-}).catch(() => null);
-
-if (!levelReaction || !levelReaction.size) {
-    await levelMessage.delete();
-    return message.channel.send('No level selected or time expired. Quiz cancelled.');
-}
-
-const userReaction = levelReaction.first();
-if (!userReaction || !levelEmojis.includes(userReaction.emoji.name)) {
-    await levelMessage.delete();
-    return message.channel.send('Invalid reaction. Quiz cancelled.');
-}
-
-const selectedLevel = levels[levelEmojis.indexOf(userReaction.emoji.name)];
-await levelMessage.delete();
-
-// Step 3: Start Quiz
-let quizData;
-if (selectedLanguage === 'german') {
-    quizData = germanQuizData;
-} else if (selectedLanguage === 'french') {
-    quizData = frenchQuizData;
-} else if (selectedLanguage === 'russian') {
-    quizData = russianQuizData;
-} else {
-    return message.channel.send('Invalid language selected. Quiz cancelled.');
-}
-
-// Ensure quiz data exists for the selected level
-if (!quizData || !quizData[selectedLevel]) {
-    console.log(`No quiz data found for level: ${selectedLevel} in ${selectedLanguage}`);
-    return message.channel.send(`No quiz data available for level ${selectedLevel} in ${selectedLanguage}.`);
-}
-
-// Extract questions and shuffle
-const questions = quizData[selectedLevel];
-shuffleArray(questions);
-
-// Select up to 5 questions to ask
-const questionsToAsk = questions.slice(0, 5);
-if (questionsToAsk.length === 0) {
-    return message.channel.send('No questions available for this level. Quiz cancelled.');
-}
-
-activeQuizzes[message.author.id] = { language: selectedLanguage, level: selectedLevel, score: 0, detailedResults: [] };
-
-for (const question of questionsToAsk) {
-    const embed = new EmbedBuilder()
-    .setTitle(`**${selectedLanguage.charAt(0).toUpperCase() + selectedLanguage.slice(1)} Vocabulary Quiz**`)
-    .setDescription(
-        `What is the English meaning of **"${question.word}"**?\n\n` +
-        `${question.options[0]}\n\n` +
-        `${question.options[1]}\n\n` +
-        `${question.options[2]}\n\n` +
-        `${question.options[3]}`
-    )
-    .setColor(embedColors[selectedLanguage])
-    .setFooter({ text: 'React with the emoji corresponding to your answer.' });
-
-    const quizMessage = await message.channel.send({ embeds: [embed] });
-    const emojis = ['🇦', '🇧', '🇨', '🇩'];
-
-    for (const emoji of emojis) {
-        await quizMessage.react(emoji);
-    }
-
-    const quizReaction = await quizMessage.awaitReactions({
-        filter: (reaction, user) => emojis.includes(reaction.emoji.name) && user.id === message.author.id,
-        max: 1,
-        time: 60000,
-    });
-
-    const userReaction = quizReaction.first();
-     // Find the index of the correct answer in the options array
-const correctIndex = question.options.findIndex((option) => option === question.correct);
-
-if (correctIndex === -1) {
-    console.error(`Correct answer not found in options for question: ${question.word}`);
-} else {
-    // Get the user's selected option based on their emoji reaction
-    const userAnswerIndex = emojis.indexOf(userReaction?.emoji.name);
-
-    // Check if the user's answer matches the correct answer
-    const isCorrect = userAnswerIndex === correctIndex;
-
-    // Update the score if the answer is correct
-    if (isCorrect) {
-        activeQuizzes[message.author.id].score++;
-    }
-
-    // Add detailed results for the question
-    activeQuizzes[message.author.id].detailedResults.push({
-        word: question.word,
-        userAnswer: userReaction ? question.options[userAnswerIndex] || 'No Answer' : 'No Answer',
-        correct: question.correct,
-        isCorrect,
-    });
-}
-
-    await quizMessage.delete();
-} 
-
-            // Step 4: Display Results
-            const result = activeQuizzes[message.author.id];
-            delete activeQuizzes[message.author.id]; 
-
-        const resultEmbed = new EmbedBuilder()
-    .setTitle('Quiz Results')
-    .setDescription(`You scored ${result.score} out of 5 in level ${result.level} (${result.language.charAt(0).toUpperCase() + result.language.slice(1)})!`)
-    .setColor(embedColors[result.language])
-    .addFields(
-        { name: 'Level', value: result.level },
-        { name: 'Language', value: result.language.charAt(0).toUpperCase() + result.language.slice(1) },
-        {
-            name: 'Detailed Results',
-            value: result.detailedResults
-                .map((res) => `**Word:** ${res.word}\nYour Answer: ${res.userAnswer}\nCorrect: ${res.correct}\nResult: ${res.isCorrect ? '✅' : '❌'}`)
-                .join('\n\n'),
-        }
-    );                        
-
-            await message.channel.send({ embeds: [resultEmbed] });
-        } catch (error) {
-            console.error(error);
-            return message.channel.send('An error occurred. Please try again.');
-        }
-    } 
-
-    if (message.content.toLowerCase() === '!help') {
-        help.execute(message);
-    } 
-
-    if (message.content.toLowerCase() === '!resources') {
-        resources.execute(message);
-    }
-}); 
-
-client.once('ready', () => {
-    console.log(`${client.user.tag} is online!`);
-}); 
-
+// Log in to Discord
 client.login(DISCORD_TOKEN);
