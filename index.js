@@ -84,7 +84,7 @@ const sendWordOfTheDay = async (language) => {
       .setColor(embedColors[language]); // Set the color based on language
 
     await channel.send({ embeds: [embed] });
-    console.log(`Sent Word of the Day for ${language} to channel ${channelId}`);
+    
   } catch (error) {
     console.error(`Error sending Word of the Day for ${language}:`, error);
   }
@@ -201,11 +201,6 @@ if (selectedLanguage === 'german') {
 } else {
     return message.channel.send('Invalid language selected. Quiz cancelled.');
 }
-
-// Debug: Log the quiz data to ensure it's loaded correctly
-console.log(`Selected Language: ${selectedLanguage}`);
-console.log(`Selected Level: ${selectedLevel}`);
-console.log(`Quiz Data for Selected Level:`, quizData[selectedLevel]);
 
 // Ensure quiz data exists for the selected level
 if (!quizData || !quizData[selectedLevel]) {
