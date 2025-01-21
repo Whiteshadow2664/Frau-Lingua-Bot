@@ -267,73 +267,89 @@ let score = 0;
 const detailedResults = [];
 
 for (const question of questionsToAsk) {
-  // Send the quiz message
-  const quizMessage = await sendQuizMessage(
-    message.channel,
-    message.author,
-    `What is the English meaning of "${question.word}"?`, 
-    question.options
-  );
+    // Send the quiz message
+    const quizMessage = await sendQuizMessage(
+        message.channel,
+        message.author,
+        `What is the English meaning of "${question.word}"?`,
+        question.options
+    );
 
-  const quizFilter = (reaction, user) =>
-    ['🇦', '🇧', '🇨', '🇩'].includes(reaction.emoji.name) && user.id === message.author.id;
+    const quizFilter = (reaction, user) =>
+        ['🇦', '🇧', '🇨', '🇩'].includes(reaction.emoji.name) && user.id === message.author.id;
 
-  try {
-    // Wait for a reaction
-    const quizCollected = await quizMessage.awaitReactions({ filter: quizFilter, max: 1, time: 15000 });
-    const quizReaction = quizCollected.first();
+    try {
+        // Wait for a reaction
+        const quizCollected = await quizMessage.awaitReactions({
+            filter: quizFilter,
+            max: 1,
+            time: 15000,
+        });
 
-    if (quizReaction && quizReaction.emoji.name === question.correct) {
-      score++;
-      detailedResults.push({
-        word: question.word,
-        userAnswer: question.options[['🇦', '🇧', '🇨', '🇩'].indexOf(quizReaction.emoji.name)],
-        correct: question.meaning,
-        isCorrect: true,
-      });
-    } else {
-      detailedResults.push({
-        word: question.word,
-        userAnswer: quizReaction
-          ? question.options[['🇦', '🇧', '🇨', '🇩'].indexOf(quizReaction.emoji.name)]
-          : 'No Answer',
-        correct: question.meaning,
-        isCorrect: false,
-      });
+        const quizReaction = quizCollected.first();
+
+        // Check if the user reacted within the time limit
+        if (quizReaction) {
+            const userAnswer = question.options[['🇦', '🇧', '🇨', '🇩'].indexOf(quizReaction.emoji.name)];
+
+            if (quizReaction.emoji.name === question.correct) {
+                score++;
+                detailedResults.push({
+                    word: question.word,
+                    userAnswer: userAnswer,
+                    correct: question.meaning,
+                    isCorrect: true,
+                });
+            } else {
+                detailedResults.push({
+                    word: question.word,
+                    userAnswer: userAnswer,
+                    correct: question.meaning,
+                    isCorrect: false,
+                });
+            }
+        } else {
+            detailedResults.push({
+                word: question.word,
+                userAnswer: 'No Answer',
+                correct: question.meaning,
+                isCorrect: false,
+            });
+        }
+    } catch (error) {
+        console.error('Reaction collection failed:', error);
+        detailedResults.push({
+            word: question.word,
+            userAnswer: 'No Answer',
+            correct: question.meaning,
+            isCorrect: false,
+        });
+    } finally {
+        await quizMessage.delete();  // Ensure the quiz message is deleted after each question
     }
-  } catch (error) {
-    console.error('Reaction collection failed:', error);
-    detailedResults.push({
-      word: question.word,
-      userAnswer: 'No Answer',
-      correct: question.meaning,
-      isCorrect: false,
-    });
-  } finally {
-    await quizMessage.delete();
-  }
 }
 
+// Create the final result embed
 const resultEmbed = new EmbedBuilder()
-  .setTitle('Quiz Results')
-  .setDescription(`You scored ${score} out of ${questionsToAsk.length}!`)
-  .setColor('#f4ed09')
-  .addFields(
-    {
-      name: 'Detailed Results',
-      value: detailedResults
-        .map(
-          (res) =>
-            `**Word:** ${res.word}\nYour Answer: ${res.userAnswer}\nCorrect: ${res.correct}\nResult: ${
-              res.isCorrect ? '✅' : '❌'
-            }`
-        )
-        .join('\n\n'),
-    }
-  );
-  
+    .setTitle('Quiz Results')
+    .setDescription(`You scored ${score} out of ${questionsToAsk.length}!`)
+    .setColor('#f4ed09')  // Choose a color for the embed
+    .addFields(
+        {
+            name: 'Detailed Results',
+            value: detailedResults
+                .map(
+                    (res) =>
+                        `**Word:** ${res.word}\nYour Answer: ${res.userAnswer}\nCorrect: ${res.correct}\nResult: ${
+                            res.isCorrect ? '✅' : '❌'
+                        }`
+                )
+                .join('\n\n'),
+        }
+    );
+
 // Send the final result embed to the channel
-message.channel.send({ embeds: [resultEmbed] });
+await message.channel.send({ embeds: [resultEmbed] });
 
             await message.channel.send({ embeds: [resultEmbed] });
         } catch (error) {
