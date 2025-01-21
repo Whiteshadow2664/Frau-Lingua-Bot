@@ -203,11 +203,16 @@ client.on('messageCreate', async (message) => {
 
             for (const question of questionsToAsk) {
                 const embed = new EmbedBuilder()
-                    .setTitle(`**${selectedLanguage.charAt(0).toUpperCase() + selectedLanguage.slice(1)} Vocabulary Quiz**`)
-                    .setDescription(
-                        `**Question:**\n**${question.word}**\n\n**Options:**\n🇦 ${question.options[0]}\n🇧 ${question.options[1]}\n🇨 ${question.options[2]}\n🇩 ${question.options[3]}`
-                    )
-                    .setColor(embedColors[selectedLanguage]);
+    .setTitle(`**${selectedLanguage.charAt(0).toUpperCase() + selectedLanguage.slice(1)} Vocabulary Quiz**`)
+    .setDescription(
+        `What is the English meaning of **"${question.word}"**?\n\n` +
+        `🇦 ${question.options[0]}\n\n` +
+        `🇧 ${question.options[1]}\n\n` +
+        `🇨 ${question.options[2]}\n\n` +
+        `🇩 ${question.options[3]}`
+    )
+    .setColor(embedColors[selectedLanguage])
+    .setFooter({ text: 'React with the emoji corresponding to your answer.' });
 
                 const quizMessage = await message.channel.send({ embeds: [embed] });
                 const emojis = ['🇦', '🇧', '🇨', '🇩'];
