@@ -261,25 +261,90 @@ for (const question of questionsToAsk) {
     await quizMessage.delete();
 }
 
-// Step 4: Display Results
-const result = activeQuizzes[message.author.id];
-delete activeQuizzes[message.author.id];
+// Assuming `questions` come from `frenchQuizData`, `germanQuizData`, or `russianQuizData`
+// Step 1: Initialize variables for score and detailed results
+let score = 0;
+const detailedResults = []; 
 
-// Create a result embed
+// Step 2: Loop through each question and process the quiz
+for (const question of questionsToAsk) {
+  const quizMessage = await sendQuizMessage(
+    message.channel,
+    message.author,
+    `What is the English meaning of "${question.word}"?`,
+    question.options.map(option => option.split(": ")[1]) // Remove emoji and show only the text
+  );
+
+  const quizFilter = (reaction, user) =>
+    ['🇦', '🇧', '🇨', '🇩'].includes(reaction.emoji.name) && user.id === message.author.id;
+
+  try {
+    const quizCollected = await quizMessage.awaitReactions({ filter: quizFilter, max: 1, time: 15000 });
+    const quizReaction = quizCollected.first();
+
+    // Get the selected answer text (without emoji)
+    const userAnswer = quizReaction
+      ? question.options[['🇦', '🇧', '🇨', '🇩'].indexOf(quizReaction.emoji.name)].split(': ')[1]
+      : 'No Answer';
+
+    // Check if the user's answer is correct
+    if (quizReaction && quizReaction.emoji.name === question.correct) {
+      score++;
+      detailedResults.push({
+        word: question.word,
+        userAnswer: userAnswer,
+        correct: question.options.find(option => option.includes(question.correct)).split(': ')[1],
+        isCorrect: true,
+      });
+    } else {
+      detailedResults.push({
+        word: question.word,
+        userAnswer: userAnswer,
+        correct: question.options.find(option => option.includes(question.correct)).split(': ')[1],
+        isCorrect: false,
+      });
+    }
+  } catch (error) {
+    console.error('Reaction collection failed:', error);
+    detailedResults.push({
+      word: question.word,
+      userAnswer: 'No Answer',
+      correct: question.options.find(option => option.includes(question.correct)).split(': ')[1],
+      isCorrect: false,
+    });
+  } finally {
+    await quizMessage.delete();
+  }
+}
+
+// Step 3: Create the result embed
 const resultEmbed = new EmbedBuilder()
-    .setTitle('Quiz Results')
-    .setDescription(`You scored ${result.score} out of 5 in level ${result.level} (${result.language.charAt(0).toUpperCase() + result.language.slice(1)})!`)
-    .setColor(embedColors[result.language])
-    .addFields(
-        { name: 'Level', value: result.level },
-        { name: 'Language', value: result.language.charAt(0).toUpperCase() + result.language.slice(1) },
-        {
-            name: 'Detailed Results',
-            value: result.detailedResults
-                .map((res) => `**Word:** ${res.word}\nYour Answer: ${res.userAnswer}\nCorrect Word: ${res.correct}\nResult: ${res.isCorrect ? '✅' : '❌'}`)
-                .join('\n\n'),
-        }
-    );
+  .setTitle('Quiz Results')
+  .setDescription(
+    `You scored ${score} out of ${questionsToAsk.length} in level ${result.level} (${result.language.charAt(0).toUpperCase() + result.language.slice(1)})!`
+  )
+  .setColor(embedColors[result.language])
+  .addFields(
+    { name: 'Level', value: result.level },
+    { name: 'Language', value: result.language.charAt(0).toUpperCase() + result.language.slice(1) },
+    {
+      name: 'Detailed Results',
+      value: detailedResults
+        .map(
+          (res) =>
+            `**Word:** ${res.word}\nYour Answer: ${res.userAnswer}\nCorrect Word: ${res.correct}\nResult: ${
+              res.isCorrect ? '✅' : '❌'
+            }`
+        )
+        .join('\n\n'),
+    }
+  );
+
+// Step 4: Send the result embed to the user
+await message.channel.send({ embeds: [resultEmbed] });
+
+// Step 5: Reset the active quiz data for the user
+delete activeQuizzes[message.author.id];
 
 await message.channel.send({ embeds: [resultEmbed] });
 
