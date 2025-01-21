@@ -247,16 +247,31 @@ for (const question of questionsToAsk) {
     });
 
     const userReaction = quizReaction.first();
-    if (userReaction && userReaction.emoji.name === emojis[question.options.indexOf(question.correct)]) {
-        activeQuizzes[message.author.id].score++;
-    } 
+     // Find the index of the correct answer in the options array
+const correctIndex = question.options.findIndex((option) => option === question.correct);
 
-    activeQuizzes[message.author.id].detailedResults.push({
-        word: question.word,
-        userAnswer: userReaction ? question.options[emojis.indexOf(userReaction.emoji.name)] : 'No Answer',
-        correct: question.correct, // Only the word is displayed for correct answers
-        isCorrect: userReaction && userReaction.emoji.name === emojis[question.options.indexOf(question.correct)],
-    }); 
+if (correctIndex === -1) {
+    console.error(`Correct answer not found in options for question: ${question.word}`);
+} else {
+    // Get the user's selected option based on their emoji reaction
+    const userAnswerIndex = emojis.indexOf(userReaction?.emoji.name);
+
+    // Check if the user's answer matches the correct answer
+    const isCorrect = userAnswerIndex === correctIndex;
+
+    // Update the score if the answer is correct
+    if (isCorrect) {
+        activeQuizzes[message.author.id].score++;
+    }
+
+    // Add detailed results for the question
+    activeQuizzes[message.author.id].detailedResults.push({
+        word: question.word,
+        userAnswer: userReaction ? question.options[userAnswerIndex] || 'No Answer' : 'No Answer',
+        correct: question.correct,
+        isCorrect,
+    });
+}
 
     await quizMessage.delete();
 } 
