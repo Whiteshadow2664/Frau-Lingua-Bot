@@ -261,7 +261,34 @@ for (const question of questionsToAsk) {
     await quizMessage.delete();
 }
 
-183u3u2i2i2i
+// Generate and send the result embed
+const userQuizData = activeQuizzes[message.author.id];
+const { score, detailedResults, language, level } = userQuizData;
+
+const detailedResultsText = detailedResults
+    .map(
+        (res) =>
+            `**Word:** ${res.word}\nYour Answer: ${res.userAnswer}\nCorrect: ${res.correct}\nResult: ${
+                res.isCorrect ? '✅' : '❌'
+            }`
+    )
+    .join('\n\n');
+
+const resultEmbed = new EmbedBuilder()
+    .setTitle('Quiz Results')
+    .setDescription(
+        `You scored ${score} out of ${detailedResults.length} in level ${level}!\n\n` +
+        `**Level:** ${level}\n` +
+        `**Language:** ${language.charAt(0).toUpperCase() + language.slice(1)}\n\n` +
+        `**Detailed Results:**\n${detailedResultsText}`
+    )
+    .setColor('#f4ed09');
+
+// Send the result to the user
+await message.channel.send({ embeds: [resultEmbed] });
+
+// Clean up user quiz data
+delete activeQuizzes[message.author.id];
 
             await message.channel.send({ embeds: [resultEmbed] });
         } catch (error) {
