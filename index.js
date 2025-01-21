@@ -247,62 +247,40 @@ for (const question of questionsToAsk) {
     });
 
     const userReaction = quizReaction.first();
-const userAnswerEmoji = userReaction ? userReaction.emoji.name : null;
+    if (userReaction && userReaction.emoji.name === emojis[question.options.indexOf(question.correct)]) {
+        activeQuizzes[message.author.id].score++;
+    } 
 
-// Determine if the user selected the correct emoji
-const correctEmoji = emojis[question.options.indexOf(question.correct)];
-const isCorrect = userAnswerEmoji === correctEmoji;
+    activeQuizzes[message.author.id].detailedResults.push({
+        word: question.word,
+        userAnswer: userReaction ? question.options[emojis.indexOf(userReaction.emoji.name)] : 'No Answer',
+        correct: question.correct, // Only the word is displayed for correct answers
+        isCorrect: userReaction && userReaction.emoji.name === emojis[question.options.indexOf(question.correct)],
+    }); 
 
-if (isCorrect) {
-    activeQuizzes[message.author.id].score++;
-}
-
-activeQuizzes[message.author.id].detailedResults.push({
-    word: question.word,
-    userAnswer: userAnswerEmoji
-        ? `${userAnswerEmoji} ${question.options[emojis.indexOf(userAnswerEmoji)]}`
-        : 'No Answer',
-    correct: `${correctEmoji} ${question.correct}`,
-    isCorrect: isCorrect,
-});
-
-    activeQuizzes[message.author.id].detailedResults.push({
-        word: question.word,
-        userAnswer: userReaction ? question.options[emojis.indexOf(userReaction.emoji.name)] : 'No Answer',
-        correct: question.correct,
-        isCorrect: userReaction && userReaction.emoji.name === emojis[question.options.indexOf(question.correct)],
-    });
-
-    await quizMessage.delete();
-}
+    await quizMessage.delete();
+} 
 
             // Step 4: Display Results
-const result = activeQuizzes[message.author.id];
-delete activeQuizzes[message.author.id];
+            const result = activeQuizzes[message.author.id];
+            delete activeQuizzes[message.author.id]; 
 
-// Create the detailed results text
-const detailedResultsText = result.detailedResults
-    .map(
-        (res) =>
-            `**Word:** ${res.word}\nYour Answer: ${res.userAnswer}\nCorrect: ${res.correct}\nResult: ${
-                res.isCorrect ? '✅' : '❌'
-            }`
-    )
-    .join('\n\n');
+        const resultEmbed = new EmbedBuilder()
+    .setTitle('Quiz Results')
+    .setDescription(`You scored ${result.score} out of 5 in level ${result.level} (${result.language.charAt(0).toUpperCase() + result.language.slice(1)})!`)
+    .setColor(embedColors[result.language])
+    .addFields(
+        { name: 'Level', value: result.level },
+        { name: 'Language', value: result.language.charAt(0).toUpperCase() + result.language.slice(1) },
+        {
+            name: 'Detailed Results',
+            value: result.detailedResults
+                .map((res) => `**Word:** ${res.word}\nYour Answer: ${res.userAnswer}\nCorrect: ${res.correct}\nResult: ${res.isCorrect ? '✅' : '❌'}`)
+                .join('\n\n'),
+        }
+    );                        
 
-// Build the final result message
-const resultEmbed = new EmbedBuilder()
-    .setTitle('Quiz Results')
-    .setDescription(
-        `You scored ${result.score} out of ${result.detailedResults.length} in level ${result.level}!\n\n` +
-        `**Level:** ${result.level}\n` +
-        `**Language:** ${result.language.charAt(0).toUpperCase() + result.language.slice(1)}\n\n` +
-        `**Detailed Results:**\n${detailedResultsText}`
-    )
-    .setColor(embedColors[result.language]);
-
-// Send the result message
-await message.channel.send({ embeds: [resultEmbed] });
+            await message.channel.send({ embeds: [resultEmbed] });
         } catch (error) {
             console.error(error);
             return message.channel.send('An error occurred. Please try again.');
