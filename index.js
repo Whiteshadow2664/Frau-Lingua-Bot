@@ -247,7 +247,10 @@ for (const question of questionsToAsk) {
     });
 
     const userReaction = quizReaction.first();
-    if (userReaction && userReaction.emoji.name === emojis[question.options.indexOf(question.correct)]) {
+    const emojiMap = { A: '🇦', B: '🇧', C: '🇨', D: '🇩' };
+if (userReaction && userReaction.emoji.name === emojiMap[question.correct]) {
+    activeQuizzes[message.author.id].score++;
+}
         activeQuizzes[message.author.id].score++;
     }
 
