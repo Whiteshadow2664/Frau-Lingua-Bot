@@ -247,12 +247,17 @@ client.on('messageCreate', async (message) => {
                     }
                 }
 
-                activeQuizzes[message.author.id].detailedResults.push({
-                    word: question.word,
-                    userAnswer: userReaction ? question.options[emojis.indexOf(userReaction.emoji.name)] : 'No Answer',
-                    correct: question.correct,
-                    isCorrect: userReaction && userReaction.emoji.name === emojis[question.options.indexOf(question.correct)],
-                });
+// For each question, track the user's answer and compare it with the correct one
+const userAnswer = userReaction ? question.options[emojis.indexOf(userReaction.emoji.name)] : 'No Answer';
+const isCorrect = userAnswer === question.correct;
+
+// Push the result to detailedResults
+activeQuizzes[message.author.id].detailedResults.push({
+    word: question.word,
+    userAnswer: userAnswer,
+    correct: question.correct,
+    isCorrect: isCorrect,
+});
 
                 await quizMessage.delete();
             }
