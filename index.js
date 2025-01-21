@@ -241,19 +241,35 @@ client.on('messageCreate', async (message) => {
     time: 15000,
 }).catch(() => null);
 
-// Delete the question message after receiving an answer (or after timeout)
 await quizMessage.delete();
 
 if (answerReaction && answerReaction.size) {
     const selectedAnswer = answerReaction.first().emoji.name;
-    const answerIndex = emojis.indexOf(selectedAnswer);
-    const isCorrect = question.correctAnswer === answerIndex;
+
+    // Debugging log to check the selected answer and correct answer
+    console.log('Correct Answer:', question.correct);
+    console.log('Selected Answer:', selectedAnswer);
+
+    const isCorrect = question.correct === selectedAnswer;
+
     activeQuizzes[message.author.id].score += isCorrect ? 1 : 0;
+
+    // Directly match the emoji to the options
+    const userAnswer = question.options.find(option => option.startsWith(selectedAnswer)); // Match the emoji to the option
+    const correctAnswer = question.options.find(option => option.startsWith(question.correct)); // Match the emoji to the correct option
+
     activeQuizzes[message.author.id].detailedResults.push({
         word: question.word,
-        userAnswer: question.options[answerIndex],
-        correctAnswer: question.options[question.correctAnswer],  // Make sure the correctAnswer is being used correctly
+        userAnswer: userAnswer || 'No Answer',
+        correctAnswer: correctAnswer,
         isCorrect: isCorrect,
+    });
+} else {
+    activeQuizzes[message.author.id].detailedResults.push({
+        word: question.word,
+        userAnswer: 'No Answer',
+        correctAnswer: question.options.find(option => option.startsWith(question.correct)),
+        isCorrect: false,
     });
 } else {
     activeQuizzes[message.author.id].detailedResults.push({
