@@ -261,46 +261,43 @@ for (const question of questionsToAsk) {
     await quizMessage.delete();
 }
 
-// Assuming `questions` come from `frenchQuizData`, `germanQuizData`, or `russianQuizData`
-// Step 1: Initialize variables for score and detailed results
-let score = 0;
-const detailedResults = []; 
+const { sendQuizMessage } = require('./quizFunctions');  // Import the function
 
-// Step 2: Loop through each question and process the quiz
+let score = 0;
+const detailedResults = [];
+
 for (const question of questionsToAsk) {
+  // Send the quiz message
   const quizMessage = await sendQuizMessage(
     message.channel,
     message.author,
-    `What is the English meaning of "${question.word}"?`,
-    question.options.map(option => option.split(": ")[1]) // Remove emoji and show only the text
+    `What is the English meaning of "${question.word}"?`, 
+    question.options
   );
 
   const quizFilter = (reaction, user) =>
     ['🇦', '🇧', '🇨', '🇩'].includes(reaction.emoji.name) && user.id === message.author.id;
 
   try {
+    // Wait for a reaction
     const quizCollected = await quizMessage.awaitReactions({ filter: quizFilter, max: 1, time: 15000 });
     const quizReaction = quizCollected.first();
 
-    // Get the selected answer text (without emoji)
-    const userAnswer = quizReaction
-      ? question.options[['🇦', '🇧', '🇨', '🇩'].indexOf(quizReaction.emoji.name)].split(': ')[1]
-      : 'No Answer';
-
-    // Check if the user's answer is correct
     if (quizReaction && quizReaction.emoji.name === question.correct) {
       score++;
       detailedResults.push({
         word: question.word,
-        userAnswer: userAnswer,
-        correct: question.options.find(option => option.includes(question.correct)).split(': ')[1],
+        userAnswer: question.options[['🇦', '🇧', '🇨', '🇩'].indexOf(quizReaction.emoji.name)],
+        correct: question.meaning,
         isCorrect: true,
       });
     } else {
       detailedResults.push({
         word: question.word,
-        userAnswer: userAnswer,
-        correct: question.options.find(option => option.includes(question.correct)).split(': ')[1],
+        userAnswer: quizReaction
+          ? question.options[['🇦', '🇧', '🇨', '🇩'].indexOf(quizReaction.emoji.name)]
+          : 'No Answer',
+        correct: question.meaning,
         isCorrect: false,
       });
     }
@@ -309,7 +306,7 @@ for (const question of questionsToAsk) {
     detailedResults.push({
       word: question.word,
       userAnswer: 'No Answer',
-      correct: question.options.find(option => option.includes(question.correct)).split(': ')[1],
+      correct: question.meaning,
       isCorrect: false,
     });
   } finally {
@@ -317,36 +314,26 @@ for (const question of questionsToAsk) {
   }
 }
 
-// Step 3: Create the result embed
 const resultEmbed = new EmbedBuilder()
   .setTitle('Quiz Results')
-  .setDescription(
-    `You scored ${score} out of ${questionsToAsk.length} in level ${result.level} (${result.language.charAt(0).toUpperCase() + result.language.slice(1)})!`
-  )
-  .setColor(embedColors[result.language])
+  .setDescription(`You scored ${score} out of ${questionsToAsk.length}!`)
+  .setColor('#f4ed09')
   .addFields(
-    { name: 'Level', value: result.level },
-    { name: 'Language', value: result.language.charAt(0).toUpperCase() + result.language.slice(1) },
     {
       name: 'Detailed Results',
       value: detailedResults
         .map(
           (res) =>
-            `**Word:** ${res.word}\nYour Answer: ${res.userAnswer}\nCorrect Word: ${res.correct}\nResult: ${
+            `**Word:** ${res.word}\nYour Answer: ${res.userAnswer}\nCorrect: ${res.correct}\nResult: ${
               res.isCorrect ? '✅' : '❌'
             }`
         )
         .join('\n\n'),
     }
   );
-
-// Step 4: Send the result embed to the user
-await message.channel.send({ embeds: [resultEmbed] });
-
-// Step 5: Reset the active quiz data for the user
-delete activeQuizzes[message.author.id];
-
-await message.channel.send({ embeds: [resultEmbed] });
+  
+// Send the final result embed to the channel
+message.channel.send({ embeds: [resultEmbed] });
 
             await message.channel.send({ embeds: [resultEmbed] });
         } catch (error) {
