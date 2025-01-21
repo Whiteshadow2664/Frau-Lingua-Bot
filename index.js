@@ -269,10 +269,12 @@ const resultEmbed = new EmbedBuilder()
         {
             name: 'Detailed Results',
             value: result.detailedResults
-                .map((res) => `**Word:** ${res.word}\nYour Answer: ${res.userAnswer}\nCorrect: ${res.correct}\nResult: ${res.isCorrect ? '✅' : '❌'}`)
+                .map((res) => `**Word:** ${res.word}\nYour Answer: ${res.userAnswer}\nCorrect Word: ${res.correct}\nResult: ${res.isCorrect ? '✅' : '❌'}`)
                 .join('\n\n'),
         }
     );
+
+await message.channel.send({ embeds: [resultEmbed] });
 
             await message.channel.send({ embeds: [resultEmbed] });
         } catch (error) {
