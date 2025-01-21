@@ -236,67 +236,60 @@ client.on('messageCreate', async (message) => {
                 }
 
                 const answerReaction = await quizMessage.awaitReactions({
-    filter: (reaction, user) => emojis.includes(reaction.emoji.name) && user.id === message.author.id,
-    max: 1,
-    time: 15000,
-}).catch(() => null);
+                    filter: (reaction, user) => emojis.includes(reaction.emoji.name) && user.id === message.author.id,
+                    max: 1,
+                    time: 15000,
+                }).catch(() => null);
 
-await quizMessage.delete();
+                await quizMessage.delete();
 
-if (answerReaction && answerReaction.size) {
-    const selectedAnswer = answerReaction.first().emoji.name;
+                if (answerReaction && answerReaction.size) {
+                    const selectedAnswer = answerReaction.first().emoji.name;
 
-    // Debugging log to check the selected answer and correct answer
-    console.log('Correct Answer:', question.correct);
-    console.log('Selected Answer:', selectedAnswer);
+                    // Debugging log to check the selected answer and correct answer
+                    console.log('Correct Answer:', question.correct);
+                    console.log('Selected Answer:', selectedAnswer);
 
-    const isCorrect = question.correct === selectedAnswer;
+                    const isCorrect = question.correct === selectedAnswer;
 
-    activeQuizzes[message.author.id].score += isCorrect ? 1 : 0;
+                    activeQuizzes[message.author.id].score += isCorrect ? 1 : 0;
 
-    // Directly match the emoji to the options
-    const userAnswer = question.options.find(option => option.startsWith(selectedAnswer)); // Match the emoji to the option
-    const correctAnswer = question.options.find(option => option.startsWith(question.correct)); // Match the emoji to the correct option
+                    // Directly match the emoji to the options
+                    const userAnswer = question.options.find(option => option.startsWith(selectedAnswer)); // Match the emoji to the option
+                    const correctAnswer = question.options.find(option => option.startsWith(question.correct)); // Match the emoji to the correct option
 
-    activeQuizzes[message.author.id].detailedResults.push({
-        word: question.word,
-        userAnswer: userAnswer || 'No Answer',
-        correctAnswer: correctAnswer,
-        isCorrect: isCorrect,
-    });
-} else {
-    activeQuizzes[message.author.id].detailedResults.push({
-        word: question.word,
-        userAnswer: 'No Answer',
-        correctAnswer: question.options.find(option => option.startsWith(question.correct)),
-        isCorrect: false,
-    });
-} else {
-    activeQuizzes[message.author.id].detailedResults.push({
-    word: question.word,
-    userAnswer: question.options[answerIndex],
-    correctAnswer: question.options[question.correctAnswer],  // This was the correct part, it's correct in concept, ensure it maps correctly in context
-    isCorrect: isCorrect,
-});
-}
+                    activeQuizzes[message.author.id].detailedResults.push({
+                        word: question.word,
+                        userAnswer: userAnswer || 'No Answer',
+                        correctAnswer: correctAnswer,
+                        isCorrect: isCorrect,
+                    });
+                } else {
+                    activeQuizzes[message.author.id].detailedResults.push({
+                        word: question.word,
+                        userAnswer: 'No Answer',
+                        correctAnswer: question.options.find(option => option.startsWith(question.correct)),
+                        isCorrect: false,
+                    });
+                }
             }
 
             // Final Results
-const resultsEmbed = new EmbedBuilder()
-    .setTitle(`**Quiz Results for ${selectedLanguage.charAt(0).toUpperCase() + selectedLanguage.slice(1)} Quiz**`)
-    .setDescription(`You scored ${activeQuizzes[message.author.id].score} out of 5!`)
-    .setColor(embedColors[selectedLanguage]);
+            const resultsEmbed = new EmbedBuilder()
+                .setTitle(`**Quiz Results for ${selectedLanguage.charAt(0).toUpperCase() + selectedLanguage.slice(1)} Quiz**`)
+                .setDescription(`You scored ${activeQuizzes[message.author.id].score} out of 5!`)
+                .setColor(embedColors[selectedLanguage]);
 
-activeQuizzes[message.author.id].detailedResults.forEach(result => {
-    const resultMessage = `Your Answer: ${result.userAnswer}\nCorrect Answer: ${result.correctAnswer}\nCorrect: ${result.isCorrect ? '✅' : '❌'}`;
-    resultsEmbed.addFields({
-        name: `Word: ${result.word}`,
-        value: resultMessage,
-        inline: false
-    });
-});
+            activeQuizzes[message.author.id].detailedResults.forEach(result => {
+                const resultMessage = `Your Answer: ${result.userAnswer}\nCorrect Answer: ${result.correctAnswer}\nCorrect: ${result.isCorrect ? '✅' : '❌'}`;
+                resultsEmbed.addFields({
+                    name: `Word: ${result.word}`,
+                    value: resultMessage,
+                    inline: false
+                });
+            });
 
-await message.channel.send({ embeds: [resultsEmbed] });
+            await message.channel.send({ embeds: [resultsEmbed] });
             delete activeQuizzes[message.author.id]; // Remove the user from active quizzes after completion
         } catch (error) {
             console.error('Error handling quiz:', error);
