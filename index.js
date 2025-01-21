@@ -261,42 +261,43 @@ for (const question of questionsToAsk) {
     await quizMessage.delete();
 }
 
-// Step 4: Display Results
-const result = activeQuizzes[message.author.id];
-delete activeQuizzes[message.author.id];
+            // Step 4: Display Results
+            const result = activeQuizzes[message.author.id];
+            delete activeQuizzes[message.author.id]; 
 
-const detailedResultsText = result.detailedResults
-    .map(
-        (res) =>
-            `**Word:** ${res.word}\nYour Answer: ${res.userAnswer}\nCorrect: ${res.correct}\nResult: ${
-                res.isCorrect ? '✅' : '❌'
-            }`
-    )
-    .join('\n\n');
+        const resultEmbed = new EmbedBuilder()
+    .setTitle('Quiz Results')
+    .setDescription(`You scored ${result.score} out of 5 in level ${result.level} (${result.language.charAt(0).toUpperCase() + result.language.slice(1)})!`)
+    .setColor(embedColors[result.language])
+    .addFields(
+        { name: 'Level', value: result.level },
+        { name: 'Language', value: result.language.charAt(0).toUpperCase() + result.language.slice(1) },
+        {
+            name: 'Detailed Results',
+            value: result.detailedResults
+                .map((res) => `**Word:** ${res.word}\nYour Answer: ${res.userAnswer}\nCorrect: ${res.correct}\nResult: ${res.isCorrect ? '✅' : '❌'}`)
+                .join('\n\n'),
+        }
+    );                        
 
-const resultEmbed = new EmbedBuilder()
-    .setTitle('Quiz Results')
-    .setDescription(
-        `You scored ${result.score} out of ${result.detailedResults.length} in level ${result.level}!\n\n` +
-        `**Level:** ${result.level}\n` +
-        `**Language:** ${result.language.charAt(0).toUpperCase() + result.language.slice(1)}\n\n` +
-        `**Detailed Results:**\n${detailedResultsText}`
-    )
-    .setColor(embedColors[result.language]);
+            await message.channel.send({ embeds: [resultEmbed] });
+        } catch (error) {
+            console.error(error);
+            return message.channel.send('An error occurred. Please try again.');
+        }
+    } 
 
-await message.channel.send({ embeds: [resultEmbed] });
+    if (message.content.toLowerCase() === '!help') {
+        help.execute(message);
+    } 
 
-    if (message.content.toLowerCase() === '!help') {
-        help.execute(message);
-    }
-
-    if (message.content.toLowerCase() === '!resources') {
-        resources.execute(message);
-    }
-});
+    if (message.content.toLowerCase() === '!resources') {
+        resources.execute(message);
+    }
+}); 
 
 client.once('ready', () => {
-    console.log(`${client.user.tag} is online!`);
-});
+    console.log(`${client.user.tag} is online!`);
+}); 
 
 client.login(DISCORD_TOKEN);
