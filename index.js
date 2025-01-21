@@ -265,6 +265,7 @@ for (const question of questionsToAsk) {
 const result = activeQuizzes[message.author.id];
 delete activeQuizzes[message.author.id];
 
+// Create a result embed
 const resultEmbed = new EmbedBuilder()
     .setTitle('Quiz Results')
     .setDescription(`You scored ${result.score} out of 5 in level ${result.level} (${result.language.charAt(0).toUpperCase() + result.language.slice(1)})!`)
