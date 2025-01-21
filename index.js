@@ -247,7 +247,6 @@ for (const question of questionsToAsk) {
     });
 
     const userReaction = quizReaction.first();
-    const userReaction = quizReaction.first();
 const userAnswerEmoji = userReaction ? userReaction.emoji.name : null;
 
 // Determine if the user selected the correct emoji
