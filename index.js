@@ -145,6 +145,11 @@ const languageReaction = await languageMessage.awaitReactions({
 });
 
 if (!languageReaction.size) {
+    try {
+        await languageMessage.delete();  // Ensure the message is deleted after timeout
+    } catch (err) {
+        console.error('Error deleting message:', err);  // Catch potential errors
+    }
     return message.channel.send('No language selected. Quiz cancelled.');
 }
 
