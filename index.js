@@ -225,13 +225,10 @@ for (const question of questionsToAsk) {
     .setTitle(`**${selectedLanguage.charAt(0).toUpperCase() + selectedLanguage.slice(1)} Vocabulary Quiz**`)
     .setDescription(
         `What is the English meaning of **"${question.word}"**?\n\n` +
-        '${question.options[0]}\n\n` +
-
-        `${question.options[1]}\n\n` +
-
-        '${question.options[2]}\n\n` +
-
-        '${question.options[3]}`
+        `A. ${question.options[0]}\n\n` +
+        `B. ${question.options[1]}\n\n` +
+        `C. ${question.options[2]}\n\n` +
+        `D. ${question.options[3]}`
     )
     .setColor(embedColors[selectedLanguage])
     .setFooter({ text: 'React with the emoji corresponding to your answer.' });
