@@ -1,6 +1,6 @@
 // Quiz Data for German
 const germanQuizData = {
-  A1: [
+  A1: [
   { word: 'Apfel', meaning: 'Apple', options: ['A: Apple', 'B: House', 'C: Dog', 'D: Cat'], correct: '🇦' },
   { word: 'Haus', meaning: 'House', options: ['A: Apple', 'B: House', 'C: Dog', 'D: Cat'], correct: '🇧' },
   { word: 'Tisch', meaning: 'Table', options: ['A: Table', 'B: Chair', 'C: Door', 'D: Window'], correct: '🇦' },
@@ -107,7 +107,7 @@ const germanQuizData = {
   B1: [
   { word: 'Abenteuer', meaning: 'Adventure', options: ['A: Routine', 'B: Challenge', 'C: Adventure', 'D: Job'], correct: '🇨' },
   { word: 'Angebot', meaning: 'Offer', options: ['A: Request', 'B: Offer', 'C: Answer', 'D: Idea'], correct: '🇧' },
-  { word: 'Ausdruck', meaning: 'Expression', options: ['A: Thought', 'B: Expression', 'C:Message', 'D: Feeling'], correct: '🇧' },
+  { word: 'Ausdruck', meaning: 'Expression', options: ['A: Thought', 'B: Expression', 'C: Message', 'D: Feeling'], correct: '🇧' },
   { word: 'Bedingung', meaning: 'Condition', options: ['A: Rule', 'B: Term', 'C: Condition', 'D: Instruction'], correct: '🇨' },
   { word: 'Beitrag', meaning: 'Contribution', options: ['A: Payment', 'B: Post', 'C: Contribution', 'D: Reply'], correct: '🇨' },
   { word: 'Behörde', meaning: 'Authority', options: ['A: Office', 'B: Department', 'C: Authority', 'D: Worker'], correct: '🇨' },
@@ -220,7 +220,7 @@ const germanQuizData = {
   { word: 'Entschlossenheit', meaning: 'Determination', options: ['A: Willpower', 'B: Resolution', 'C: Steadfastness', 'D: Determination'], correct: '🇩' },
   { word: 'Erklärung', meaning: 'Clarification', options: ['A: Explanation', 'B: Argument', 'C: Justification', 'D: Clarification'], correct: '🇩' },
   { word: 'Erfahrung', meaning: 'Experience', options: ['A: Knowledge', 'B: Practice', 'C: Encounter', 'D: Experience'], correct: '🇩' },
-  { word: 'Fähigkeit', meaning: 'Competence', options: ['A: Skill', 'B: Ability', 'C: Capability', 'D: Competence'], correct:'🇩' },
+  { word: 'Fähigkeit', meaning: 'Competence', options: ['A: Skill', 'B: Ability', 'C: Capability', 'D: Competence'], correct: '🇩' },
   { word: 'Fortschrittlichkeit', meaning: 'Progressiveness', options: ['A: Innovation', 'B: Openness', 'C: Advancement', 'D: Progressiveness'], correct: '🇩' },
   { word: 'Freundlichkeit', meaning: 'Kindness', options: ['A: Gentleness', 'B: Compassion', 'C: Friendliness', 'D: Kindness'], correct: '🇩' },
   { word: 'Freiheit', meaning: 'Freedom', options: ['A: Liberty', 'B: Independence', 'C: Autonomy', 'D: Freedom'], correct: '🇩' },
@@ -274,7 +274,8 @@ const germanQuizData = {
   { word: 'Flüssigkeit', meaning: 'Fluency', options: ['A: Ease', 'B: Smoothness', 'C: Flow', 'D: Fluency'], correct: '🇩' },
   { word: 'Gegenseitigkeit', meaning: 'Reciprocity', options: ['A: Symmetry', 'B: Exchange', 'C: Mutuality', 'D: Reciprocity'], correct: '🇩' },
   { word: 'Gegensatz', meaning: 'Contradiction', options: ['A: Contrast', 'B: Disagreement', 'C: Discrepancy', 'D: Contradiction'], correct: '🇩' },
-  { word: 'Intuition', meaning: 'Intuition', options: ['A: Instinct', 'B: Insight', 'C: Perception', 'D: Intuition'], correct: '🇩' },  { word: 'Konformität', meaning: 'Conformity', options: ['A: Agreement', 'B: Compliance', 'C: Adherence', 'D: Conformity'], correct: '🇩' },
+  { word: 'Intuition', meaning: 'Intuition', options: ['A: Instinct', 'B: Insight', 'C: Perception', 'D: Intuition'], correct: '🇩' },
+  { word: 'Konformität', meaning: 'Conformity', options: ['A: Agreement', 'B: Compliance', 'C: Adherence', 'D: Conformity'], correct: '🇩' },
   { word: 'Komplexität', meaning: 'Complexity', options: ['A: Intricacy', 'B: Difficulty', 'C: Entanglement', 'D: Complexity'], correct: '🇩' },
   { word: 'Korrektheit', meaning: 'Correctness', options: ['A: Rightness', 'B: Exactness', 'C: Accuracy', 'D: Correctness'], correct: '🇩' },
   { word: 'Kritikfähigkeit', meaning: 'Criticism capability', options: ['A: Review ability', 'B: Reflection', 'C: Analytical skill', 'D: Criticism capability'], correct: '🇩' },
@@ -328,39 +329,14 @@ const germanQuizData = {
   { word: 'Metakognition', meaning: 'Metacognition', options: ['A: Reflection', 'B: Self-awareness', 'C: Understanding', 'D: Metacognition'], correct: '🇩' },
   { word: 'Präzision', meaning: 'Precision', options: ['A: Accuracy', 'B: Exactness', 'C: Rigidity', 'D: Precision'], correct: '🇩' },
   { word: 'Deklaration', meaning: 'Declaration', options: ['A: Statement', 'B: Announcement', 'C: Proclamation', 'D: Declaration'], correct: '🇩' }
-  ],
+  ]
 }; 
-
-// Word of the Day data
-const wordList = [
-  { word: 'die Stadt', meaning: 'City', plural: 'die Städte', indefinite: 'eine Stadt', definite: 'die Stadt' },
-  { word: 'der Apfel', meaning: 'An Apple', plural: 'die Äpfel', indefinite: 'ein Apfel', definite: 'der Apfel' },
-  { word: 'das Buch', meaning: 'A Book', plural: 'die Bücher', indefinite: 'ein Buch', definite: 'das Buch' },
-  { word: 'die Blume', meaning: 'Flower', plural: 'die Blumen', indefinite: 'eine Blume', definite: 'die Blume' },
-  { word: 'der Hund', meaning: 'Dog', plural: 'die Hunde', indefinite: 'ein Hund', definite: 'der Hund' },
-  { word: 'die Katze', meaning: 'Cat', plural: 'die Katzen', indefinite: 'eine Katze', definite: 'die Katze' },
-  { word: 'das Haus', meaning: 'House', plural: 'die Häuser', indefinite: 'ein Haus', definite: 'das Haus' },
-  { word: 'die Schule', meaning: 'School', plural: 'die Schulen', indefinite: 'eine Schule', definite: 'die Schule' },
-  { word: 'der Tisch', meaning: 'Table', plural: 'die Tische', indefinite: 'ein Tisch', definite: 'der Tisch' },
-  { word: 'die Lampe', meaning: 'Lamp', plural: 'die Lampen', indefinite: 'eine Lampe', definite: 'die Lampe' },
-  { word: 'das Auto', meaning: 'Car', plural: 'die Autos', indefinite: 'ein Auto', definite: 'das Auto' },
-  { word: 'die Tasche', meaning: 'Bag', plural: 'die Taschen', indefinite: 'eine Tasche', definite: 'die Tasche' },
-  { word: 'der Stuhl', meaning: 'Chair', plural: 'die Stühle', indefinite: 'ein Stuhl', definite: 'der Stuhl' },
-  { word: 'das Fenster', meaning: 'Window', plural: 'die Fenster', indefinite: 'ein Fenster', definite: 'das Fenster' },
-  { word: 'die Wand', meaning: 'Wall', plural: 'die Wände', indefinite: 'eine Wand', definite: 'die Wand' },
-  { word: 'die Tür', meaning: 'Door', plural: 'die Türen', indefinite: 'eine Tür', definite: 'die Tür' },
-  { word: 'der Lehrer', meaning: 'Teacher (Male)', plural: 'die Lehrer', indefinite: 'ein Lehrer', definite: 'der Lehrer' },  { word: 'die Lehrerin', meaning: 'Teacher (Female)', plural: 'die Lehrerinnen', indefinite: 'eine Lehrerin', definite: 'die Lehrerin' },
-  { word: 'die Zeit', meaning: 'Time', plural: 'die Zeiten', indefinite: 'eine Zeit', definite: 'die Zeit' },
-  { word: 'das Wasser', meaning: 'Water', plural: 'die Wasser', indefinite: 'ein Wasser', definite: 'das Wasser' },
-  { word: 'der Tag', meaning: 'Day', plural: 'die Tage', indefinite: 'ein Tag', definite: 'der Tag' },
-  { word: 'die Nacht', meaning: 'Night', plural: 'die Nächte', indefinite: 'eine Nacht', definite: 'die Nacht' },
-};
 
 // Word of the Day Data for German
 const germanWordList = [
-  { word: "Hund", meaning: "Dog", plural: "Hunde", indefinite: "ein", definite: "der" },
-  { word: "Buch", meaning: "Book", plural: "Bücher", indefinite: "ein", definite: "das" },
-  { word: "Meer", meaning: "Sea", plural: "Meere", indefinite: "ein", definite: "das" }
-];
+  { word: "Hund", meaning: "Dog", plural: "Hunde", indefinite: "ein", definite: "der" },
+  { word: "Buch", meaning: "Book", plural: "Bücher", indefinite: "ein", definite: "das" },
+  { word: "Meer", meaning: "Sea", plural: "Meere", indefinite: "ein", definite: "das" }
+]; 
 
 module.exports = { germanQuizData, germanWordList };
