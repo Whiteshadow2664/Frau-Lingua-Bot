@@ -247,9 +247,19 @@ for (const question of questionsToAsk) {
     });
 
     const userReaction = quizReaction.first();
-    if (userReaction && userReaction.emoji.name === emojis[question.options.indexOf(question.correct)]) {
-        activeQuizzes[message.author.id].score++;
-    }
+    const userAnswer = userReaction ? question.options[emojis.indexOf(userReaction.emoji.name)] : 'No Answer';
+const isCorrect = userAnswer === question.correct;
+
+if (isCorrect) {
+    activeQuizzes[message.author.id].score++;
+}
+
+activeQuizzes[message.author.id].detailedResults.push({
+    word: question.word,
+    userAnswer: userAnswer,
+    correct: question.correct,
+    isCorrect: isCorrect,
+});
 
     activeQuizzes[message.author.id].detailedResults.push({
         word: question.word,
