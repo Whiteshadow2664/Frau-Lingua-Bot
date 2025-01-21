@@ -247,8 +247,12 @@ for (const question of questionsToAsk) {
     });
 
     const userReaction = quizReaction.first();
-    const userAnswer = userReaction ? question.options[emojis.indexOf(userReaction.emoji.name)] : 'No Answer';
-const isCorrect = userAnswer === question.correct;
+    const userReaction = quizReaction.first();
+const userAnswerEmoji = userReaction ? userReaction.emoji.name : null;
+
+// Determine if the user selected the correct emoji
+const correctEmoji = emojis[question.options.indexOf(question.correct)];
+const isCorrect = userAnswerEmoji === correctEmoji;
 
 if (isCorrect) {
     activeQuizzes[message.author.id].score++;
@@ -256,8 +260,10 @@ if (isCorrect) {
 
 activeQuizzes[message.author.id].detailedResults.push({
     word: question.word,
-    userAnswer: userAnswer,
-    correct: question.correct,
+    userAnswer: userAnswerEmoji
+        ? `${userAnswerEmoji} ${question.options[emojis.indexOf(userAnswerEmoji)]}`
+        : 'No Answer',
+    correct: `${correctEmoji} ${question.correct}`,
     isCorrect: isCorrect,
 });
 
