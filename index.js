@@ -266,20 +266,21 @@ if (answerReaction && answerReaction.size) {
             }
 
             // Final Results
-            const resultsEmbed = new EmbedBuilder()
-                .setTitle(`**Quiz Results for ${selectedLanguage.charAt(0).toUpperCase() + selectedLanguage.slice(1)} Quiz**`)
-                .setDescription(`You scored ${activeQuizzes[message.author.id].score} out of 5!`)
-                .setColor(embedColors[selectedLanguage]);
+const resultsEmbed = new EmbedBuilder()
+    .setTitle(`**Quiz Results for ${selectedLanguage.charAt(0).toUpperCase() + selectedLanguage.slice(1)} Quiz**`)
+    .setDescription(`You scored ${activeQuizzes[message.author.id].score} out of 5!`)
+    .setColor(embedColors[selectedLanguage]);
 
-            activeQuizzes[message.author.id].detailedResults.forEach(result => {
-                resultsEmbed.addFields({
-                    name: `Word: ${result.word}`,
-                    value: `Your Answer: ${result.userAnswer}\nCorrect Answer: ${result.correctAnswer}\nCorrect: ${result.isCorrect ? 'Yes' : 'No'}`,
-                    inline: false
-                });
-            });
+activeQuizzes[message.author.id].detailedResults.forEach(result => {
+    const resultMessage = `Your Answer: ${result.userAnswer}\nCorrect Answer: ${result.correctAnswer}\nCorrect: ${result.isCorrect ? '✅' : '❌'}`;
+    resultsEmbed.addFields({
+        name: `Word: ${result.word}`,
+        value: resultMessage,
+        inline: false
+    });
+});
 
-            await message.channel.send({ embeds: [resultsEmbed] });
+await message.channel.send({ embeds: [resultsEmbed] });
             delete activeQuizzes[message.author.id]; // Remove the user from active quizzes after completion
         } catch (error) {
             console.error('Error handling quiz:', error);
