@@ -261,34 +261,31 @@ for (const question of questionsToAsk) {
     await quizMessage.delete();
 }
 
-// Generate and send the result embed
-const userQuizData = activeQuizzes[message.author.id];
-const { score, detailedResults, language, level } = userQuizData;
+            // Step 4: Display Results
+            const result = activeQuizzes[message.author.id];
+            delete activeQuizzes[message.author.id]; 
 
-const detailedResultsText = detailedResults
-    .map(
-        (res) =>
-            `**Word:** ${res.word}\nYour Answer: ${res.userAnswer}\nCorrect: ${res.correct}\nResult: ${
-                res.isCorrect ? '✅' : '❌'
-            }`
-    )
-    .join('\n\n');
+        const resultEmbed = new EmbedBuilder()
+    .setTitle('Quiz Results')
+    .setDescription(`You scored ${result.score} out of 5 in level ${result.level} (${result.language.charAt(0).toUpperCase() + result.language.slice(1)})!`)
+    .setColor(embedColors[result.language])
+    .addFields(
+        { name: 'Level', value: result.level },
+        { name: 'Language', value: result.language.charAt(0).toUpperCase() + result.language.slice(1) },
+        {
+            name: 'Detailed Results',
+            value: result.detailedResults
+                .map((res) => `**Word:** ${res.word}\nYour Answer: ${res.userAnswer}\nCorrect: ${res.correct}\nResult: ${res.isCorrect ? '✅' : '❌'}`)
+                .join('\n\n'),
+        }
+    );                        
 
-const resultEmbed = new EmbedBuilder()
-    .setTitle('Quiz Results')
-    .setDescription(
-        `You scored ${score} out of ${detailedResults.length} in level ${level}!\n\n` +
-        `**Level:** ${level}\n` +
-        `**Language:** ${language.charAt(0).toUpperCase() + language.slice(1)}\n\n` +
-        `**Detailed Results:**\n${detailedResultsText}`
-    )
-    .setColor('#f4ed09'); // Yellow color for result
-
-// Send the result message once
-if (activeQuizzes[message.author.id]) {
-    await message.channel.send({ embeds: [resultEmbed] });
-    delete activeQuizzes[message.author.id];
-}
+            await message.channel.send({ embeds: [resultEmbed] });
+        } catch (error) {
+            console.error(error);
+            return message.channel.send('An error occurred. Please try again.');
+        }
+    } 
 
     if (message.content.toLowerCase() === '!help') {
         help.execute(message);
