@@ -236,30 +236,33 @@ client.on('messageCreate', async (message) => {
                 }
 
                 const answerReaction = await quizMessage.awaitReactions({
-                    filter: (reaction, user) => emojis.includes(reaction.emoji.name) && user.id === message.author.id,
-                    max: 1,
-                    time: 15000,
-                }).catch(() => null);
+    filter: (reaction, user) => emojis.includes(reaction.emoji.name) && user.id === message.author.id,
+    max: 1,
+    time: 15000,
+}).catch(() => null);
 
-                if (answerReaction && answerReaction.size) {
-                    const selectedAnswer = answerReaction.first().emoji.name;
-                    const answerIndex = emojis.indexOf(selectedAnswer);
-                    const isCorrect = question.correctAnswer === answerIndex;
-                    activeQuizzes[message.author.id].score += isCorrect ? 1 : 0;
-                    activeQuizzes[message.author.id].detailedResults.push({
-                        word: question.word,
-                        userAnswer: question.options[answerIndex],
-                        correctAnswer: question.options[question.correctAnswer],
-                        isCorrect: isCorrect,
-                    });
-                } else {
-                    activeQuizzes[message.author.id].detailedResults.push({
-                        word: question.word,
-                        userAnswer: 'No Answer',
-                        correctAnswer: question.options[question.correctAnswer],
-                        isCorrect: false,
-                    });
-                }
+// Delete the question message after receiving an answer (or after timeout)
+await quizMessage.delete();
+
+if (answerReaction && answerReaction.size) {
+    const selectedAnswer = answerReaction.first().emoji.name;
+    const answerIndex = emojis.indexOf(selectedAnswer);
+    const isCorrect = question.correctAnswer === answerIndex;
+    activeQuizzes[message.author.id].score += isCorrect ? 1 : 0;
+    activeQuizzes[message.author.id].detailedResults.push({
+        word: question.word,
+        userAnswer: question.options[answerIndex],
+        correctAnswer: question.options[question.correctAnswer],  // Make sure the correctAnswer is being used correctly
+        isCorrect: isCorrect,
+    });
+} else {
+    activeQuizzes[message.author.id].detailedResults.push({
+    word: question.word,
+    userAnswer: question.options[answerIndex],
+    correctAnswer: question.options[question.correctAnswer],  // This was the correct part, it's correct in concept, ensure it maps correctly in context
+    isCorrect: isCorrect,
+});
+}
             }
 
             // Final Results
