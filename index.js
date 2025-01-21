@@ -284,15 +284,11 @@ const resultEmbed = new EmbedBuilder()
     )
     .setColor('#f4ed09');
 
-// Send the result to the user
-await message.channel.send({ embeds: [resultEmbed] });
-
-// Clean up user quiz data
-delete activeQuizzes[message.author.id];
-
-            await message.channel.send({ embeds: [resultEmbed] });
-        } catch (error) {
-            console.error(error);
+// Send the result once
+if (activeQuizzes[message.author.id]) {
+    await message.channel.send({ embeds: [resultEmbed] });
+    delete activeQuizzes[message.author.id];
+}
             return message.channel.send('An error occurred. Please try again.');
         }
     }
