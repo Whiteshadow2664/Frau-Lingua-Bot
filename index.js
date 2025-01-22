@@ -12,7 +12,6 @@ const { frenchQuizData, frenchWordList } = require('./frenchData');
 const { shuffleArray } = require('./utilities');
 const help = require('./commands/help');
 const resources = require('./commands/resources');
-const ticket = require('./commands/ticket');
 
 // Environment Variables
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
@@ -92,7 +91,7 @@ const sendWordOfTheDay = async (language) => {
 
 // Word of the Day Schedule for each language
 const wordOfTheDayTimes = {
-  russian: '50 10 * * *',  // 12:59 PM IST for Russian
+  russian: '58 12 * * *',  // 12:59 PM IST for Russian
   german: '17 22 * * *',   // 2:59 PM IST for German
   french: '17 22 * * *',   // 4:59 PM IST for French
 };
@@ -113,63 +112,9 @@ Object.keys(wordOfTheDayTimes).forEach((language) => {
 
 
 
-            // Send a welcome message in the ticket channel
-            await ticketChannel.send({
-                content: `Hello ${member}, your ticket has been created! How can we assist you today?`,
-            });
-
-            // Notify the user
-            await interaction.reply({
-                content: `Ticket created successfully! You can view it here: ${ticketChannel}`,
-                ephemeral: true,
-            });
-        } catch (error) {
-            console.error('Error creating ticket channel:', error);
-            await interaction.reply({
-                content: 'An error occurred while creating your ticket. Please try again later.',
-                ephemeral: true,
-            });
-        }
-    }
-});
-
 // Commands and Event Handling
 client.on('messageCreate', async (message) => {
     if (message.author.bot) return;
-
-    // Handle the !ticket command
-    if (message.content.toLowerCase() === '!ticket') {
-    // Ensure that the user has permission to create tickets
-    const member = message.member;
-    if (!member) {
-        return message.channel.send('You must be a member of the server to create a ticket.');
-    }
-
-    try {
-        // Send the button to initiate the ticket creation
-        const buttonMessage = await message.channel.send({
-            content: 'Click the button below to create a ticket.',
-            components: [
-                {
-                    type: 1, // Action Row
-                    components: [
-                        {
-                            type: 2, // Button
-                            style: 1, // Primary button
-                            label: 'Create Ticket',
-                            customId: 'create_ticket',
-                        },
-                    ],
-                },
-            ],
-        });
-    } catch (error) {
-        console.error('Error sending ticket button:', error);
-        return message.channel.send('An error occurred while processing your ticket request.');
-    }
-}
-
-    // Handle the quiz command
     if (message.content.toLowerCase() === '!q') {
         // Check if the user is already participating in a quiz
         if (activeQuizzes[message.author.id]) {
