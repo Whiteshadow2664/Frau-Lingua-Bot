@@ -174,6 +174,38 @@ client.on('interactionCreate', async (interaction) => {
 client.on('messageCreate', async (message) => {
     if (message.author.bot) return;
 
+    // Handle the !ticket command
+    if (message.content.toLowerCase() === '!ticket') {
+    // Ensure that the user has permission to create tickets
+    const member = message.member;
+    if (!member) {
+        return message.channel.send('You must be a member of the server to create a ticket.');
+    }
+
+    try {
+        // Send the button to initiate the ticket creation
+        const buttonMessage = await message.channel.send({
+            content: 'Click the button below to create a ticket.',
+            components: [
+                {
+                    type: 1, // Action Row
+                    components: [
+                        {
+                            type: 2, // Button
+                            style: 1, // Primary button
+                            label: 'Create Ticket',
+                            customId: 'create_ticket',
+                        },
+                    ],
+                },
+            ],
+        });
+    } catch (error) {
+        console.error('Error sending ticket button:', error);
+        return message.channel.send('An error occurred while processing your ticket request.');
+    }
+}
+
     // Handle the quiz command
     if (message.content.toLowerCase() === '!q') {
         // Check if the user is already participating in a quiz
