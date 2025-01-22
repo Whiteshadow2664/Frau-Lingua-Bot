@@ -1,20 +1,18 @@
-const { EmbedBuilder } = require('discord.js');
+const { Client, GatewayIntentBits } = require('discord.js');
 
 // Function to handle member joins
 const handleMemberJoin = async (member) => {
     const guild = member.guild;
     const memberCount = guild.memberCount;
 
-    // Embed for member join
-    const welcomeEmbed = new EmbedBuilder()
-        .setTitle('Welcome to the Server!')
-        .setDescription(`Hello ${member.user.tag}, welcome to the server! You are member **#${memberCount}**.`)
-        .setColor('#1cd86c');
+    // Get the user's profile picture URL
+    const profilePicture = member.user.displayAvatarURL({ dynamic: true, size: 1024 });
 
-    // Send to a specific channel (e.g., 'general')
+    // Send a regular message mentioning the user and showing their profile picture
     const channel = guild.channels.cache.find(ch => ch.name === 'general');
     if (channel) {
-        await channel.send({ embeds: [welcomeEmbed] });
+        await channel.send(`Hello <@${member.id}>, welcome to the server! You are member **#${memberCount}**!`);
+        await channel.send({ content: `Here’s your profile picture!`, files: [profilePicture] });
     } else {
         console.error("Channel not found: 'general'");
     }
@@ -25,16 +23,10 @@ const handleMemberLeave = async (member) => {
     const guild = member.guild;
     const memberCount = guild.memberCount;
 
-    // Embed for member leave
-    const leaveEmbed = new EmbedBuilder()
-        .setTitle('Goodbye!')
-        .setDescription(`${member.user.tag} has left the server. We now have **${memberCount}** members.`)
-        .setColor('#ff4c4c');
-
-    // Send to a specific channel (e.g., 'general')
+    // Send a regular message mentioning the user when they leave
     const channel = guild.channels.cache.find(ch => ch.name === 'general');
     if (channel) {
-        await channel.send({ embeds: [leaveEmbed] });
+        await channel.send(`Goodbye <@${member.id}>, you have left the server. We now have **${memberCount}** members.`);
     } else {
         console.error("Channel not found: 'general'");
     }
