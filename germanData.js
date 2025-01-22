@@ -708,27 +708,45 @@ const germanQuizData = {
 
 // German Word of the Day Data
 const germanWordList = [
-    {
-        word: "Собака",
-        meaning: "Dog",
-        plural: "Собаки",
-        indefinite: "одна",
-        definite: "та"
-    },
-    {
-        word: "Книга",
-        meaning: "Book",
-        plural: "Книги",
-        indefinite: "одна",
-        definite: "та"
-    },
-    {
-        word: "Море",
-        meaning: "Sea",
-        plural: "Моря",
-        indefinite: "одно",
-        definite: "то"
-    }
+{ "word": "Hund", "meaning": "Dog", "plural": "Hunde", "indefinite": "ein", "definite": "der" },
+    { "word": "Buch", "meaning": "Book", "plural": "Bücher", "indefinite": "ein", "definite": "das" },
+    { "word": "Katze", "meaning": "Cat", "plural": "Katzen", "indefinite": "eine", "definite": "die" },
+    { "word": "Auto", "meaning": "Car", "plural": "Autos", "indefinite": "ein", "definite": "das" },
+    { "word": "Haus", "meaning": "House", "plural": "Häuser", "indefinite": "ein", "definite": "das" },
+    { "word": "Stuhl", "meaning": "Chair", "plural": "Stühle", "indefinite": "ein", "definite": "der" },
+    { "word": "Tisch", "meaning": "Table", "plural": "Tische", "indefinite": "ein", "definite": "der" },
+    { "word": "Lampe", "meaning": "Lamp", "plural": "Lampen", "indefinite": "eine", "definite": "die" },
+    { "word": "Apfel", "meaning": "Apple", "plural": "Äpfel", "indefinite": "ein", "definite": "der" },
+    { "word": "Blume", "meaning": "Flower", "plural": "Blumen", "indefinite": "eine", "definite": "die" },
+    { "word": "Baum", "meaning": "Tree", "plural": "Bäume", "indefinite": "ein", "definite": "der" },
+    { "word": "Koffer", "meaning": "Suitcase", "plural": "Koffer", "indefinite": "ein", "definite": "der" },
+    { "word": "Schuh", "meaning": "Shoe", "plural": "Schuhe", "indefinite": "ein", "definite": "der" },
+    { "word": "Jacke", "meaning": "Jacket", "plural": "Jacken", "indefinite": "eine", "definite": "die" },
+    { "word": "Fenster", "meaning": "Window", "plural": "Fenster", "indefinite": "ein", "definite": "das" },
+    { "word": "Bleistift", "meaning": "Pencil", "plural": "Bleistifte", "indefinite": "ein", "definite": "der" },
+    { "word": "Heft", "meaning": "Notebook", "plural": "Hefte", "indefinite": "ein", "definite": "das" },
+    { "word": "Brille", "meaning": "Glasses", "plural": "Brillen", "indefinite": "eine", "definite": "die" },
+    { "word": "Zug", "meaning": "Train", "plural": "Züge", "indefinite": "ein", "definite": "der" },
+    { "word": "Küche", "meaning": "Kitchen", "plural": "Küchen", "indefinite": "eine", "definite": "die" },{ "word": "Fahrrad", "meaning": "Bicycle", "plural": "Fahrräder", "indefinite": "ein", "definite": "das" },
+    { "word": "Tasche", "meaning": "Bag", "plural": "Taschen", "indefinite": "eine", "definite": "die" },
+    { "word": "Uhr", "meaning": "Clock", "plural": "Uhren", "indefinite": "eine", "definite": "die" },
+    { "word": "Brot", "meaning": "Bread", "plural": "Brote", "indefinite": "ein", "definite": "das" },
+    { "word": "Wasser", "meaning": "Water", "plural": "—", "indefinite": "ein", "definite": "das" },
+    { "word": "Messer", "meaning": "Knife", "plural": "Messer", "indefinite": "ein", "definite": "das" },
+    { "word": "Gabel", "meaning": "Fork", "plural": "Gabeln", "indefinite": "eine", "definite": "die" },
+    { "word": "Löffel", "meaning": "Spoon", "plural": "Löffel", "indefinite": "ein", "definite": "der" },
+    { "word": "Stadt", "meaning": "City", "plural": "Städte", "indefinite": "eine", "definite": "die" },
+    { "word": "Dorf", "meaning": "Village", "plural": "Dörfer", "indefinite": "ein", "definite": "das" },
+    { "word": "Schule", "meaning": "School", "plural": "Schulen", "indefinite": "eine", "definite": "die" },
+    { "word": "Flugzeug", "meaning": "Airplane", "plural": "Flugzeuge", "indefinite": "ein", "definite": "das" },
+    { "word": "Handy", "meaning": "Mobile Phone", "plural": "Handys", "indefinite": "ein", "definite": "das" },
+    { "word": "Computer", "meaning": "Computer", "plural": "Computer", "indefinite": "ein", "definite": "der" },
+    { "word": "Kind", "meaning": "Child", "plural": "Kinder", "indefinite": "ein", "definite": "das" },
+    { "word": "Lehrer", "meaning": "Teacher (Male)", "plural": "Lehrer", "indefinite": "ein", "definite": "der" },
+    { "word": "Lehrerin", "meaning": "Teacher (Female)", "plural": "Lehrerinnen", "indefinite": "eine", "definite": "die" },
+    { "word": "Freund", "meaning": "Friend (Male)", "plural": "Freunde", "indefinite": "ein", "definite": "der" },
+    { "word": "Freundin", "meaning": "Friend (Female)", "plural": "Freundinnen", "indefinite": "eine", "definite": "die" },
+    { "word": "Familie", "meaning": "Family", "plural": "Familien", "indefinite": "eine", "definite": "die" }
 ];
 
 module.exports = { germanQuizData, germanWordList };
