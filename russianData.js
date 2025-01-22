@@ -1,77 +1,77 @@
-// Quiz Data for Russian
-const russianQuizData = {
+// French Quiz Data
+const frenchQuizData = {
     A1: [
         {
-            word: "дом",
-            options: ["🇦 House", "🇧 Tree", "🇨 Car", "🇩 Dog"],
-            correct: "🇦"
+            word: "Maison",
+            options: ["House", "Tree", "Car", "Dog"],
+            correct: "House"
         },
         {
-            word: "кошка",
-            options: ["🇦 Cat", "🇧 Mouse", "🇨 Bird", "🇩 Horse"],
-            correct: "🇦"
+            word: "Chat",
+            options: ["Cat", "Mouse", "Bird", "Horse"],
+            correct: "Cat"
         }
     ],
     A2: [
         {
-            word: "дружба",
-            options: ["🇦 Friendship", "🇧 Love", "🇨 Anger", "🇩 Sadness"],
-            correct: "🇦"
+            word: "Amitié",
+            options: ["Friendship", "Love", "Anger", "Sadness"],
+            correct: "Friendship"
         }
     ],
     B1: [
         {
-            word: "свобода",
-            options: ["🇦 Freedom", "🇧 Justice", "🇨 Peace", "🇩 Honor"],
-            correct: "🇦"
+            word: "Liberté",
+            options: ["Freedom", "Justice", "Peace", "Honor"],
+            correct: "Freedom"
         }
     ],
     B2: [
         {
-            word: "прогресс",
-            options: ["🇦 Progress", "🇧 Decline", "🇨 Start", "🇩 Stop"],
-            correct: "🇦"
+            word: "Progrès",
+            options: ["Progress", "Decline", "Start", "Stop"],
+            correct: "Progress"
         }
     ],
     C1: [
         {
-            word: "гармония",
-            options: ["🇦 Harmony", "🇧 Chaos", "🇨 Peace", "🇩 Disagreement"],
-            correct: "🇦"
+            word: "Harmonie",
+            options: ["Harmony", "Chaos", "Peace", "Disagreement"],
+            correct: "Harmony"
         }
     ],
     C2: [
         {
-            word: "совершенство",
-            options: ["🇦 Perfection", "🇧 Imperfection", "🇨 Mediocrity", "🇩 Excellence"],
-            correct: "🇦"
+            word: "Perfection",
+            options: ["Perfection", "Imperfection", "Mediocrity", "Excellence"],
+            correct: "Perfection"
         }
     ]
 };
 
-// Word of the Day Data for Russian
-const russianWordList = [
+// French Word of the Day Data
+const frenchWordList = [
     {
-        word: "собака",
+        word: "Chien",
         meaning: "Dog",
-        plural: "собаки",
-        indefinite: "-",
-        definite: "-"
+        plural: "Chiens",
+        indefinite: "un",
+        definite: "le"
     },
     {
-        word: "книга",
+        word: "Livre",
         meaning: "Book",
-        plural: "книги",
-        indefinite: "-",
-        definite: "-"
+        plural: "Livres",
+        indefinite: "un",
+        definite: "le"
     },
     {
-        word: "море",
+        word: "Mer",
         meaning: "Sea",
-        plural: "моря",
-        indefinite: "-",
-        definite: "-"
+        plural: "Mers",
+        indefinite: "une",
+        definite: "la"
     }
 ];
 
-module.exports = { russianQuizData, russianWordList };
+module.exports = { frenchQuizData, frenchWordList };
