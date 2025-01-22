@@ -23,8 +23,13 @@ function shuffleQuizOptions(question) {
 
     // Preserve the correct answer by checking the index of "A"
     const correctOption = question.options[0]; // Assuming option A is the correct answer
-    // Shuffle options
-    shuffleArray(question.options);
+    const otherOptions = question.options.slice(1); // Get options other than "A"
+
+    // Shuffle the other options
+    shuffleArray(otherOptions);
+
+    // Add the correct option back to the shuffled options
+    question.options = [correctOption, ...otherOptions];
 
     // Find the new index of the correct answer after shuffling
     const correctAnswerIndex = question.options.indexOf(correctOption);
