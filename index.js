@@ -91,16 +91,15 @@ const sendWordOfTheDay = async (language) => {
 
 // Word of the Day Schedule for each language
 const wordOfTheDayTimes = {
-  russian: '17 22 * * *',  // 12:59 PM IST for Russian
+  russian: '50 10 * * *',  // 12:59 PM IST for Russian
   german: '17 22 * * *',   // 2:59 PM IST for German
   french: '17 22 * * *',   // 4:59 PM IST for French
 };
 
-// Send Word of the Day at scheduled times for each language
 Object.keys(wordOfTheDayTimes).forEach((language) => {
   cron.schedule(wordOfTheDayTimes[language], async () => {
     try {
-      console.log(`Sending Word of the Day for ${language} at scheduled time`);
+      
       await sendWordOfTheDay(language);
     } catch (error) {
       console.error(`Failed to send Word of the Day for ${language}:`, error);
