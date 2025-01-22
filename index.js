@@ -122,14 +122,15 @@ client.on('interactionCreate', async (interaction) => {
         const member = interaction.member;
 
         // Ensure the bot has permission to create channels
-        if (!guild.me.permissions.has('MANAGE_CHANNELS')) {
-            return interaction.reply({
-                content: 'I do not have permission to manage channels.',
-                ephemeral: true,
-            });
-        }
-
         try {
+            const botMember = await guild.members.fetch(client.user.id); // Fetch bot member
+            if (!botMember.permissions.has('MANAGE_CHANNELS')) {
+                return interaction.reply({
+                    content: 'I do not have permission to manage channels.',
+                    ephemeral: true,
+                });
+            }
+
             // Create a new channel for the ticket
             const ticketChannel = await guild.channels.create({
                 name: `ticket-${member.user.username}`,
@@ -149,6 +150,22 @@ client.on('interactionCreate', async (interaction) => {
                     },
                 ],
             });
+
+            // Respond with a success message
+            interaction.reply({
+                content: `Ticket created successfully! You can access it here: ${ticketChannel}`,
+                ephemeral: true,
+            });
+
+        } catch (error) {
+            console.error('Error creating ticket channel:', error);
+            return interaction.reply({
+                content: 'An error occurred while creating your ticket.',
+                ephemeral: true,
+            });
+        }
+    }
+});
 
             // Send a welcome message in the ticket channel
             await ticketChannel.send({
