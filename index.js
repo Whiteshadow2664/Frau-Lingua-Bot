@@ -111,7 +111,6 @@ Object.keys(wordOfTheDayTimes).forEach((language) => {
   });
 });
 
-// Ticket Creation Interaction
 client.on('interactionCreate', async (interaction) => {
     // Ignore if it's not a button interaction
     if (!interaction.isButton()) return;
@@ -151,16 +150,21 @@ client.on('interactionCreate', async (interaction) => {
                 ],
             });
 
+            // Send a welcome message in the ticket channel
+            await ticketChannel.send({
+                content: `Hello ${member}, your ticket has been created! How can we assist you today?`,
+            });
+
             // Respond with a success message
-            interaction.reply({
-                content: `Ticket created successfully! You can access it here: ${ticketChannel}`,
+            await interaction.reply({
+                content: `Ticket created successfully! You can view it here: ${ticketChannel}`,
                 ephemeral: true,
             });
 
         } catch (error) {
             console.error('Error creating ticket channel:', error);
-            return interaction.reply({
-                content: 'An error occurred while creating your ticket.',
+            await interaction.reply({
+                content: 'An error occurred while creating your ticket. Please try again later.',
                 ephemeral: true,
             });
         }
