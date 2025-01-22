@@ -306,6 +306,8 @@ await message.channel.send({ embeds: [resultEmbed] });
     }
 
     // Inside your message event listener
+client.on('messageCreate', async (message) => {
+    if (message.author.bot) return;
 if (message.content.startsWith('/createTicket')) {
     createTicket(message);
 } else if (message.content.startsWith('/closeTicket')) {
