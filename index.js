@@ -58,7 +58,7 @@ const wordOfTheDayChannelIds = {
 // Word of the Day Function
 const sendWordOfTheDay = async (language) => {
   let wordList;
-  if (language === 'russian') wordList = russianWordList;
+  else if (language === 'russian') wordList = russianWordList;
   else if (language === 'german') wordList = germanWordList;
   else if (language === 'french') wordList = frenchWordList;
 
@@ -92,8 +92,8 @@ const sendWordOfTheDay = async (language) => {
 
 // Word of the Day Schedule for each language
 const wordOfTheDayTimes = {
-  russian: '01 20 * * *',  // 12:59 PM IST for Russian
-  german: '47 19 * * *',   // 2:59 PM IST for German
+  russian: '14 20 * * *',  // 12:59 PM IST for Russian
+  german: '14 20 * * *',   // 2:59 PM IST for German
   french: '47 19 * * *',   // 4:59 PM IST for French
 };
 
