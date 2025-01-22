@@ -235,8 +235,11 @@ for (const question of questionsToAsk) {
         .setDescription(
             `What is the English meaning of **"${question.word}"**?\n\n` +
             `🇦 ${question.options[0]}\n` +
+
             `🇧 ${question.options[1]}\n` +
+
             `🇨 ${question.options[2]}\n` +
+
             `🇩 ${question.options[3]}`
         )
         .setColor(embedColors[selectedLanguage])
