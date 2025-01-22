@@ -117,16 +117,6 @@ Object.keys(wordOfTheDayTimes).forEach((language) => {
 client.on('messageCreate', async (message) => {
     if (message.author.bot) return;
 
-    / Ticket command
-    if (message.content.toLowerCase() === '!ticket') {
-        await createTicket(message);
-    } 
-
-    // Close ticket command
-    if (message.content.toLowerCase() === '!close' && message.channel.name.startsWith('ticket-')) {
-        await closeTicket(message);
-    }
-
     if (message.content.toLowerCase() === '!q') {
         // Check if the user is already participating in a quiz
         if (activeQuizzes[message.author.id]) {
