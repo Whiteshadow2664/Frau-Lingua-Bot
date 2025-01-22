@@ -52,9 +52,9 @@ const embedColors = {
 
 // Word of the Day Data for each language
 const wordOfTheDayChannelIds = {
-  russian: '1327875414584201350', // Replace with actual Russian channel ID
-  german: '1327875414584201350',   // Replace with actual German channel ID
-  french: '1327875414584201350',   // Replace with actual French channel ID
+  russian: '1303664003444379649', // Replace with actual Russian channel ID
+  german: '1225363050207514675',   // Replace with actual German channel ID
+  french: '1225362787581296640',   // Replace with actual French channel ID
 };
 
 // Word of the Day Function
@@ -95,9 +95,9 @@ const embed = new EmbedBuilder()
 
 // Word of the Day Schedule for each language
 const wordOfTheDayTimes = {
-  russian: '40 20 * * *',  // 12:59 PM IST for Russian
-  german: '40 20 * * *',   // 2:59 PM IST for German
-  french: '30 20 * * *',   // 4:59 PM IST for French
+  russian: '30 03 * * *',  // 03:30 AM IST for Russian
+  german: '30 04 * * *',   // 04:30 AM IST for German
+  french: '30 04 * * *',   // 04:30 AM IST for French
 };
 
 Object.keys(wordOfTheDayTimes).forEach((language) => {
@@ -129,7 +129,7 @@ client.on('messageCreate', async (message) => {
         return; // Exit after replying to avoid processing other commands
     }
 
-    if (message.content.toLowerCase() === '!q') {
+    if (message.content.toLowerCase() === '!quiz') {
         // Check if the user is already participating in a quiz
         if (activeQuizzes[message.author.id]) {
             return message.channel.send('You are already participating in a quiz! Please finish it before starting a new one.');
