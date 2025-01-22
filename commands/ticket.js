@@ -1,32 +1,22 @@
-const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
+const { ActionRowBuilder, ButtonBuilder } = require('discord.js');
 
 module.exports = {
-    name: 'ticket',
-    description: 'Creates a ticket for support.',
-    async execute(message) {
-        try {
-            // Create the ticket embed
-            const ticketEmbed = new EmbedBuilder()
-                .setTitle('Support Ticket')
-                .setDescription('Click the button below to create a support ticket.')
-                .setColor('#0099ff');
+    data: {
+        name: 'ticket',
+        description: 'Creates a support ticket',
+    },
+    async execute(interaction) {
+        const row = new ActionRowBuilder().addComponents(
+            new ButtonBuilder()
+                .setCustomId('create_ticket')
+                .setLabel('Create Ticket')
+                .setStyle('PRIMARY')
+        );
 
-            // Create a button for ticket creation
-            const row = new ActionRowBuilder().addComponents(
-                new ButtonBuilder()
-                    .setCustomId('create_ticket')
-                    .setLabel('Create Ticket')
-                    .setStyle(ButtonStyle.Primary)
-            );
-
-            // Send the embed with the button
-            await message.channel.send({
-                embeds: [ticketEmbed],
-                components: [row],
-            });
-        } catch (error) {
-            console.error('Error executing ticket command:', error);
-            await message.channel.send('An error occurred while creating the ticket.');
-        }
+        await interaction.reply({
+            content: 'Click the button below to create a support ticket.',
+            components: [row],
+            ephemeral: true, // Only the user can see this message
+        });
     },
 };
