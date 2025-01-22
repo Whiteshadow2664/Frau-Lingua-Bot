@@ -12,7 +12,6 @@ const { frenchQuizData, frenchWordList } = require('./frenchData');
 const { shuffleArray } = require('./utilities');
 const help = require('./commands/help');
 const resources = require('./commands/resources');
-const { createTicket, closeTicket } = require('./commands/ticket.js');
 
 // Environment Variables
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
@@ -100,7 +99,7 @@ const wordOfTheDayTimes = {
 Object.keys(wordOfTheDayTimes).forEach((language) => {
   cron.schedule(wordOfTheDayTimes[language], async () => {
     try {
-      
+
       await sendWordOfTheDay(language);
     } catch (error) {
       console.error(`Failed to send Word of the Day for ${language}:`, error);
@@ -116,7 +115,6 @@ Object.keys(wordOfTheDayTimes).forEach((language) => {
 // Commands and Event Handling
 client.on('messageCreate', async (message) => {
     if (message.author.bot) return;
-
     if (message.content.toLowerCase() === '!q') {
         // Check if the user is already participating in a quiz
         if (activeQuizzes[message.author.id]) {
@@ -263,7 +261,7 @@ activeQuizzes[message.author.id].detailedResults.push({
                 await quizMessage.delete();
             }
 
-          
+
             // Step 4: Display Results
 const result = activeQuizzes[message.author.id];
 delete activeQuizzes[message.author.id];
@@ -304,15 +302,6 @@ await message.channel.send({ embeds: [resultEmbed] });
     if (message.content.toLowerCase() === '!resources') {
         resources.execute(message);
     }
-
-    // Inside your message event listener
-client.on('messageCreate', async (message) => {
-    if (message.author.bot) return;
-if (message.content.startsWith('/createTicket')) {
-    createTicket(message);
-} else if (message.content.startsWith('/closeTicket')) {
-    closeTicket(message);
-}
 }); 
 
 client.once('ready', () => {
