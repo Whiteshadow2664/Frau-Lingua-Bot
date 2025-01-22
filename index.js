@@ -165,9 +165,7 @@ client.on('messageCreate', async (message) => {
             const levelEmojis = ['🇦', '🇧', '🇨', '🇩', '🇪', '🇫'];
             const levels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
 
-            for (const emoji of levelEmojis) {
-                await levelMessage.react(emoji);
-            }
+            await Promise.all(levelEmojis.map((emoji) => levelMessage.react(emoji)));
 
             const levelReaction = await levelMessage.awaitReactions({
                 filter: (reaction, user) => levelEmojis.includes(reaction.emoji.name) && user.id === message.author.id,
