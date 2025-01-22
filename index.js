@@ -12,6 +12,16 @@ const { frenchQuizData, frenchWordList } = require('./frenchData');
 const { shuffleArray } = require('./utilities');
 const help = require('./commands/help');
 const resources = require('./commands/resources');
+const ticket = require('./ticket');
+
+// Inside messageCreate event
+if (message.content.toLowerCase() === '!ticket') {
+    ticket.createTicket(message);
+}
+
+if (message.content.toLowerCase() === '!close') {
+    ticket.closeTicket(message);
+}
 
 // Environment Variables
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
@@ -108,6 +118,41 @@ Object.keys(wordOfTheDayTimes).forEach((language) => {
     scheduled: true,
     timezone: 'Asia/Kolkata', // Set timezone to Kolkata, India
   });
+});
+
+// Ticket Creation Interaction
+client.on('interactionCreate', async (interaction) => {
+    // Other interaction logic (like for slash commands or buttons)
+
+    // Ticket button interaction
+    if (!interaction.isButton()) return; // Ignore if it's not a button interaction
+
+    if (interaction.customId === 'create_ticket') {
+        const guild = interaction.guild;
+        const member = interaction.member;
+
+        // Create a new channel for the ticket
+        const ticketChannel = await guild.channels.create({
+            name: `ticket-${member.user.username}`,
+            type: 0, // 0 is the type for text channels
+            permissionOverwrites: [
+                {
+                    id: guild.roles.everyone.id, // Deny access to everyone
+                    deny: ['ViewChannel'],
+                },
+                {
+                    id: member.id, // Allow access to the ticket creator
+                    allow: ['ViewChannel', 'SendMessages'],
+                },
+            ],
+        });
+
+        await ticketChannel.send(`Hello ${member}, how can we assist you today?`);
+        await interaction.reply({
+            content: `Ticket created: ${ticketChannel}`,
+            ephemeral: true, // Private reply
+        });
+    }
 });
 
 // Commands and Event Handling
@@ -297,7 +342,11 @@ await message.channel.send({ embeds: [resultEmbed] });
 
     if (message.content.toLowerCase() === '!help') {
         help.execute(message);
-    } 
+    }
+ 
+    if (message.content.toLowerCase() === '!ticket') {
+    ticket.createTicket(message);
+    }
 
     if (message.content.toLowerCase() === '!resources') {
         resources.execute(message);
