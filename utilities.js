@@ -8,10 +8,6 @@ const embedColors = {
 };
 
 // Function to shuffle an array in place using the Fisher-Yates algorithm
-/**
- * Shuffles an array in place using the Fisher-Yates algorithm.
- * @param {Array} array - The array to shuffle.
- */
 function shuffleArray(array) {
     for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -19,12 +15,25 @@ function shuffleArray(array) {
     }
 }
 
+// Function to shuffle quiz options with their correct answers
+function shuffleQuizOptions(question) {
+    if (!question || !question.options || question.options.length === 0) {
+        throw new Error('Invalid question format or empty options');
+    }
+
+    // Shuffle the options
+    shuffleArray(question.options);
+
+    // Ensure the correct answer is properly linked with its position
+    const correctAnswer = question.correctAnswer;
+    question.options.forEach((option, index) => {
+        if (option === correctAnswer) {
+            question.correctAnswerIndex = index; // Store the new index of the correct answer
+        }
+    });
+}
+
 // Function to clear the active quiz for a user
-/**
- * Clears the active quiz for a user.
- * @param {Object} activeQuizzes - The object tracking active quizzes.
- * @param {String} userId - The ID of the user whose quiz data to clear.
- */
 function clearActiveQuiz(activeQuizzes, userId) {
     if (activeQuizzes[userId]) {
         delete activeQuizzes[userId];
@@ -32,12 +41,6 @@ function clearActiveQuiz(activeQuizzes, userId) {
 }
 
 // Function to track the active quiz for a user
-/**
- * Tracks the active quiz for a user.
- * @param {Object} activeQuizzes - The object tracking active quizzes.
- * @param {String} userId - The ID of the user taking the quiz.
- * @param {Object} quizData - The quiz data for the user.
- */
 function trackActiveQuiz(activeQuizzes, userId, quizData) {
     if (quizData && typeof quizData === 'object' && quizData.language && quizData.level) {
         activeQuizzes[userId] = quizData;
@@ -47,11 +50,6 @@ function trackActiveQuiz(activeQuizzes, userId, quizData) {
 }
 
 // Function to generate a random item from an array (e.g., "Word of the Day")
-/**
- * Generates a random item from an array (e.g., "Word of the Day").
- * @param {Array} array - The array to select a random item from.
- * @returns {*} A random item from the array.
- */
 function getRandomItem(array) {
     if (!Array.isArray(array) || array.length === 0) {
         throw new Error('Invalid array provided for random selection.');
@@ -60,11 +58,6 @@ function getRandomItem(array) {
 }
 
 // Function to format a word's details into an embed-friendly format
-/**
- * Formats a word's details into an embed-friendly format.
- * @param {Object} word - The word object containing details.
- * @returns {Array} An array of fields for an embed.
- */
 function formatWordDetails(word) {
     if (!word || typeof word !== 'object') {
         throw new Error('Invalid word object');
@@ -79,12 +72,6 @@ function formatWordDetails(word) {
 }
 
 // Function to handle "Word of the Day" logic
-/**
- * Handles the "Word of the Day" logic.
- * @param {Array} wordList - List of words to choose from for the Word of the Day.
- * @param {String} language - The language of the word.
- * @returns {Object} An object containing the word and its details.
- */
 function getWordOfTheDay(wordList, language) {
     const word = getRandomItem(wordList);
     return {
@@ -95,12 +82,6 @@ function getWordOfTheDay(wordList, language) {
 }
 
 // Function to send a Word of the Day message
-/**
- * Sends a Word of the Day message.
- * @param {Object} message - The Discord message object.
- * @param {Array} wordList - List of words for Word of the Day.
- * @param {String} language - The language of the word.
- */
 async function sendWordOfTheDay(message, wordList, language) {
     const wordOfTheDay = getWordOfTheDay(wordList, language);
     const embed = new EmbedBuilder()
@@ -112,6 +93,24 @@ async function sendWordOfTheDay(message, wordList, language) {
     await message.channel.send({ embeds: [embed] });
 }
 
+// Function to shuffle quiz options
+async function shuffleQuizAndSend(message, quizQuestions) {
+    // Shuffle the options for each question
+    quizQuestions.forEach(question => {
+        shuffleQuizOptions(question);
+    });
+
+    // Send the quiz to the user with shuffled options
+    for (const question of quizQuestions) {
+        const embed = new EmbedBuilder()
+            .setTitle(`Question: ${question.question}`)
+            .setDescription(`Options: ${question.options.join('\n')}`)
+            .setColor(embedColors[question.language]);
+
+        await message.channel.send({ embeds: [embed] });
+    }
+}
+
 module.exports = {
     shuffleArray,
     clearActiveQuiz,
@@ -120,4 +119,5 @@ module.exports = {
     formatWordDetails,
     getWordOfTheDay,
     sendWordOfTheDay,
+    shuffleQuizAndSend
 };
