@@ -34,21 +34,6 @@ GatewayIntentBits.GuildMembers
     partials: [Partials.Message, Partials.Channel, Partials.Reaction],
 });
 
-// Add guild member event handlers here
-client.on('guildMemberAdd', async (member) => {
-    const channel = member.guild.systemChannel; // Default system channel
-    if (channel) {
-        channel.send(`Welcome to the server, ${member.user}!`);
-    }
-});
-
-client.on('guildMemberRemove', async (member) => {
-    const channel = member.guild.systemChannel; // Default system channel
-    if (channel) {
-        channel.send(`${member.user.tag} has left the server.`);
-    }
-});
-
 // Express Server to Keep Bot Alive
 const app = express();
 app.get('/', (req, res) => {
@@ -334,6 +319,14 @@ await message.channel.send({ embeds: [resultEmbed] });
 client.once('ready', () => {
     console.log(`${client.user.tag} is online!`);
 
-}); 
+});
+
+client.on('guildMemberAdd', (member) => {
+    handleMemberJoin(member);
+});
+
+client.on('guildMemberRemove', (member) => {
+    handleMemberLeave(member);
+});
 
 client.login(DISCORD_TOKEN);
