@@ -304,6 +304,15 @@ await message.channel.send({ embeds: [resultEmbed] });
     if (message.content.toLowerCase() === '!resources') {
         resources.execute(message);
     }
+
+    // Ticket Commands
+    if (message.content.toLowerCase() === '!createTicket') {
+        createTicket(message);
+    } 
+
+    if (message.content.toLowerCase() === '!closeTicket') {
+        closeTicket(message);
+    }
 }); 
 
 client.once('ready', () => {
