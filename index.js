@@ -321,12 +321,14 @@ client.once('ready', () => {
 
 });
 
+// Event when a member joins the server
 client.on('guildMemberAdd', (member) => {
-    handleMemberJoin(member);
-});
+    handleMemberJoin(member); // Call the handle join function
+}); 
 
+// Event when a member leaves the server
 client.on('guildMemberRemove', (member) => {
-    handleMemberLeave(member);
+    handleMemberLeave(member); // Call the handle leave function
 });
 
 client.login(DISCORD_TOKEN);
