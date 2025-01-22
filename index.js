@@ -123,12 +123,20 @@ client.on('interactionCreate', async (interaction) => {
         try {
             // Ensure the bot has permission to create channels
             const botMember = await guild.members.fetch(client.user.id); // Fetch bot member
-            if (!botMember.permissions.has('MANAGE_CHANNELS')) {
-                return interaction.reply({
-                    content: 'I do not have permission to manage channels.',
-                    ephemeral: true,
-                });
-            }
+if (!botMember) {
+    console.error('Bot member not found in the guild.');
+    return interaction.reply({
+        content: 'I could not retrieve the bot member information.',
+        ephemeral: true,
+    });
+}
+
+if (!botMember.permissions.has('MANAGE_CHANNELS')) {
+    return interaction.reply({
+        content: 'I do not have permission to manage channels.',
+        ephemeral: true,
+    });
+}
 
             // Create a new channel for the ticket
             const ticketChannel = await guild.channels.create({
