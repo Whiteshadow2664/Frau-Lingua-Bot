@@ -72,22 +72,21 @@ const sendWordOfTheDay = async (language) => {
       return;
     }
 
-    const embed = new EmbedBuilder()
-      .setTitle('**Word of the Day**')
-      .setDescription(`Today's Word of the Day is...\n\n**${randomWord.word}**`)
-      .addFields(
-        { name: '**Meaning**', value: randomWord.meaning, inline: false },
-        { name: '**Plural**', value: randomWord.plural, inline: false },
-        { name: '**Indefinite Article**', value: randomWord.indefinite, inline: false },
-        { name: '**Definite Article**', value: randomWord.definite, inline: false }
-      )
-      .setColor(embedColors[language]); // Set the color based on language
-
-    await channel.send({ embeds: [embed] });
-
-  } catch (error) {
-    console.error(`Error sending Word of the Day for ${language}:`, error);
-  }
+    try {
+  const embed = new EmbedBuilder()
+    .setTitle('**Word of the Day**')
+    .setDescription(`Today's Word of the Day is...\n\n**${randomWord.word}**`)
+    .addFields(
+      { name: '**Meaning**', value: randomWord.meaning || 'N/A', inline: false },
+      { name: '**Plural**', value: randomWord.plural || 'N/A', inline: false },
+      { name: '**Indefinite Article**', value: randomWord.indefinite || 'N/A', inline: false },
+      { name: '**Definite Article**', value: randomWord.definite || 'N/A', inline: false }
+    )
+    .setColor(embedColors[language]);
+  await channel.send({ embeds: [embed] });
+} catch (error) {
+  console.error(`Error creating embed for ${language}:`, error);
+}
 };
 
 // Word of the Day Schedule for each language
