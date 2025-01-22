@@ -223,6 +223,11 @@ client.on('messageCreate', async (message) => {
     }
 });
 
+    // Handle the !ticket command
+    if (message.content.toLowerCase() === '!ticket') {
+        // Your existing code...
+    }
+
     // Handle the quiz command
     if (message.content.toLowerCase() === '!q') {
         // Check if the user is already participating in a quiz
