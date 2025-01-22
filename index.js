@@ -12,7 +12,7 @@ const { frenchQuizData, frenchWordList } = require('./frenchData');
 const { shuffleArray } = require('./utilities');
 const help = require('./commands/help');
 const resources = require('./commands/resources');
-const ticket = require('./commands/ticket');
+
 // Environment Variables
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
 
@@ -115,10 +115,6 @@ Object.keys(wordOfTheDayTimes).forEach((language) => {
 // Commands and Event Handling
 client.on('messageCreate', async (message) => {
     if (message.author.bot) return;
-// Inside the `messageCreate` event
-if (message.content.toLowerCase() === '!ticket') {
-    ticket.execute(message);
-}
 
     if (message.content.toLowerCase() === '!q') {
         // Check if the user is already participating in a quiz
