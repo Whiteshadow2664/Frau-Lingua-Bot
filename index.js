@@ -115,6 +115,17 @@ Object.keys(wordOfTheDayTimes).forEach((language) => {
 // Commands and Event Handling
 client.on('messageCreate', async (message) => {
     if (message.author.bot) return;
+    const { handleGreeting } = require('./greetingsHandler');
+
+
+    // Check if the message is a greeting in any language
+    const response = handleGreeting(message);
+
+    if (response) {
+        // Reply with "How are you?" in the detected language
+        await message.reply(response);
+        return; // Exit after replying to avoid processing other commands
+    }
 
     if (message.content.toLowerCase() === '!q') {
         // Check if the user is already participating in a quiz
