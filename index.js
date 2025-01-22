@@ -96,7 +96,7 @@ const embed = new EmbedBuilder()
 // Word of the Day Schedule for each language
 const wordOfTheDayTimes = {
   russian: '30 03 * * *',  // 03:30 AM IST for Russian
-  german: '49 00 * * *',   // 04:30 AM IST for German
+  german: '30 04 * * *',   // 04:30 AM IST for German
   french: '30 04 * * *',   // 04:30 AM IST for French
 };
 
