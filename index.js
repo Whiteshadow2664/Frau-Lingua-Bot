@@ -248,10 +248,10 @@ client.on('messageCreate', async (message) => {
                 }
 
 // For each question, track the user's answer and compare it with the correct one
+const correctEmoji = emojis[question.options.indexOf(question.correct)]; // Emoji for the correct answer
 const userAnswer = userReaction ? question.options[emojis.indexOf(userReaction.emoji.name)] : 'No Answer';
-const isCorrect = userAnswer === question.correct;
+const isCorrect = userReaction && userReaction.emoji.name === correctEmoji;
 
-// Push the result to detailedResults
 activeQuizzes[message.author.id].detailedResults.push({
     word: question.word,
     userAnswer: userAnswer,
