@@ -12,6 +12,7 @@ const { frenchQuizData, frenchWordList } = require('./frenchData');
 const { shuffleArray } = require('./utilities');
 const help = require('./commands/help');
 const resources = require('./commands/resources');
+const { createTicket, closeTicket } = require('./commands/ticket.js');
 
 // Environment Variables
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
@@ -115,6 +116,17 @@ Object.keys(wordOfTheDayTimes).forEach((language) => {
 // Commands and Event Handling
 client.on('messageCreate', async (message) => {
     if (message.author.bot) return;
+
+    / Ticket command
+    if (message.content.toLowerCase() === '!ticket') {
+        await createTicket(message);
+    } 
+
+    // Close ticket command
+    if (message.content.toLowerCase() === '!close' && message.channel.name.startsWith('ticket-')) {
+        await closeTicket(message);
+    }
+
     if (message.content.toLowerCase() === '!q') {
         // Check if the user is already participating in a quiz
         if (activeQuizzes[message.author.id]) {
