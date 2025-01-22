@@ -1,55 +1,55 @@
-// Quiz Data for French
+// French Quiz Data
 const frenchQuizData = {
     A1: [
         {
             word: "Maison",
-            options: ["🇦 House", "🇧 Tree", "🇨 Car", "🇩 Dog"],
-            correct: "🇦"
+            options: ["House", "Tree", "Car", "Dog"],
+            correct: "House"
         },
         {
             word: "Chat",
-            options: ["🇦 Cat", "🇧 Mouse", "🇨 Bird", "🇩 Horse"],
-            correct: "🇦"
+            options: ["Cat", "Mouse", "Bird", "Horse"],
+            correct: "Cat"
         }
     ],
     A2: [
         {
             word: "Amitié",
-            options: ["🇦 Friendship", "🇧 Love", "🇨 Anger", "🇩 Sadness"],
-            correct: "🇦"
+            options: ["Friendship", "Love", "Anger", "Sadness"],
+            correct: "Friendship"
         }
     ],
     B1: [
         {
             word: "Liberté",
-            options: ["🇦 Freedom", "🇧 Justice", "🇨 Peace", "🇩 Honor"],
-            correct: "🇦"
+            options: ["Freedom", "Justice", "Peace", "Honor"],
+            correct: "Freedom"
         }
     ],
     B2: [
         {
             word: "Progrès",
-            options: ["🇦 Progress", "🇧 Decline", "🇨 Start", "🇩 Stop"],
-            correct: "🇦"
+            options: ["Progress", "Decline", "Start", "Stop"],
+            correct: "Progress"
         }
     ],
     C1: [
         {
             word: "Harmonie",
-            options: ["🇦 Harmony", "🇧 Chaos", "🇨 Peace", "🇩 Disagreement"],
-            correct: "🇦"
+            options: ["Harmony", "Chaos", "Peace", "Disagreement"],
+            correct: "Harmony"
         }
     ],
     C2: [
         {
             word: "Perfection",
-            options: ["🇦 Perfection", "🇧 Imperfection", "🇨 Mediocrity", "🇩 Excellence"],
-            correct: "🇦"
+            options: ["Perfection", "Imperfection", "Mediocrity", "Excellence"],
+            correct: "Perfection"
         }
     ]
 };
 
-// Word of the Day Data for French
+// French Word of the Day Data
 const frenchWordList = [
     {
         word: "Chien",
