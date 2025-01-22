@@ -5,19 +5,20 @@ const handleMemberJoin = async (client, member) => {
 
     try {
         // Fetch the updated member count
-        await guild.members.fetch();
         const memberCount = guild.memberCount;
 
         // Embed message for member joining
         const welcomeEmbed = new EmbedBuilder()
             .setTitle('Welcome to the Server!')
-            .setDescription(`Hello ${member.user.tag}, you are member number **${memberCount}** of this server! We're glad to have you! 🎉`)
+            .setDescription(`Hello ${member.user.tag}, you are member number **${memberCount}** of this server! 🎉 We're excited to have you here!`)
             .setColor('#1cd86c');
 
         // Send the embed to the appropriate channel
         const channel = guild.systemChannel || guild.channels.cache.find(ch => ch.name === 'general' && ch.isText());
         if (channel) {
             await channel.send({ embeds: [welcomeEmbed] });
+        } else {
+            console.log('No valid channel found to send the welcome message.');
         }
     } catch (error) {
         console.error('Error handling member join:', error);
@@ -29,7 +30,6 @@ const handleMemberLeave = async (client, member) => {
 
     try {
         // Fetch the updated member count
-        await guild.members.fetch();
         const memberCount = guild.memberCount;
 
         // Embed message for member leaving
@@ -42,6 +42,8 @@ const handleMemberLeave = async (client, member) => {
         const channel = guild.systemChannel || guild.channels.cache.find(ch => ch.name === 'general' && ch.isText());
         if (channel) {
             await channel.send({ embeds: [leaveEmbed] });
+        } else {
+            console.log('No valid channel found to send the goodbye message.');
         }
     } catch (error) {
         console.error('Error handling member leave:', error);
