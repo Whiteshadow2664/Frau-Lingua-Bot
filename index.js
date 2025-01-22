@@ -36,7 +36,6 @@ GatewayIntentBits.GuildMembers
 
 // Add guild member event handlers here
 client.on('guildMemberAdd', async (member) => {
-    console.log(`${member.user.tag} joined the server.`);
     const channel = member.guild.systemChannel; // Default system channel
     if (channel) {
         channel.send(`Welcome to the server, ${member.user}!`);
@@ -44,7 +43,6 @@ client.on('guildMemberAdd', async (member) => {
 });
 
 client.on('guildMemberRemove', async (member) => {
-    console.log(`${member.user.tag} left the server.`);
     const channel = member.guild.systemChannel; // Default system channel
     if (channel) {
         channel.send(`${member.user.tag} has left the server.`);
