@@ -1,54 +1,50 @@
 const { EmbedBuilder } = require('discord.js');
 
-// This will be the function to handle new member joins and member leaves
 const handleMemberJoin = async (client, member) => {
     const guild = member.guild;
 
-    // Get the total member count
-    const memberCount = guild.memberCount;
+    try {
+        // Fetch the updated member count
+        await guild.members.fetch();
+        const memberCount = guild.memberCount;
 
-    // Check if the member is the 100th member
-    if (memberCount === 100) {
-        const welcomeEmbed = new EmbedBuilder()
-            .setTitle('🎉 100th Member Alert! 🎉')
-            .setDescription(`Welcome ${member.user.tag}, you are the **100th member** of the server! 🎉`)
-            .setColor('#1cd86c');
-
-        // Send the welcome message to a specific channel, replace 'general' with your channel name or ID
-        const channel = guild.channels.cache.find(ch => ch.name === 'general');
-        if (channel) {
-            await channel.send({ embeds: [welcomeEmbed] });
-        }
-    } else {
+        // Embed message for member joining
         const welcomeEmbed = new EmbedBuilder()
             .setTitle('Welcome to the Server!')
-            .setDescription(`Hello ${member.user.tag}, welcome to the server! We're glad to have you!`)
+            .setDescription(`Hello ${member.user.tag}, you are member number **${memberCount}** of this server! We're glad to have you! 🎉`)
             .setColor('#1cd86c');
 
-        // Send the general welcome message to the 'general' channel
-        const channel = guild.channels.cache.find(ch => ch.name === 'general');
+        // Send the embed to the appropriate channel
+        const channel = guild.systemChannel || guild.channels.cache.find(ch => ch.name === 'general' && ch.isText());
         if (channel) {
             await channel.send({ embeds: [welcomeEmbed] });
         }
+    } catch (error) {
+        console.error('Error handling member join:', error);
     }
 };
 
 const handleMemberLeave = async (client, member) => {
     const guild = member.guild;
 
-    // Get the updated member count
-    const memberCount = guild.memberCount;
+    try {
+        // Fetch the updated member count
+        await guild.members.fetch();
+        const memberCount = guild.memberCount;
 
-    // Send a message when a member leaves
-    const leaveEmbed = new EmbedBuilder()
-        .setTitle('Goodbye!')
-        .setDescription(`${member.user.tag} has left the server. We now have **${memberCount}** members.`)
-        .setColor('#ff4c4c');
+        // Embed message for member leaving
+        const leaveEmbed = new EmbedBuilder()
+            .setTitle('Goodbye!')
+            .setDescription(`${member.user.tag} has left the server. We now have **${memberCount}** members remaining.`)
+            .setColor('#ff4c4c');
 
-    // Send the message to the 'general' channel
-    const channel = guild.channels.cache.find(ch => ch.name === 'general');
-    if (channel) {
-        await channel.send({ embeds: [leaveEmbed] });
+        // Send the embed to the appropriate channel
+        const channel = guild.systemChannel || guild.channels.cache.find(ch => ch.name === 'general' && ch.isText());
+        if (channel) {
+            await channel.send({ embeds: [leaveEmbed] });
+        }
+    } catch (error) {
+        console.error('Error handling member leave:', error);
     }
 };
 
