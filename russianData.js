@@ -530,27 +530,45 @@ const russianQuizData = {
 
 // Russian Word of the Day Data
 const russianWordList = [
-    {
-        word: "Собака",
-        meaning: "Dog",
-        plural: "Собаки",
-        indefinite: "одна",
-        definite: "та"
-    },
-    {
-        word: "Книга",
-        meaning: "Book",
-        plural: "Книги",
-        indefinite: "одна",
-        definite: "та"
-    },
-    {
-        word: "Море",
-        meaning: "Sea",
-        plural: "Моря",
-        indefinite: "одно",
-        definite: "то"
-    }
+{ "word": "собака", "meaning": "Dog", "plural": "собаки", "gender": "feminine" },
+    { "word": "книга", "meaning": "Book", "plural": "книги", "gender": "feminine" },
+    { "word": "море", "meaning": "Sea", "plural": "моря", "gender": "neuter" },
+    { "word": "машина", "meaning": "Car", "plural": "машины", "gender": "feminine" },
+    { "word": "дом", "meaning": "House", "plural": "дома", "gender": "masculine" },
+    { "word": "стул", "meaning": "Chair", "plural": "стулья", "gender": "masculine" },
+    { "word": "стол", "meaning": "Table", "plural": "столы", "gender": "masculine" },
+    { "word": "лампа", "meaning": "Lamp", "plural": "лампы", "gender": "feminine" },
+    { "word": "яблоко", "meaning": "Apple", "plural": "яблоки", "gender": "neuter" },
+    { "word": "цветок", "meaning": "Flower", "plural": "цветы", "gender": "masculine" },
+    { "word": "дерево", "meaning": "Tree", "plural": "деревья", "gender": "neuter" },
+    { "word": "чемодан", "meaning": "Suitcase", "plural": "чемоданы", "gender": "masculine" },
+    { "word": "ботинок", "meaning": "Shoe", "plural": "ботинки", "gender": "masculine" },
+    { "word": "куртка", "meaning": "Jacket", "plural": "куртки", "gender": "feminine" },
+    { "word": "окно", "meaning": "Window", "plural": "окна", "gender": "neuter" },
+    { "word": "карандаш", "meaning": "Pencil", "plural": "карандаши", "gender": "masculine" },
+    { "word": "тетрадь", "meaning": "Notebook", "plural": "тетради", "gender": "feminine" },
+    { "word": "очки", "meaning": "Glasses", "plural": "очки", "gender": "plural" },
+    { "word": "поезд", "meaning": "Train", "plural": "поезда", "gender": "masculine" },
+    { "word": "кухня", "meaning": "Kitchen", "plural": "кухни", "gender": "feminine" },{ "word": "велосипед", "meaning": "Bicycle", "plural": "велосипеды", "gender": "masculine" },
+    { "word": "сумка", "meaning": "Bag", "plural": "сумки", "gender": "feminine" },
+    { "word": "часы", "meaning": "Clock", "plural": "часы", "gender": "plural" },
+    { "word": "хлеб", "meaning": "Bread", "plural": "хлеба", "gender": "masculine" },
+    { "word": "вода", "meaning": "Water", "plural": "воды", "gender": "feminine" },
+    { "word": "нож", "meaning": "Knife", "plural": "ножи", "gender": "masculine" },
+    { "word": "вилка", "meaning": "Fork", "plural": "вилки", "gender": "feminine" },
+    { "word": "ложка", "meaning": "Spoon", "plural": "ложки", "gender": "feminine" },
+    { "word": "город", "meaning": "City", "plural": "города", "gender": "masculine" },
+    { "word": "деревня", "meaning": "Village", "plural": "деревни", "gender": "feminine" },
+    { "word": "школа", "meaning": "School", "plural": "школы", "gender": "feminine" },
+    { "word": "самолёт", "meaning": "Airplane", "plural": "самолёты", "gender": "masculine" },
+    { "word": "телефон", "meaning": "Phone", "plural": "телефоны", "gender": "masculine" },
+    { "word": "компьютер", "meaning": "Computer", "plural": "компьютеры", "gender": "masculine" },
+    { "word": "ребёнок", "meaning": "Child", "plural": "дети", "gender": "masculine" },
+    { "word": "учитель", "meaning": "Teacher (Male)", "plural": "учителя", "gender": "masculine" },
+    { "word": "учительница", "meaning": "Teacher (Female)", "plural": "учительницы", "gender": "feminine" },
+    { "word": "друг", "meaning": "Friend (Male)", "plural": "друзья", "gender": "masculine" },
+    { "word": "подруга", "meaning": "Friend (Female)", "plural": "подруги", "gender": "feminine" },
+    { "word": "семья", "meaning": "Family", "plural": "семьи", "gender": "feminine" }
 ];
 
 module.exports = { russianQuizData, russianWordList };
