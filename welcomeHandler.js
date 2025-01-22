@@ -5,14 +5,14 @@ const handleMemberJoin = async (member) => {
     const guild = member.guild;
     const memberCount = guild.memberCount;
 
-    // Get the user's profile picture URL
-    const profilePicture = member.user.displayAvatarURL({ dynamic: true, size: 1024 });
+    // Get the user's profile picture URL (small and rectangular)
+    const profilePicture = member.user.displayAvatarURL({ dynamic: true, size: 128 }); // Size: 128px
 
     // Send a regular message mentioning the user and showing their profile picture
     const channel = guild.channels.cache.find(ch => ch.name === 'general');
     if (channel) {
         await channel.send(`Hello <@${member.id}>, welcome to the server! You are member **#${memberCount}**!`);
-        await channel.send({ content: `Here’s your profile picture!`, files: [profilePicture] });
+        await channel.send({ content: '', files: [profilePicture] }); // Only the profile picture (rectangular size)
     } else {
         console.error("Channel not found: 'general'");
     }
@@ -23,10 +23,10 @@ const handleMemberLeave = async (member) => {
     const guild = member.guild;
     const memberCount = guild.memberCount;
 
-    // Send a regular message mentioning the user when they leave
+    // Send a message mentioning the user and showing the updated member count
     const channel = guild.channels.cache.find(ch => ch.name === 'general');
     if (channel) {
-        await channel.send(`Goodbye <@${member.id}>, you have left the server. We now have **${memberCount}** members.`);
+        await channel.send(`<@${member.id}> has left the server. We now have **${memberCount}** members.`);
     } else {
         console.error("Channel not found: 'general'");
     }
