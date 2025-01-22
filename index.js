@@ -120,8 +120,8 @@ client.on('interactionCreate', async (interaction) => {
         const guild = interaction.guild;
         const member = interaction.member;
 
-        // Ensure the bot has permission to create channels
         try {
+            // Ensure the bot has permission to create channels
             const botMember = await guild.members.fetch(client.user.id); // Fetch bot member
             if (!botMember.permissions.has('MANAGE_CHANNELS')) {
                 return interaction.reply({
@@ -144,7 +144,7 @@ client.on('interactionCreate', async (interaction) => {
                         allow: ['ViewChannel', 'SendMessages'],
                     },
                     {
-                        id: guild.roles.cache.find(role => role.name === 'Support'), // Replace with your support role
+                        id: '1330222964985303172', // Use the Support role ID directly here
                         allow: ['ViewChannel', 'SendMessages'],
                     },
                 ],
@@ -161,26 +161,6 @@ client.on('interactionCreate', async (interaction) => {
                 ephemeral: true,
             });
 
-        } catch (error) {
-            console.error('Error creating ticket channel:', error);
-            await interaction.reply({
-                content: 'An error occurred while creating your ticket. Please try again later.',
-                ephemeral: true,
-            });
-        }
-    }
-});
-
-            // Send a welcome message in the ticket channel
-            await ticketChannel.send({
-                content: `Hello ${member}, your ticket has been created! How can we assist you today?`,
-            });
-
-            // Notify the user
-            await interaction.reply({
-                content: `Ticket created successfully! You can view it here: ${ticketChannel}`,
-                ephemeral: true,
-            });
         } catch (error) {
             console.error('Error creating ticket channel:', error);
             await interaction.reply({
