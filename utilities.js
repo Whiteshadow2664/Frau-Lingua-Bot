@@ -15,21 +15,25 @@ function shuffleArray(array) {
     }
 }
 
-// Function to shuffle quiz options but keep the correct answer in the first position
+// Function to shuffle quiz options and update the correct answer's position
 function shuffleQuizOptions(question) {
     if (!question || !question.options || question.options.length === 0) {
         throw new Error('Invalid question format or empty options');
     }
 
-    // Preserve the correct answer by checking its value
-    const correctOption = question.correct; // Correct answer is stored in the "correct" field
-    const otherOptions = question.options.filter(option => option !== correctOption); // Get options excluding the correct one
+    // Get the correct answer
+    const correctOption = question.correct;
 
-    // Shuffle the other options
-    shuffleArray(otherOptions);
+    // Shuffle the options
+    shuffleArray(question.options);
 
-    // Place the correct option back at the start
-    question.options = [correctOption, ...otherOptions];
+    // Ensure the correct answer is in the shuffled options
+    if (!question.options.includes(correctOption)) {
+        throw new Error('Correct answer is missing in options');
+    }
+
+    // Update the `correct` field to reflect the new position
+    question.correctIndex = question.options.indexOf(correctOption);
 }
 
 // Function to clear the active quiz for a user
@@ -102,7 +106,7 @@ async function shuffleQuizAndSend(message, quizQuestions) {
     // Send the quiz to the user with shuffled options
     for (const question of quizQuestions) {
         const embed = new EmbedBuilder()
-            .setTitle(`Question: ${question.question}`)
+            .setTitle(`Question: ${question.word}`)
             .setDescription(`Options:\n${question.options.join('\n')}`)
             .setColor(embedColors[question.language]);
 
@@ -112,6 +116,7 @@ async function shuffleQuizAndSend(message, quizQuestions) {
 
 module.exports = {
     shuffleArray,
+    shuffleQuizOptions,
     clearActiveQuiz,
     trackActiveQuiz,
     getRandomItem,
