@@ -1,62 +1,42 @@
 const { EmbedBuilder } = require('discord.js');
 
-// Function to handle member join
-const handleMemberJoin = async (client, member) => {
+// Function to handle member joins
+const handleMemberJoin = async (member) => {
     const guild = member.guild;
+    const memberCount = guild.memberCount;
 
-    try {
-        // Fetch the current member count
-        const memberCount = guild.memberCount;
+    // Embed for member join
+    const welcomeEmbed = new EmbedBuilder()
+        .setTitle('Welcome to the Server!')
+        .setDescription(`Hello ${member.user.tag}, welcome to the server! You are member **#${memberCount}**.`)
+        .setColor('#1cd86c');
 
-        // Log member count for debugging
-        console.log(`New member joined: ${member.user.tag}, Total members: ${memberCount}`);
-
-        // Create an embed for the welcome message
-        const welcomeEmbed = new EmbedBuilder()
-            .setTitle('Welcome to the Server!')
-            .setDescription(`Hello ${member.user.tag}, you are member number **${memberCount}** of this server! 🎉`)
-            .setColor('#1cd86c');
-
-        // Find the channel to send the message
-        const channel = guild.systemChannel || guild.channels.cache.find(ch => ch.name === 'general' && ch.isText());
-        if (channel) {
-            console.log(`Sending welcome message to channel: ${channel.name}`);
-            await channel.send({ embeds: [welcomeEmbed] });
-        } else {
-            console.error('No valid channel found to send the welcome message.');
-        }
-    } catch (error) {
-        console.error('Error handling member join:', error);
+    // Send to a specific channel (e.g., 'general')
+    const channel = guild.channels.cache.find(ch => ch.name === 'general');
+    if (channel) {
+        await channel.send({ embeds: [welcomeEmbed] });
+    } else {
+        console.error("Channel not found: 'general'");
     }
 };
 
-// Function to handle member leave
-const handleMemberLeave = async (client, member) => {
+// Function to handle member leaves
+const handleMemberLeave = async (member) => {
     const guild = member.guild;
+    const memberCount = guild.memberCount;
 
-    try {
-        // Fetch the updated member count
-        const memberCount = guild.memberCount;
+    // Embed for member leave
+    const leaveEmbed = new EmbedBuilder()
+        .setTitle('Goodbye!')
+        .setDescription(`${member.user.tag} has left the server. We now have **${memberCount}** members.`)
+        .setColor('#ff4c4c');
 
-        // Log member count for debugging
-        console.log(`Member left: ${member.user.tag}, Remaining members: ${memberCount}`);
-
-        // Create an embed for the goodbye message
-        const leaveEmbed = new EmbedBuilder()
-            .setTitle('Goodbye!')
-            .setDescription(`${member.user.tag} has left the server. We now have **${memberCount}** members remaining.`)
-            .setColor('#ff4c4c');
-
-        // Find the channel to send the message
-        const channel = guild.systemChannel || guild.channels.cache.find(ch => ch.name === 'general' && ch.isText());
-        if (channel) {
-            console.log(`Sending goodbye message to channel: ${channel.name}`);
-            await channel.send({ embeds: [leaveEmbed] });
-        } else {
-            console.error('No valid channel found to send the goodbye message.');
-        }
-    } catch (error) {
-        console.error('Error handling member leave:', error);
+    // Send to a specific channel (e.g., 'general')
+    const channel = guild.channels.cache.find(ch => ch.name === 'general');
+    if (channel) {
+        await channel.send({ embeds: [leaveEmbed] });
+    } else {
+        console.error("Channel not found: 'general'");
     }
 };
 
