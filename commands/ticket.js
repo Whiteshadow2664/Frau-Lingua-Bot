@@ -5,8 +5,7 @@ module.exports.createTicket = async (message) => {
     const user = message.author;
     const guild = message.guild;
 
-    // Log when the command is triggered
-    console.log(`${user.tag} requested a ticket`);
+    console.log(`[Ticket System] ${user.tag} requested a ticket.`);
 
     // Check if the user already has an open ticket
     const existingTicketChannel = guild.channels.cache.find(
@@ -14,47 +13,47 @@ module.exports.createTicket = async (message) => {
     );
 
     if (existingTicketChannel) {
-        console.log('Ticket already exists for this user.');
+        console.log(`[Ticket System] Ticket already exists for ${user.tag}.`);
         return message.channel.send('You already have an open ticket!');
     }
 
     try {
-        // Log before creating the ticket channel
-        console.log('Creating a new ticket channel...');
-        
+        console.log(`[Ticket System] Creating a new ticket channel for ${user.tag}...`);
+
         // Create a new text channel for the ticket
         const ticketChannel = await guild.channels.create({
             name: `ticket-${user.id}`,
             type: 'GUILD_TEXT',
-            topic: `Ticket for ${user.tag}`,
-            parent: '1327875414584201349', // Set the category ID where tickets will be created
+            topic: `Support Ticket for ${user.tag}`,
+            parent: '1327875414584201349', // Replace with your ticket category ID
             permissionOverwrites: [
                 {
-                    id: guild.id,
-                    deny: ['ViewChannel'],  // Deny @everyone from viewing the ticket
+                    id: guild.id, // @everyone
+                    deny: ['ViewChannel'], // Prevent @everyone from seeing the channel
                 },
                 {
-                    id: user.id,
-                    allow: ['ViewChannel', 'SendMessages', 'ReadMessageHistory'],  // Give the user permissions to interact with the ticket
+                    id: user.id, // Allow the ticket creator
+                    allow: ['ViewChannel', 'SendMessages', 'ReadMessageHistory'],
                 },
             ],
         });
 
-        // Log after creating the channel
-        console.log('Ticket channel created:', ticketChannel.name);
+        console.log(`[Ticket System] Ticket channel created: ${ticketChannel.name}`);
 
-        // Send a message in the new ticket channel
+        // Send an introductory message in the ticket channel
         const embed = new EmbedBuilder()
             .setTitle('Ticket Created')
-            .setDescription(`Hello ${user.tag}, your ticket has been created.\nPlease describe your issue or request.`)
+            .setDescription(`Hello ${user.tag}, your ticket has been created. Please describe your issue or request below.`)
             .setColor('#1cd86c')
             .setFooter({ text: 'Ticket System' });
 
         await ticketChannel.send({ embeds: [embed] });
-        message.channel.send(`Your ticket has been created! Go to ${ticketChannel} to provide more details.`);
+
+        // Notify the user in the original channel
+        await message.channel.send(`Your ticket has been created! Please check ${ticketChannel} to provide more details.`);
     } catch (error) {
-        console.error('Error creating ticket:', error);
-        message.channel.send('There was an error creating your ticket. Please try again later.');
+        console.error(`[Ticket System] Error creating ticket for ${user.tag}:`, error);
+        return message.channel.send('There was an error creating your ticket. Please try again later.');
     }
 };
 
@@ -63,28 +62,28 @@ module.exports.closeTicket = async (message) => {
     const user = message.author;
     const guild = message.guild;
 
-    // Log when the command is triggered
-    console.log(`${user.tag} requested to close a ticket`);
+    console.log(`[Ticket System] ${user.tag} requested to close a ticket.`);
 
-    // Find the ticket channel for the user
+    // Find the user's ticket channel
     const ticketChannel = guild.channels.cache.find(
         (channel) => channel.name === `ticket-${user.id}`
     );
 
     if (!ticketChannel) {
-        console.log('No ticket found for this user.');
+        console.log(`[Ticket System] No ticket found for ${user.tag}.`);
         return message.channel.send('You do not have any open tickets.');
     }
 
     try {
-        // Log before deleting the ticket channel
-        console.log('Closing the ticket channel...');
+        console.log(`[Ticket System] Closing ticket channel for ${user.tag}: ${ticketChannel.name}`);
 
-        // Close the ticket by deleting the channel
+        // Delete the ticket channel
         await ticketChannel.delete();
-        message.channel.send(`The ticket has been closed. Thank you for reaching out, ${user.tag}.`);
+
+        // Notify the user in the original channel
+        await message.channel.send(`Your ticket has been closed. Thank you for reaching out, ${user.tag}.`);
     } catch (error) {
-        console.error('Error closing ticket:', error);
-        message.channel.send('There was an error closing your ticket. Please try again later.');
+        console.error(`[Ticket System] Error closing ticket for ${user.tag}:`, error);
+        return message.channel.send('There was an error closing your ticket. Please try again later.');
     }
 };
