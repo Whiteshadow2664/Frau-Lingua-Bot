@@ -281,7 +281,7 @@ const detailedResultsText = result.detailedResults
 const resultEmbed = new EmbedBuilder()
     .setTitle('Quiz Results')
     .setDescription(
-        `You scored ${result.score} out of ${result.detailedResults.length} in level ${result.level}!\n\n` +
+        `You scored ${result.score} out of ${result.detailedResults.length}!\n\n` + // Removed "in level ${result.level}"
         `**Level:** ${result.level}\n` +
         `**Language:** ${result.language.charAt(0).toUpperCase() + result.language.slice(1)}\n\n` +
         `**Detailed Results:**\n${detailedResultsText}`
