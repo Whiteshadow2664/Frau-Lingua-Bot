@@ -217,61 +217,65 @@ client.on('messageCreate', async (message) => {
             shuffleArray(questions);
 
             // Select up to 5 questions to ask
-            const questionsToAsk = questions.slice(0, 5);
-            if (questionsToAsk.length === 0) {
-                return message.channel.send('No questions available for this level. Quiz cancelled.');
-            }
+const questionsToAsk = questions.slice(0, 5);
+if (questionsToAsk.length === 0) {
+    return message.channel.send('No questions available for this level. Quiz cancelled.');
+}
 
-            activeQuizzes[message.author.id] = { language: selectedLanguage, level: selectedLevel, score: 0, detailedResults: [] };
+activeQuizzes[message.author.id] = { language: selectedLanguage, level: selectedLevel, score: 0, detailedResults: [] };
 
-            for (const question of questionsToAsk) {
-                const embed = new EmbedBuilder()
-                .setTitle(`**${selectedLanguage.charAt(0).toUpperCase() + selectedLanguage.slice(1)} Vocabulary Quiz**`)
-                .setDescription(
-                    `What is the English meaning of **"${question.word}"**?\n\n` +
-                    `${question.options[0]}\n\n` +
-                    `${question.options[1]}\n\n` +
-                    `${question.options[2]}\n\n` +
-                    `${question.options[3]}`
-                )
-                .setColor(embedColors[selectedLanguage])
-                .setFooter({ text: 'React with the emoji corresponding to your answer.' });
+for (const question of questionsToAsk) {
+    // Shuffle options for the current question
+    const correctOption = question.correct; // Store the correct option
+    question.options = question.options.sort(() => Math.random() - 0.5); // Shuffle options randomly
+    question.correct = correctOption; // Ensure the correct option is still marked as correct after shuffle
 
-                const quizMessage = await message.channel.send({ embeds: [embed] });
-                const emojis = ['🇦', '🇧', '🇨', '🇩'];
+    const embed = new EmbedBuilder()
+        .setTitle(`**${selectedLanguage.charAt(0).toUpperCase() + selectedLanguage.slice(1)} Vocabulary Quiz**`)
+        .setDescription(
+            `What is the English meaning of **"${question.word}"**?\n\n` +
+            `🇦 ${question.options[0]}\n` +
+            `🇧 ${question.options[1]}\n` +
+            `🇨 ${question.options[2]}\n` +
+            `🇩 ${question.options[3]}`
+        )
+        .setColor(embedColors[selectedLanguage])
+        .setFooter({ text: 'React with the emoji corresponding to your answer.' });
 
-                for (const emoji of emojis) {
-                    await quizMessage.react(emoji);
-                }
+    const quizMessage = await message.channel.send({ embeds: [embed] });
+    const emojis = ['🇦', '🇧', '🇨', '🇩'];
 
-                const quizReaction = await quizMessage.awaitReactions({
-                    filter: (reaction, user) => emojis.includes(reaction.emoji.name) && user.id === message.author.id,
-                    max: 1,
-                    time: 60000,
-                });
+    for (const emoji of emojis) {
+        await quizMessage.react(emoji);
+    }
 
-                const userReaction = quizReaction.first();
-                if (userReaction) {
-                    const correctEmoji = emojis[question.options.indexOf(question.correct)]; // Correct emoji for the answer
-                    if (userReaction.emoji.name === correctEmoji) {
-                        activeQuizzes[message.author.id].score++;
-                    }
-                }
+    const quizReaction = await quizMessage.awaitReactions({
+        filter: (reaction, user) => emojis.includes(reaction.emoji.name) && user.id === message.author.id,
+        max: 1,
+        time: 60000,
+    });
 
-// For each question, track the user's answer and compare it with the correct one
-const correctEmoji = emojis[question.options.indexOf(question.correct)]; // Emoji for the correct answer
-const userAnswer = userReaction ? question.options[emojis.indexOf(userReaction.emoji.name)] : 'No Answer';
-const isCorrect = userReaction && userReaction.emoji.name === correctEmoji;
+    const userReaction = quizReaction.first();
 
-activeQuizzes[message.author.id].detailedResults.push({
-    word: question.word,
-    userAnswer: userAnswer,
-    correct: question.correct,
-    isCorrect: isCorrect,
-});
+    // Determine the correct emoji for the answer
+    const correctEmoji = emojis[question.options.indexOf(correctOption)]; // Find the emoji for the correct answer
+    const userAnswer = userReaction ? question.options[emojis.indexOf(userReaction.emoji.name)] : 'No Answer';
+    const isCorrect = userReaction && userReaction.emoji.name === correctEmoji;
 
-                await quizMessage.delete();
-            }
+    // Update score and results
+    if (isCorrect) {
+        activeQuizzes[message.author.id].score++;
+    }
+
+    activeQuizzes[message.author.id].detailedResults.push({
+        word: question.word,
+        userAnswer: userAnswer,
+        correct: correctOption,
+        isCorrect: isCorrect,
+    });
+
+    await quizMessage.delete();
+}
 
 
             // Step 4: Display Results
