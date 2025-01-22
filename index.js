@@ -91,7 +91,7 @@ const sendWordOfTheDay = async (language) => {
 
 // Word of the Day Schedule for each language
 const wordOfTheDayTimes = {
-  russian: '14 20 * * *',  // 12:59 PM IST for Russian
+  russian: '19 20 * * *',  // 12:59 PM IST for Russian
   german: '14 20 * * *',   // 2:59 PM IST for German
   french: '47 19 * * *',   // 4:59 PM IST for French
 };
