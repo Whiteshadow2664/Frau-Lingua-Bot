@@ -122,36 +122,60 @@ Object.keys(wordOfTheDayTimes).forEach((language) => {
 
 // Ticket Creation Interaction
 client.on('interactionCreate', async (interaction) => {
-    // Other interaction logic (like for slash commands or buttons)
+    // Ignore if it's not a button interaction
+    if (!interaction.isButton()) return;
 
-    // Ticket button interaction
-    if (!interaction.isButton()) return; // Ignore if it's not a button interaction
-
+    // Handle 'create_ticket' interaction
     if (interaction.customId === 'create_ticket') {
         const guild = interaction.guild;
         const member = interaction.member;
 
-        // Create a new channel for the ticket
-        const ticketChannel = await guild.channels.create({
-            name: `ticket-${member.user.username}`,
-            type: 0, // 0 is the type for text channels
-            permissionOverwrites: [
-                {
-                    id: guild.roles.everyone.id, // Deny access to everyone
-                    deny: ['ViewChannel'],
-                },
-                {
-                    id: member.id, // Allow access to the ticket creator
-                    allow: ['ViewChannel', 'SendMessages'],
-                },
-            ],
-        });
+        // Ensure the bot has permission to create channels
+        if (!guild.me.permissions.has('MANAGE_CHANNELS')) {
+            return interaction.reply({
+                content: 'I do not have permission to manage channels.',
+                ephemeral: true,
+            });
+        }
 
-        await ticketChannel.send(`Hello ${member}, how can we assist you today?`);
-        await interaction.reply({
-            content: `Ticket created: ${ticketChannel}`,
-            ephemeral: true, // Private reply
-        });
+        try {
+            // Create a new channel for the ticket
+            const ticketChannel = await guild.channels.create({
+                name: `ticket-${member.user.username}`,
+                type: 0, // 0 is the type for text channels
+                permissionOverwrites: [
+                    {
+                        id: guild.roles.everyone.id, // Deny access to everyone
+                        deny: ['ViewChannel'],
+                    },
+                    {
+                        id: member.id, // Allow access to the ticket creator
+                        allow: ['ViewChannel', 'SendMessages'],
+                    },
+                    {
+                        id: guild.roles.cache.find(role => role.name === 'Support'), // Replace with your support role
+                        allow: ['ViewChannel', 'SendMessages'],
+                    },
+                ],
+            });
+
+            // Send a welcome message in the ticket channel
+            await ticketChannel.send({
+                content: `Hello ${member}, your ticket has been created! How can we assist you today?`,
+            });
+
+            // Notify the user
+            await interaction.reply({
+                content: `Ticket created successfully! You can view it here: ${ticketChannel}`,
+                ephemeral: true,
+            });
+        } catch (error) {
+            console.error('Error creating ticket channel:', error);
+            await interaction.reply({
+                content: 'An error occurred while creating your ticket. Please try again later.',
+                ephemeral: true,
+            });
+        }
     }
 });
 
@@ -342,11 +366,7 @@ await message.channel.send({ embeds: [resultEmbed] });
 
     if (message.content.toLowerCase() === '!help') {
         help.execute(message);
-    }
- 
-    if (message.content.toLowerCase() === '!ticket') {
-    ticket.createTicket(message);
-    }
+    }   
 
     if (message.content.toLowerCase() === '!resources') {
         resources.execute(message);
