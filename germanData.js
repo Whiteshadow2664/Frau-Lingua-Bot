@@ -708,7 +708,27 @@ const germanQuizData = {
 
 // German Word of the Day Data
 const germanWordList = [
-      
+    {
+        word: "Собака",
+        meaning: "Dog",
+        plural: "Собаки",
+        indefinite: "одна",
+        definite: "та"
+    },
+    {
+        word: "Книга",
+        meaning: "Book",
+        plural: "Книги",
+        indefinite: "одна",
+        definite: "та"
+    },
+    {
+        word: "Море",
+        meaning: "Sea",
+        plural: "Моря",
+        indefinite: "одно",
+        definite: "то"
+    }
 ];
 
 module.exports = { germanQuizData, germanWordList };
