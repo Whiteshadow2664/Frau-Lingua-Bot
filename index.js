@@ -14,15 +14,6 @@ const help = require('./commands/help');
 const resources = require('./commands/resources');
 const ticket = require('./commands/ticket');
 
-// Inside messageCreate event
-if (message.content.toLowerCase() === '!ticket') {
-    ticket.createTicket(message);
-}
-
-if (message.content.toLowerCase() === '!close') {
-    ticket.closeTicket(message);
-}
-
 // Environment Variables
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
 
