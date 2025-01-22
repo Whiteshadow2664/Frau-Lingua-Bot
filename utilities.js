@@ -15,25 +15,21 @@ function shuffleArray(array) {
     }
 }
 
-// Function to shuffle quiz options but keep 'A' as the correct answer
+// Function to shuffle quiz options but keep the correct answer in the first position
 function shuffleQuizOptions(question) {
     if (!question || !question.options || question.options.length === 0) {
         throw new Error('Invalid question format or empty options');
     }
 
-    // Preserve the correct answer by checking the index of "A"
-    const correctOption = question.options[0]; // Assuming option A is the correct answer
-    const otherOptions = question.options.slice(1); // Get options other than "A"
+    // Preserve the correct answer by checking its value
+    const correctOption = question.correct; // Correct answer is stored in the "correct" field
+    const otherOptions = question.options.filter(option => option !== correctOption); // Get options excluding the correct one
 
     // Shuffle the other options
     shuffleArray(otherOptions);
 
-    // Add the correct option back to the shuffled options
+    // Place the correct option back at the start
     question.options = [correctOption, ...otherOptions];
-
-    // Find the new index of the correct answer after shuffling
-    const correctAnswerIndex = question.options.indexOf(correctOption);
-    question.correctAnswerIndex = correctAnswerIndex; // Store the new index of the correct answer
 }
 
 // Function to clear the active quiz for a user
