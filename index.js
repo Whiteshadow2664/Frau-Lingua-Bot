@@ -58,7 +58,7 @@ const wordOfTheDayChannelIds = {
 // Word of the Day Function
 const sendWordOfTheDay = async (language) => {
   let wordList;
-  else if (language === 'russian') wordList = russianWordList;
+  if (language === 'russian') wordList = russianWordList;
   else if (language === 'german') wordList = germanWordList;
   else if (language === 'french') wordList = frenchWordList;
 
