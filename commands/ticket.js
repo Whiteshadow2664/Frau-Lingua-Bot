@@ -5,16 +5,23 @@ module.exports.createTicket = async (message) => {
     const user = message.author;
     const guild = message.guild;
 
+    // Log when the command is triggered
+    console.log(`${user.tag} requested a ticket`);
+
     // Check if the user already has an open ticket
     const existingTicketChannel = guild.channels.cache.find(
         (channel) => channel.name === `ticket-${user.id}`
     );
 
     if (existingTicketChannel) {
+        console.log('Ticket already exists for this user.');
         return message.channel.send('You already have an open ticket!');
     }
 
     try {
+        // Log before creating the ticket channel
+        console.log('Creating a new ticket channel...');
+        
         // Create a new text channel for the ticket
         const ticketChannel = await guild.channels.create({
             name: `ticket-${user.id}`,
@@ -32,6 +39,9 @@ module.exports.createTicket = async (message) => {
                 },
             ],
         });
+
+        // Log after creating the channel
+        console.log('Ticket channel created:', ticketChannel.name);
 
         // Send a message in the new ticket channel
         const embed = new EmbedBuilder()
@@ -53,16 +63,23 @@ module.exports.closeTicket = async (message) => {
     const user = message.author;
     const guild = message.guild;
 
+    // Log when the command is triggered
+    console.log(`${user.tag} requested to close a ticket`);
+
     // Find the ticket channel for the user
     const ticketChannel = guild.channels.cache.find(
         (channel) => channel.name === `ticket-${user.id}`
     );
 
     if (!ticketChannel) {
+        console.log('No ticket found for this user.');
         return message.channel.send('You do not have any open tickets.');
     }
 
     try {
+        // Log before deleting the ticket channel
+        console.log('Closing the ticket channel...');
+
         // Close the ticket by deleting the channel
         await ticketChannel.delete();
         message.channel.send(`The ticket has been closed. Thank you for reaching out, ${user.tag}.`);
