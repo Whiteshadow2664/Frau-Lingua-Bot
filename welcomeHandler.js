@@ -5,8 +5,8 @@ const handleMemberJoin = async (member) => {
     const guild = member.guild;
     const memberCount = guild.memberCount;
 
-    // Send a message in the "general" channel mentioning the user
-    const channel = guild.channels.cache.find(ch => ch.name === 'general');
+    // Send a message in the "welcome" channel mentioning the user
+    const channel = guild.channels.cache.find(ch => ch.name === 'welcome');
     if (channel) {
         await channel.send(`Hello <@${member.id}>, welcome to the server! You are member **#${memberCount}**!`);
     } else {
@@ -20,7 +20,7 @@ const handleMemberLeave = async (member) => {
     const memberCount = guild.memberCount;
 
     // Send a leave message mentioning the user and showing the updated member count
-    const channel = guild.channels.cache.find(ch => ch.name === 'general');
+    const channel = guild.channels.cache.find(ch => ch.name === 'welcome');
     if (channel) {
         await channel.send(`${member.user.username} has left the server. We now have **${memberCount}** members.`);
     } else {
