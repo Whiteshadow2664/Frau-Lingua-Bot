@@ -1,5 +1,5 @@
 // Russian Quiz Data
-const RussianQuizData = {
+const russianQuizData = {
     A1: [
         {
             word: "Maison",
@@ -50,7 +50,7 @@ const RussianQuizData = {
 };
 
 // Russian Word of the Day Data
-const RussianWordList = [
+const russianWordList = [
   { word: 'город', meaning: 'City', plural: 'города', indefinite: 'город', definite: 'город' },
   { word: 'яблоко', meaning: 'Apple', plural: 'яблоки', indefinite: 'яблоко', definite: 'яблоко' },
   { word: 'книга', meaning: 'Book', plural: 'книги', indefinite: 'книга', definite: 'книга' },
@@ -147,4 +147,4 @@ const RussianWordList = [
   { word: 'здоровье', meaning: 'Health', plural: 'здоровья', indefinite: 'здоровье', definite: 'здоровье' },
 ];
 
-module.exports = { QuizData, frenchWordList };
+module.exports = { russianQuizData, russianWordList };
