@@ -1,92 +1,62 @@
-const { EmbedBuilder, PermissionsBitField } = require('discord.js');
+const { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 
-// Create Ticket Command
-module.exports.createTicket = async (message) => {
-    const user = message.author;
-    const guild = message.guild;
+const ticketSystem = {
+    async execute(message) {
+        // Create a ticket embed
+        const ticketEmbed = new EmbedBuilder()
+            .setTitle('Support Ticket System')
+            .setDescription('Click the button below to create a new support ticket.')
+            .setColor('#00FF00');
 
-    try {
-        console.log(`[Ticket System] ${user.tag} requested to create a ticket.`);
-
-        // Check if the user already has an open ticket
-        const existingTicketChannel = guild.channels.cache.find(
-            (channel) => channel.name === `ticket-${user.id}`
+        const ticketButton = new ActionRowBuilder().addComponents(
+            new ButtonBuilder()
+                .setCustomId('create_ticket')
+                .setLabel('Create Ticket')
+                .setStyle(ButtonStyle.Primary)
         );
 
-        if (existingTicketChannel) {
-            console.log(`[Ticket System] Ticket already exists for ${user.tag}.`);
-            return await message.channel.send('You already have an open ticket!');
-        }
+        // Send the embed with the button
+        const sentMessage = await message.channel.send({ embeds: [ticketEmbed], components: [ticketButton] });
 
-        // Create a new text channel for the ticket
-        console.log(`[Ticket System] Creating a ticket channel for ${user.tag}...`);
+        // Listen for button interactions
+        const filter = (interaction) => interaction.customId === 'create_ticket' && interaction.user.id === message.author.id;
 
-        const ticketChannel = await guild.channels.create({
-            name: `ticket-${user.id}`,
-            type: 0, // Text channel (use '0' for compatibility with Discord.js v14 and above)
-            topic: `Support Ticket for ${user.tag}`,
-            parent: '1327875414584201349', // Your category ID
-            permissionOverwrites: [
-                {
-                    id: guild.id, // @everyone
-                    deny: [PermissionsBitField.Flags.ViewChannel], // Deny viewing for everyone
-                },
-                {
-                    id: user.id, // Ticket creator
-                    allow: [
-                        PermissionsBitField.Flags.ViewChannel,
-                        PermissionsBitField.Flags.SendMessages,
-                        PermissionsBitField.Flags.ReadMessageHistory,
-                    ],
-                },
-            ],
+        const collector = sentMessage.createMessageComponentCollector({ filter, time: 60000 });
+
+        collector.on('collect', async (interaction) => {
+            // Create a ticket channel
+            const ticketChannel = await message.guild.channels.create({
+                name: `ticket-${interaction.user.username}`,
+                type: 0, // Guild text channel
+                permissionOverwrites: [
+                    {
+                        id: interaction.guild.roles.everyone.id, // Deny access to everyone
+                        deny: ['ViewChannel'],
+                    },
+                    {
+                        id: interaction.user.id, // Allow access to the user
+                        allow: ['ViewChannel', 'SendMessages'],
+                    },
+                ],
+            });
+
+            // Send a confirmation message in the ticket channel
+            const ticketCreatedEmbed = new EmbedBuilder()
+                .setTitle('Ticket Created')
+                .setDescription('A support member will assist you shortly.')
+                .setColor('#FFD700');
+
+            ticketChannel.send({ embeds: [ticketCreatedEmbed] });
+            await interaction.reply({ content: 'Your ticket has been created!', ephemeral: true });
         });
 
-        console.log(`[Ticket System] Ticket channel created: ${ticketChannel.name}`);
-
-        // Send a message in the new ticket channel
-        const embed = new EmbedBuilder()
-            .setTitle('Ticket Created')
-            .setDescription(`Hello ${user.tag}, your ticket has been created.\nPlease describe your issue or request below.`)
-            .setColor('#1cd86c')
-            .setFooter({ text: 'Ticket System' });
-
-        await ticketChannel.send({ embeds: [embed] });
-
-        // Notify the user in the original channel
-        await message.channel.send(`Your ticket has been created! Please check ${ticketChannel} to provide more details.`);
-    } catch (error) {
-        console.error(`[Ticket System] Error creating ticket for ${user.tag}:`, error);
-        await message.channel.send('There was an error creating your ticket. Please try again later.');
-    }
+        collector.on('end', (collected) => {
+            if (collected.size === 0) {
+                sentMessage.edit({ components: [] }); // Disable the button after timeout
+                message.channel.send('Ticket creation timed out.');
+            }
+        });
+    },
 };
 
-// Close Ticket Command
-module.exports.closeTicket = async (message) => {
-    const user = message.author;
-    const guild = message.guild;
-
-    try {
-        console.log(`[Ticket System] ${user.tag} requested to close a ticket.`);
-
-        // Find the user's ticket channel
-        const ticketChannel = guild.channels.cache.find(
-            (channel) => channel.name === `ticket-${user.id}`
-        );
-
-        if (!ticketChannel) {
-            console.log(`[Ticket System] No ticket found for ${user.tag}.`);
-            return await message.channel.send('You do not have any open tickets.');
-        }
-
-        // Delete the ticket channel
-        console.log(`[Ticket System] Closing ticket channel: ${ticketChannel.name} for ${user.tag}`);
-        await ticketChannel.delete();
-
-        // Notify the user in the original channel
-        await message.channel.send(`Your ticket has been closed. Thank you for reaching out, ${user.tag}.`);
-    } catch (error) {
-        console.error(`[Ticket System] Error closing ticket for ${user.tag}:`, error);
-        await message.channel.send('There was an error closing your ticket. Please try again later.');
-    }
-};
+module.exports = ticketSystem;
