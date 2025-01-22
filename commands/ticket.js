@@ -5,7 +5,7 @@ module.exports.createTicket = async (message) => {
     const user = message.author;
     const guild = message.guild;
 
-    // Check if a ticket channel already exists for the user
+    // Check if the user already has an open ticket
     const existingTicketChannel = guild.channels.cache.find(
         (channel) => channel.name === `ticket-${user.id}`
     );
@@ -20,20 +20,20 @@ module.exports.createTicket = async (message) => {
             name: `ticket-${user.id}`,
             type: 'GUILD_TEXT',
             topic: `Ticket for ${user.tag}`,
-            parent: 'YOUR_CATEGORY_ID', // Set a category ID where tickets should go
+            parent: '1327875414584201349', // Set the category ID where tickets will be created
             permissionOverwrites: [
                 {
                     id: guild.id,
-                    deny: ['ViewChannel'],
+                    deny: ['ViewChannel'],  // Deny @everyone from viewing the ticket
                 },
                 {
                     id: user.id,
-                    allow: ['ViewChannel', 'SendMessages', 'ReadMessageHistory'],
+                    allow: ['ViewChannel', 'SendMessages', 'ReadMessageHistory'],  // Give the user permissions to interact with the ticket
                 },
             ],
         });
 
-        // Send a welcome message in the new ticket channel
+        // Send a message in the new ticket channel
         const embed = new EmbedBuilder()
             .setTitle('Ticket Created')
             .setDescription(`Hello ${user.tag}, your ticket has been created.\nPlease describe your issue or request.`)
