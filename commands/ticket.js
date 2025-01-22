@@ -1,60 +1,69 @@
-const { Permissions } = require('discord.js');
+// commands/ticket.js
+const { EmbedBuilder } = require('discord.js');
 
-module.exports = {
-    async createTicket(interaction) {
-        const guild = interaction.guild;
-        const member = interaction.member;
+// Ticket Command: Create a ticket
+async function createTicket(message) {
+    // Check if the user already has an open ticket
+    const existingTicket = message.guild.channels.cache.find(
+        (channel) => channel.name === `ticket-${message.author.id}`
+    );
 
-        // Create a new channel for the ticket
-        const ticketChannel = await guild.channels.create({
-            name: `ticket-${member.user.username}`,
-            type: 0, // 0 is the type for text channels
+    if (existingTicket) {
+        return message.channel.send('You already have an open ticket!');
+    }
+
+    // Create the ticket channel
+    try {
+        const ticketChannel = await message.guild.channels.create(`ticket-${message.author.id}`, {
+            type: 'text',
+            topic: `Ticket for ${message.author.tag}`,
             permissionOverwrites: [
                 {
-                    id: guild.roles.everyone.id, // Deny access to everyone
-                    deny: ['ViewChannel'],
+                    id: message.guild.id, // Deny everyone permission to view the channel
+                    deny: ['VIEW_CHANNEL'],
                 },
                 {
-                    id: member.id, // Allow access to the ticket creator
-                    allow: ['ViewChannel', 'SendMessages'],
+                    id: message.author.id, // Allow the user to view and send messages in the channel
+                    allow: ['VIEW_CHANNEL', 'SEND_MESSAGES'],
+                },
+                {
+                    id: '1330222964985303172', // Support role ID
+                    allow: ['VIEW_CHANNEL', 'SEND_MESSAGES'],
                 },
             ],
         });
 
-        await ticketChannel.send(`Hello ${member}, how can we assist you today?`);
+        // Send an initial message in the ticket channel
+        await ticketChannel.send(
+            `Hello ${message.author.tag}, how can we assist you? Please describe your issue here. A staff member will respond soon.`
+        );
 
-        // Reply to the interaction with the ticket link
-        await interaction.reply({
-            content: `Ticket created: ${ticketChannel}`,
-            ephemeral: true, // Private reply
-        });
-
-        // Start the timer to check for inactivity
-        setTimeout(async () => {
-            const moderatorRole = guild.roles.cache.find(role => role.name === 'moderator'); // Replace with your actual moderator role name
-            if (!moderatorRole) {
-                console.error('Moderator role not found');
-                return;
-            }
-
-            // Check if the ticket channel still has no messages or activity
-            const ticketMessages = await ticketChannel.messages.fetch({ limit: 1 }); // Check if there are any messages
-            if (ticketMessages.size === 0) {
-                // No messages after 10 minutes, ping the moderator
-                await ticketChannel.send(`@${moderatorRole.name}, the user ${member.user.tag} has not been assisted yet. Please check the ticket!`);
-            }
-        }, 600000); // 10 minutes in milliseconds (600000ms)
-    },
-
-    async closeTicket(interaction) {
-        const ticketChannel = interaction.channel;
-
-        // Check if the channel is a ticket
-        if (ticketChannel.name.startsWith('ticket-')) {
-            await ticketChannel.delete();
-            await interaction.reply({ content: 'Your ticket has been closed.', ephemeral: true });
-        } else {
-            await interaction.reply({ content: 'This is not a valid ticket channel.', ephemeral: true });
-        }
+        // Notify the user about the ticket creation
+        message.channel.send(`Your ticket has been created! Check <#${ticketChannel.id}> to describe your issue.`);
+    } catch (error) {
+        console.error('Error creating ticket channel:', error);
+        return message.channel.send('There was an error creating the ticket. Please try again later.');
     }
+}
+
+// Ticket Command: Close a ticket
+async function closeTicket(message) {
+    // Ensure the user is either the ticket owner or a staff member
+    if (message.author.id !== message.channel.name.split('-')[1] && !message.member.roles.cache.has('1330222964985303172')) {
+        return message.channel.send('You are not authorized to close this ticket.');
+    }
+
+    // Close the ticket by deleting the channel
+    try {
+        await message.channel.send('Closing the ticket...');
+        await message.channel.delete();
+    } catch (error) {
+        console.error('Error closing ticket channel:', error);
+        return message.channel.send('There was an error closing the ticket. Please try again later.');
+    }
+}
+
+module.exports = {
+    createTicket,
+    closeTicket,
 };
