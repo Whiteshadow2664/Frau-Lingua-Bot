@@ -111,69 +111,23 @@ Object.keys(wordOfTheDayTimes).forEach((language) => {
   });
 });
 
-client.on('interactionCreate', async (interaction) => {
-    // Ignore if it's not a button interaction
-    if (!interaction.isButton()) return;
 
-    // Handle 'create_ticket' interaction
-    if (interaction.customId === 'create_ticket') {
-        const guild = interaction.guild;
-        const member = interaction.member;
-
-        try {
-            // Ensure the bot has permission to create channels
-            const botMember = await guild.members.fetch(client.user.id); // Fetch bot member
-            if (!botMember) {
-                console.error('Bot member not found in the guild.');
-                return interaction.reply({
-                    content: 'I could not retrieve the bot member information.',
-                    flags: 64, // Make this response ephemeral
-                });
-            }
-
-            if (!botMember.permissions.has('MANAGE_CHANNELS')) {
-                return interaction.reply({
-                    content: 'I do not have permission to manage channels.',
-                    flags: 64, // Make this response ephemeral
-                });
-            }
-
-            // Create a new channel for the ticket
-            const ticketChannel = await guild.channels.create({
-                name: `ticket-${member.user.username}`,
-                type: 0, // 0 is the type for text channels
-                permissionOverwrites: [
-                    {
-                        id: guild.roles.everyone.id, // Deny access to everyone
-                        deny: ['VIEW_CHANNEL'],
-                    },
-                    {
-                        id: member.id, // Allow access to the ticket creator
-                        allow: ['VIEW_CHANNEL', 'SEND_MESSAGES'],
-                    },
-                    {
-                        id: '1330222964985303172', // Use the Support role ID directly here
-                        allow: ['VIEW_CHANNEL', 'SEND_MESSAGES'],
-                    },
-                ],
-            });
 
             // Send a welcome message in the ticket channel
             await ticketChannel.send({
                 content: `Hello ${member}, your ticket has been created! How can we assist you today?`,
             });
 
-            // Respond with a success message
+            // Notify the user
             await interaction.reply({
                 content: `Ticket created successfully! You can view it here: ${ticketChannel}`,
-                flags: 64, // Make this response ephemeral
+                ephemeral: true,
             });
-
         } catch (error) {
             console.error('Error creating ticket channel:', error);
             await interaction.reply({
                 content: 'An error occurred while creating your ticket. Please try again later.',
-                flags: 64, // Make this response ephemeral
+                ephemeral: true,
             });
         }
     }
@@ -185,48 +139,35 @@ client.on('messageCreate', async (message) => {
 
     // Handle the !ticket command
     if (message.content.toLowerCase() === '!ticket') {
-        // Ensure that the user has permission to create tickets
-        const member = message.member;
-        if (!member) {
-            return message.channel.send({
-                content: 'You must be a member of the server to create a ticket.',
-                flags: 64, // Make this message ephemeral
-            });
-        }
-
-        try {
-            // Send the button to initiate the ticket creation
-            const buttonMessage = await message.channel.send({
-                content: 'Click the button below to create a ticket.',
-                components: [
-                    {
-                        type: 1, // Action Row
-                        components: [
-                            {
-                                type: 2, // Button
-                                style: 1, // Primary button
-                                label: 'Create Ticket',
-                                customId: 'create_ticket',
-                            },
-                        ],
-                    },
-                ],
-                flags: 64, // Make the button message ephemeral
-            });
-        } catch (error) {
-            console.error('Error sending ticket button:', error);
-            return message.channel.send({
-                content: 'An error occurred while processing your ticket request.',
-                flags: 64, // Make the error message ephemeral
-            });
-        }
+    // Ensure that the user has permission to create tickets
+    const member = message.member;
+    if (!member) {
+        return message.channel.send('You must be a member of the server to create a ticket.');
     }
-});
 
-    // Handle the !ticket command
-    if (message.content.toLowerCase() === '!ticket') {
-        // Your existing code...
+    try {
+        // Send the button to initiate the ticket creation
+        const buttonMessage = await message.channel.send({
+            content: 'Click the button below to create a ticket.',
+            components: [
+                {
+                    type: 1, // Action Row
+                    components: [
+                        {
+                            type: 2, // Button
+                            style: 1, // Primary button
+                            label: 'Create Ticket',
+                            customId: 'create_ticket',
+                        },
+                    ],
+                },
+            ],
+        });
+    } catch (error) {
+        console.error('Error sending ticket button:', error);
+        return message.channel.send('An error occurred while processing your ticket request.');
     }
+}
 
     // Handle the quiz command
     if (message.content.toLowerCase() === '!q') {
