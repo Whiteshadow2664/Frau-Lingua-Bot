@@ -15,22 +15,20 @@ function shuffleArray(array) {
     }
 }
 
-// Function to shuffle quiz options with their correct answers
+// Function to shuffle quiz options but keep 'A' as the correct answer
 function shuffleQuizOptions(question) {
     if (!question || !question.options || question.options.length === 0) {
         throw new Error('Invalid question format or empty options');
     }
 
-    // Shuffle the options
+    // Preserve the correct answer by checking the index of "A"
+    const correctOption = question.options[0]; // Assuming option A is the correct answer
+    // Shuffle options
     shuffleArray(question.options);
 
-    // Ensure the correct answer is properly linked with its position
-    const correctAnswer = question.correctAnswer;
-    question.options.forEach((option, index) => {
-        if (option === correctAnswer) {
-            question.correctAnswerIndex = index; // Store the new index of the correct answer
-        }
-    });
+    // Find the new index of the correct answer after shuffling
+    const correctAnswerIndex = question.options.indexOf(correctOption);
+    question.correctAnswerIndex = correctAnswerIndex; // Store the new index of the correct answer
 }
 
 // Function to clear the active quiz for a user
@@ -104,7 +102,7 @@ async function shuffleQuizAndSend(message, quizQuestions) {
     for (const question of quizQuestions) {
         const embed = new EmbedBuilder()
             .setTitle(`Question: ${question.question}`)
-            .setDescription(`Options: ${question.options.join('\n')}`)
+            .setDescription(`Options:\n${question.options.join('\n')}`)
             .setColor(embedColors[question.language]);
 
         await message.channel.send({ embeds: [embed] });
