@@ -12,7 +12,7 @@ const { frenchQuizData, frenchWordList } = require('./frenchData');
 const { shuffleArray } = require('./utilities');
 const help = require('./commands/help');
 const resources = require('./commands/resources');
-const ticket = require('./ticket');
+const ticket = require('./commands/ticket');
 
 // Inside messageCreate event
 if (message.content.toLowerCase() === '!ticket') {
