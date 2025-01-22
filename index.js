@@ -13,6 +13,7 @@ const { shuffleArray } = require('./utilities');
 const help = require('./commands/help');
 const resources = require('./commands/resources');
 const { handleGreeting } = require('./greetingsHandler');
+const { handleMemberJoin, handleMemberLeave } = require('./welcomeHandler');
 
 // Environment Variables
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
@@ -316,6 +317,15 @@ await message.channel.send({ embeds: [resultEmbed] });
 
 client.once('ready', () => {
     console.log(`${client.user.tag} is online!`);
+
+client.on('guildMemberAdd', async (member) => {
+    await handleMemberJoin(client, member);
+});
+
+client.on('guildMemberRemove', async (member) => {
+    await handleMemberLeave(client, member);
+});
+
 }); 
 
 client.login(DISCORD_TOKEN);
