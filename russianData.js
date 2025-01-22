@@ -575,7 +575,6 @@ const russianWordList = [
     { "word": "молоко", "meaning": "Milk", "plural": "молока", "gender": "neuter" },
     { "word": "птица", "meaning": "Bird", "plural": "птицы", "gender": "feminine" },
     { "word": "дождь", "meaning": "Rain", "plural": "дожди", "gender": "masculine" },
-    { "word": "сумка", "meaning": "Bag", "plural": "сумки", "gender": "feminine" },
     { "word": "площадь", "meaning": "Square (in a city)", "plural": "площади", "gender": "feminine" },
     { "word": "комната", "meaning": "Room", "plural": "комнаты", "gender": "feminine" },
     { "word": "телевизор", "meaning": "Television", "plural": "телевизоры", "gender": "masculine" },
@@ -590,6 +589,6 @@ const russianWordList = [
     { "word": "осень", "meaning": "Autumn", "plural": "осени", "gender": "feminine" },
     { "word": "зима", "meaning": "Winter", "plural": "зимы", "gender": "feminine" },
     { "word": "метро", "meaning": "Metro", "plural": "метро", "gender": "neuter" }
-];
+]
 
 module.exports = { russianQuizData, russianWordList };
