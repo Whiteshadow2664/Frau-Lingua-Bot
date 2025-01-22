@@ -29,8 +29,26 @@ const client = new Client({
         GatewayIntentBits.GuildMessages,
         GatewayIntentBits.MessageContent,
         GatewayIntentBits.GuildMessageReactions,
+GatewayIntentBits.GuildMembers
     ],
     partials: [Partials.Message, Partials.Channel, Partials.Reaction],
+});
+
+// Add guild member event handlers here
+client.on('guildMemberAdd', async (member) => {
+    console.log(`${member.user.tag} joined the server.`);
+    const channel = member.guild.systemChannel; // Default system channel
+    if (channel) {
+        channel.send(`Welcome to the server, ${member.user}!`);
+    }
+});
+
+client.on('guildMemberRemove', async (member) => {
+    console.log(`${member.user.tag} left the server.`);
+    const channel = member.guild.systemChannel; // Default system channel
+    if (channel) {
+        channel.send(`${member.user.tag} has left the server.`);
+    }
 });
 
 // Express Server to Keep Bot Alive
@@ -317,14 +335,6 @@ await message.channel.send({ embeds: [resultEmbed] });
 
 client.once('ready', () => {
     console.log(`${client.user.tag} is online!`);
-
-client.on('guildMemberAdd', async (member) => {
-    await handleMemberJoin(client, member);
-});
-
-client.on('guildMemberRemove', async (member) => {
-    await handleMemberLeave(client, member);
-});
 
 }); 
 
