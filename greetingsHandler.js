@@ -7,74 +7,42 @@ const greetings = {
 const responses = {
     german: {
         greeting: 'Wie geht es dir?',  // "How are you?" in German
-        good: 'Das ist großartig!',    // "That's great!" in German
-        aboutYou: 'Mir geht es gut, danke der Nachfrage!', // "I'm good, thanks for asking!" in German
-        haveNiceDay: 'Gut, hab einen schönen Tag!' // "Good, have a nice day!" in German
+        haveNiceDay: 'Gut, hab einen schönen Tag!', // "Good, have a nice day!" in German
     },
     french: {
         greeting: 'Comment ça va?',  // "How are you?" in French
-        good: 'C’est génial!',       // "That's great!" in French
-        aboutYou: 'Je vais bien, merci de demander!', // "I'm good, thanks for asking!" in French
-        haveNiceDay: 'Bien, passez une bonne journée!' // "Good, have a nice day!" in French
+        haveNiceDay: 'Bien, passez une bonne journée!', // "Good, have a nice day!" in French
     },
     russian: {
         greeting: 'Как дела?',      // "How are you?" in Russian
-        good: 'Отлично!',           // "That's great!" in Russian
-        aboutYou: 'Я в порядке, спасибо, что спросили!', // "I'm good, thanks for asking!" in Russian
         haveNiceDay: 'Хорошо, хорошего дня!' // "Good, have a nice day!" in Russian
     }
 };
 
+let previousLanguage = null; // To keep track of the last language used
+
 const handleGreeting = (message) => {
     const content = message.content.toLowerCase(); // Convert message to lowercase for matching
 
-    // Check for each language's greetings
+    // Check for greetings in each language
     if (greetings.german.some(greeting => content.includes(greeting))) {
+        previousLanguage = 'german';
         return responses.german.greeting;
     }
     if (greetings.french.some(greeting => content.includes(greeting))) {
+        previousLanguage = 'french';
         return responses.french.greeting;
     }
     if (greetings.russian.some(greeting => content.includes(greeting))) {
+        previousLanguage = 'russian';
         return responses.russian.greeting;
     }
 
-    // Check for responses like "I'm good" or "What about you?"
-    if (content.includes('i\'m good') || content.includes('i am good')) {
-        if (greetings.german.some(greeting => content.includes(greeting))) {
-            return responses.german.good;
-        }
-        if (greetings.french.some(greeting => content.includes(greeting))) {
-            return responses.french.good;
-        }
-        if (greetings.russian.some(greeting => content.includes(greeting))) {
-            return responses.russian.good;
-        }
-    }
-
-    if (content.includes('what about you')) {
-        if (greetings.german.some(greeting => content.includes(greeting))) {
-            return responses.german.aboutYou;
-        }
-        if (greetings.french.some(greeting => content.includes(greeting))) {
-            return responses.french.aboutYou;
-        }
-        if (greetings.russian.some(greeting => content.includes(greeting))) {
-            return responses.russian.aboutYou;
-        }
-    }
-
-    // Check for replies to "How are you?" in the respective languages
-    if (content.includes('wie geht es dir') || content.includes('comment ça va') || content.includes('как дела')) {
-        if (content.includes('wie geht es dir')) {
-            return responses.german.haveNiceDay;
-        }
-        if (content.includes('comment ça va')) {
-            return responses.french.haveNiceDay;
-        }
-        if (content.includes('как дела')) {
-            return responses.russian.haveNiceDay;
-        }
+    // Check if user replies to the bot
+    if (previousLanguage) {
+        const language = previousLanguage;
+        previousLanguage = null; // Reset after responding
+        return `${responses[language].haveNiceDay} ${responses[language].greeting}`;
     }
 
     // Return null if no match is found
