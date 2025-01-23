@@ -39,9 +39,8 @@ const handleGreeting = (message) => {
 
     // If the bot has already asked "How are you?" and user replies
     if (conversationState.previousLanguage && !conversationState.hasAskedHowAreYou) {
-        const language = conversationState.previousLanguage;
         conversationState.hasAskedHowAreYou = true; // Mark "How are you?" as asked
-        return responses[language].greeting;
+        return responses[conversationState.previousLanguage].greeting;
     }
 
     // If the bot should respond with "Have a nice day"
