@@ -236,9 +236,12 @@ for (const question of questionsToAsk) {
             `What is the English meaning of **"${question.word}"**?\n\n` +
             `A) ${question.options[0]}\n` +
 
+
             `B) ${question.options[1]}\n` +
 
+
             `C) ${question.options[2]}\n` +
+
 
             `D) ${question.options[3]}`
         )
