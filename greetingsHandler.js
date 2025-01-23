@@ -40,7 +40,7 @@ const handleGreeting = (message) => {
     // If the bot has already asked "How are you?" and user replies
     if (conversationState.previousLanguage && !conversationState.hasAskedHowAreYou) {
         conversationState.hasAskedHowAreYou = true; // Mark "How are you?" as asked
-        return responses[conversationState.previousLanguage].greeting;
+        return responses[conversationState.previousLanguage].greeting; // Respond with "How are you?"
     }
 
     // If the bot should respond with "Have a nice day"
@@ -48,7 +48,7 @@ const handleGreeting = (message) => {
         const language = conversationState.previousLanguage;
         conversationState.previousLanguage = null; // Reset after completing the conversation
         conversationState.hasAskedHowAreYou = false;
-        return responses[language].haveNiceDay;
+        return responses[language].haveNiceDay; // Respond with "Have a nice day"
     }
 
     // Return null if no match is found
