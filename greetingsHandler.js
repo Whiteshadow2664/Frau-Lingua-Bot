@@ -19,30 +19,37 @@ const responses = {
     }
 };
 
-let previousLanguage = null; // To keep track of the last language used
+let conversationState = {
+    previousLanguage: null, // To track the last language used
+    hasAskedHowAreYou: false, // To track if the bot has already asked "How are you?"
+};
 
 const handleGreeting = (message) => {
     const content = message.content.toLowerCase(); // Convert message to lowercase for matching
 
     // Check for greetings in each language
-    if (greetings.german.some(greeting => content.includes(greeting))) {
-        previousLanguage = 'german';
-        return responses.german.greeting;
-    }
-    if (greetings.french.some(greeting => content.includes(greeting))) {
-        previousLanguage = 'french';
-        return responses.french.greeting;
-    }
-    if (greetings.russian.some(greeting => content.includes(greeting))) {
-        previousLanguage = 'russian';
-        return responses.russian.greeting;
+    for (const [language, greetingsList] of Object.entries(greetings)) {
+        if (greetingsList.some(greeting => content.includes(greeting))) {
+            // If the user starts a new greeting
+            conversationState.previousLanguage = language;
+            conversationState.hasAskedHowAreYou = false; // Reset the state
+            return responses[language].greeting;
+        }
     }
 
-    // Check if user replies to the bot
-    if (previousLanguage) {
-        const language = previousLanguage;
-        previousLanguage = null; // Reset after responding
-        return `${responses[language].haveNiceDay} ${responses[language].greeting}`;
+    // If the bot has already asked "How are you?" and user replies
+    if (conversationState.previousLanguage && !conversationState.hasAskedHowAreYou) {
+        const language = conversationState.previousLanguage;
+        conversationState.hasAskedHowAreYou = true; // Mark "How are you?" as asked
+        return responses[language].greeting;
+    }
+
+    // If the bot should respond with "Have a nice day"
+    if (conversationState.previousLanguage && conversationState.hasAskedHowAreYou) {
+        const language = conversationState.previousLanguage;
+        conversationState.previousLanguage = null; // Reset after completing the conversation
+        conversationState.hasAskedHowAreYou = false;
+        return responses[language].haveNiceDay;
     }
 
     // Return null if no match is found
