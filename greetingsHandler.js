@@ -15,7 +15,7 @@ const responses = {
     },
     russian: {
         greeting: 'Как дела?',      // "How are you?" in Russian
-        haveNiceDay: 'Хорошо, хорошего дня!' // "Good, have a nice day!" in Russian
+        haveNiceDay: 'Хорошо, хорошего дня!', // "Good, have a nice day!" in Russian
     }
 };
 
@@ -32,22 +32,16 @@ const handleGreeting = (message) => {
         if (greetingsList.some(greeting => content.includes(greeting))) {
             // If the user starts a new greeting
             conversationState.previousLanguage = language;
-            conversationState.hasAskedHowAreYou = false; // Reset the state
+            conversationState.hasAskedHowAreYou = true; // Mark that the bot has asked "How are you?"
             return responses[language].greeting;
         }
     }
 
-    // If the bot has already asked "How are you?" and user replies
-    if (conversationState.previousLanguage && !conversationState.hasAskedHowAreYou) {
-        conversationState.hasAskedHowAreYou = true; // Mark "How are you?" as asked
-        return responses[conversationState.previousLanguage].greeting; // Respond with "How are you?"
-    }
-
-    // If the bot should respond with "Have a nice day"
-    if (conversationState.previousLanguage && conversationState.hasAskedHowAreYou) {
+    // If the bot has already asked "How are you?" and user responds with anything
+    if (conversationState.hasAskedHowAreYou) {
         const language = conversationState.previousLanguage;
         conversationState.previousLanguage = null; // Reset after completing the conversation
-        conversationState.hasAskedHowAreYou = false;
+        conversationState.hasAskedHowAreYou = false; // Reset the flag
         return responses[language].haveNiceDay; // Respond with "Have a nice day"
     }
 
