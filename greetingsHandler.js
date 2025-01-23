@@ -8,17 +8,20 @@ const responses = {
     german: {
         greeting: 'Wie geht es dir?',  // "How are you?" in German
         good: 'Das ist großartig!',    // "That's great!" in German
-        aboutYou: 'Mir geht es gut, danke der Nachfrage!' // "I'm good, thanks for asking!" in German
+        aboutYou: 'Mir geht es gut, danke der Nachfrage!', // "I'm good, thanks for asking!" in German
+        haveNiceDay: 'Gut, hab einen schönen Tag!' // "Good, have a nice day!" in German
     },
     french: {
         greeting: 'Comment ça va?',  // "How are you?" in French
         good: 'C’est génial!',       // "That's great!" in French
-        aboutYou: 'Je vais bien, merci de demander!' // "I'm good, thanks for asking!" in French
+        aboutYou: 'Je vais bien, merci de demander!', // "I'm good, thanks for asking!" in French
+        haveNiceDay: 'Bien, passez une bonne journée!' // "Good, have a nice day!" in French
     },
     russian: {
         greeting: 'Как дела?',      // "How are you?" in Russian
         good: 'Отлично!',           // "That's great!" in Russian
-        aboutYou: 'Я в порядке, спасибо, что спросили!' // "I'm good, thanks for asking!" in Russian
+        aboutYou: 'Я в порядке, спасибо, что спросили!', // "I'm good, thanks for asking!" in Russian
+        haveNiceDay: 'Хорошо, хорошего дня!' // "Good, have a nice day!" in Russian
     }
 };
 
@@ -58,6 +61,19 @@ const handleGreeting = (message) => {
         }
         if (greetings.russian.some(greeting => content.includes(greeting))) {
             return responses.russian.aboutYou;
+        }
+    }
+
+    // Check for replies to "How are you?" in the respective languages
+    if (content.includes('wie geht es dir') || content.includes('comment ça va') || content.includes('как дела')) {
+        if (content.includes('wie geht es dir')) {
+            return responses.german.haveNiceDay;
+        }
+        if (content.includes('comment ça va')) {
+            return responses.french.haveNiceDay;
+        }
+        if (content.includes('как дела')) {
+            return responses.russian.haveNiceDay;
         }
     }
 
