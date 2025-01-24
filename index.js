@@ -127,6 +127,11 @@ client.on('messageCreate', async (message) => {
     handleBadWords(message);
 });
 
+//Command for Leaderboard
+if (message.content.toLowerCase() === '!leaderboard') {
+    displayLeaderboard(message);
+}  
+
 
 // Commands and Event Handling
 client.on('messageCreate', async (message) => {
