@@ -2,7 +2,7 @@ const { MessageActionRow, MessageButton } = require('discord.js');
 
 module.exports = {
   name: 'announcement',
-  description: 'Send an announcement to the general channel with everyone ping',
+  description: 'Send an announcement to the announcements channel with everyone ping',
 
   async execute(message, args) {
     // Check if the message author has the 'Moderator' role
