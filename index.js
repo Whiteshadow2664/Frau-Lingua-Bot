@@ -120,6 +120,11 @@ Object.keys(wordOfTheDayTimes).forEach((language) => {
 client.on('messageCreate', async (message) => {
     if (message.author.bot) return;
 
+// Commands for Announcement
+    if (message.content.toLowerCase() === '!announcement') {
+    announcement.execute(message);
+}
+
     // Check if the message is a greeting in any language
     const response = handleGreeting(message);
 
