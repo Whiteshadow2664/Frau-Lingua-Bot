@@ -2,7 +2,7 @@ const { MessageActionRow, MessageButton } = require('discord.js');
 
 module.exports = {
   name: 'announcement',
-  description: 'Send an announcement to the announcements channel with everyone ping',
+  description: 'Send an announcement to the specific announcements channel with everyone ping',
 
   async execute(message, args) {
     // Check if the message author has the 'Moderator' role
@@ -15,17 +15,23 @@ module.exports = {
 
     // Filter to ensure we get the correct response
     const filter = response => response.author.id === message.author.id;
-    const collected = await message.channel.awaitMessages({ filter, time: 30000, max: 1, errors: ['time'] });
+    let collected;
+
+    try {
+      collected = await message.channel.awaitMessages({ filter, time: 30000, max: 1, errors: ['time'] });
+    } catch (error) {
+      return message.reply('You took too long to respond. Please try again.');
+    }
 
     const announcementMessage = collected.first().content;
 
-    // Check if the 'announcements' channel exists
-    const announcementChannel = message.guild.channels.cache.find(channel => channel.name === 'announcements');
+    // Fetch the specific announcement channel using its ID
+    const announcementChannel = message.guild.channels.cache.get('1279821768785137686');
     if (!announcementChannel) {
-      return message.reply('Announcements channel not found.');
+      return message.reply('Announcement channel not found. Please check the channel ID.');
     }
 
-    // Send the message to the 'announcements' channel with everyone ping
+    // Send the message to the specified announcement channel with everyone ping
     try {
       const sentMessage = await announcementChannel.send(`@everyone\n\n${announcementMessage}`);
 
