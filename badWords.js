@@ -1,4 +1,4 @@
-const badWords = ['badword1', 'badword2', 'badword3']; // Add your bad words here
+const badWords = ['cunt', 'dick', 'nigga', 'horny', 'motherfucker', 'mf']; // List of bad words
 const userOffenses = new Map(); // To track user offenses
 
 /**
@@ -12,12 +12,12 @@ const containsBadWords = (content) => {
 };
 
 /**
- * Check if a user has the "Humans" role.
+ * Check if a user has the "Moderator" role.
  * @param {GuildMember} member The guild member to check.
- * @returns {boolean} True if the member has the "Humans" role, false otherwise.
+ * @returns {boolean} True if the member has the "Moderator" role, false otherwise.
  */
-const hasHumansRole = (member) => {
-    return member.roles.cache.some((role) => role.name.toLowerCase() === 'humans');
+const hasModeratorRole = (member) => {
+    return member.roles.cache.some((role) => role.name.toLowerCase() === 'moderator');
 };
 
 /**
@@ -49,17 +49,17 @@ const handleBadWords = async (message) => {
             return;
         }
 
-        // Check if the member has the "Humans" role
-        if (hasHumansRole(member)) {
-            // Send a warning specific to users with the "Humans" role
+        // Check if the member has the "Moderator" role
+        if (hasModeratorRole(member)) {
+            // Send a warning specific to users with the "Moderator" role
             try {
                 await message.channel.send({
-                    content: `${member}, as a user with privileges, please do not misuse your powers by using inappropriate language.`,
+                    content: `${member}, as a Moderator, please maintain decorum and avoid using inappropriate language.`,
                 });
             } catch (error) {
                 return;
             }
-            return; // End processing for "Humans" role members
+            return; // End processing for "Moderator" role members
         }
 
         // Send a general warning message
@@ -90,5 +90,5 @@ const handleBadWords = async (message) => {
 module.exports = {
     handleBadWords,
     containsBadWords,
-    hasHumansRole,
+    hasModeratorRole,
 };
