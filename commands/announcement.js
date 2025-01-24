@@ -5,8 +5,8 @@ module.exports = {
   description: 'Send an announcement to the general channel with @everyone ping',
 
   async execute(message, args) {
-    // Check if the message author has the 'humans' role
-    if (!message.member.roles.cache.some(role => role.name === 'humans')) {
+    // Check if the message author has the 'Moderator' role
+    if (!message.member.roles.cache.some(role => role.name === 'Moderator')) {
       return message.reply('You do not have the required role to make an announcement.');
     }
 
@@ -19,13 +19,13 @@ module.exports = {
 
     const announcementMessage = collected.first().content;
 
-    // Check if the 'general' channel exists
-    const announcementChannel = message.guild.channels.cache.find(channel => channel.name === 'general');
+    // Check if the 'announcements' channel exists
+    const announcementChannel = message.guild.channels.cache.find(channel => channel.name === 'announcements');
     if (!announcementChannel) {
-      return message.reply('General channel not found.');
+      return message.reply('Announcements channel not found.');
     }
 
-    // Send the message to the 'general' channel with @everyone ping
+    // Send the message to the 'announcements' channel with @everyone ping
     try {
       const sentMessage = await announcementChannel.send(`@everyone\n\n${announcementMessage}`);
 
