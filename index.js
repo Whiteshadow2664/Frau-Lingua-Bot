@@ -127,11 +127,6 @@ client.on('messageCreate', async (message) => {
     handleBadWords(message);
 });
 
-//Command for Leaderboard
-if (message.content.toLowerCase() === '!leaderboard') {
-    displayLeaderboard(message);
-}  
-
 
 // Commands and Event Handling
 client.on('messageCreate', async (message) => {
@@ -141,6 +136,13 @@ client.on('messageCreate', async (message) => {
     if (message.content.toLowerCase() === '!announcement') {
     announcement.execute(message);
 }
+
+//Command for Leaderboard
+
+   if (message.content.toLowerCase() === '!leaderboard') {
+    displayLeaderboard(message);
+} 
+
 
     // Check if the message is a greeting in any language
     const response = handleGreeting(message);
