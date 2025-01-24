@@ -14,6 +14,7 @@ const help = require('./commands/help');
 const resources = require('./commands/resources');
 const { handleGreeting } = require('./greetingsHandler');
 const { handleMemberJoin, handleMemberLeave } = require('./welcomeHandler');
+const announcement = require('./commands/announcement');
 
 // Environment Variables
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
