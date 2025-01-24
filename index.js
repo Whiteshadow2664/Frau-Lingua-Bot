@@ -138,7 +138,8 @@ client.on('messageCreate', async (message) => {
 }
 
 //Command for Leaderboard
-
+client.on('messageCreate', async (message) => {
+    if (message.author.bot) return;
    if (message.content.toLowerCase() === '!leaderboard') {
     displayLeaderboard(message);
 } 
