@@ -314,6 +314,7 @@ for (const question of questionsToAsk) {
 
             // Step 4: Display Results
 const result = activeQuizzes[message.author.id];
+updateLeaderboard(message.author.id, message.author.username, selectedLanguage, selectedLevel, result.score);
 delete activeQuizzes[message.author.id];
 
 // Create the detailed results text
