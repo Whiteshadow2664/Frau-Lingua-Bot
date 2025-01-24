@@ -16,7 +16,6 @@ const { handleGreeting } = require('./greetingsHandler');
 const { handleMemberJoin, handleMemberLeave } = require('./welcomeHandler');
 const announcement = require('./commands/announcement');
 const { handleBadWords } = require('./badWords');
-const { displayLeaderboard } = require('./leaderboard');
 
 // Environment Variables
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
@@ -136,13 +135,6 @@ client.on('messageCreate', async (message) => {
     if (message.content.toLowerCase() === '!announcement') {
     announcement.execute(message);
 }
-
-//Command for Leaderboard
-client.on('messageCreate', async (message) => {
-    if (message.author.bot) return;
-   if (message.content.toLowerCase() === '!leaderboard') {
-    displayLeaderboard(message);
-} 
 
 
     // Check if the message is a greeting in any language
