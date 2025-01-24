@@ -15,6 +15,7 @@ const resources = require('./commands/resources');
 const { handleGreeting } = require('./greetingsHandler');
 const { handleMemberJoin, handleMemberLeave } = require('./welcomeHandler');
 const announcement = require('./commands/announcement');
+const { handleBadWords } = require('./badWords');
 
 // Environment Variables
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
@@ -115,6 +116,15 @@ Object.keys(wordOfTheDayTimes).forEach((language) => {
   });
 });
 
+
+// Check if the message is badwords in any language
+client.on('messageCreate', async (message) => {
+    // Ignore messages from bots
+    if (message.author.bot) return;
+
+    // Handle bad words
+    handleBadWords(message);
+});
 
 
 // Commands and Event Handling
