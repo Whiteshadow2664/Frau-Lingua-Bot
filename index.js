@@ -116,6 +116,14 @@ Object.keys(wordOfTheDayTimes).forEach((language) => {
   });
 });
 
+// Inside the messageCreate event listener for the !leaderboard command
+client.on('messageCreate', async (message) => {
+    if (message.author.bot) return;
+
+if (message.content.toLowerCase() === '!leaderboard') {
+    displayLeaderboard(message);
+}  
+
 
 // Check if the message is badwords in any language
 client.on('messageCreate', async (message) => {
