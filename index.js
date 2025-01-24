@@ -16,6 +16,7 @@ const { handleGreeting } = require('./greetingsHandler');
 const { handleMemberJoin, handleMemberLeave } = require('./welcomeHandler');
 const announcement = require('./commands/announcement');
 const { handleBadWords } = require('./badWords');
+const { displayLeaderboard } = require('./leaderboard');
 
 // Environment Variables
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
