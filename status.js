@@ -12,19 +12,22 @@ module.exports = (client) => {
 
   let i = 0;
 
-  setInterval(async () => {
+  setInterval(() => {
     if (i >= statuses.length) i = 0; // Reset index if at the end of the statuses
     const status = statuses[i];
 
+    // Set the bot's presence (custom status)
+    client.user.setPresence({
+      activities: [{
+        name: status, // Status text
+        type: 'CUSTOM', // You can also change this to 'PLAYING', 'LISTENING', etc.
+      }],
+      status: 'online', // You can change this to 'idle', 'dnd', or 'invisible' based on the bot's need
+    });
+
+    // If any errors occur, they'll be logged to the console
     try {
-      // Set the bot's presence (custom status)
-      await client.user.setPresence({
-        activities: [{
-          name: status, // Status text
-          type: 'CUSTOM', // You can also change this to 'PLAYING', 'LISTENING', etc.
-        }],
-        status: 'online', // You can change this to 'idle', 'dnd', or 'invisible' based on the bot's need
-      });
+      // Any additional logic can be added here if needed
     } catch (error) {
       console.error('Error setting presence:', error);
     }
