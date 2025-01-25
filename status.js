@@ -18,20 +18,10 @@ module.exports = (client) => {
 
     // Set the bot's presence (custom status)
     client.user.setPresence({
-      activities: [{
-        name: status, // Status text
-        type: 'CUSTOM', // You can also change this to 'PLAYING', 'LISTENING', etc.
-      }],
-      status: 'online', // You can change this to 'idle', 'dnd', or 'invisible' based on the bot's need
+      activities: [{ name: status, type: 'CUSTOM' }], // Set the activity type to CUSTOM
+      status: 'online', // Set the bot's online status (online, idle, dnd, invisible)
     });
 
-    // If any errors occur, they'll be logged to the console
-    try {
-      // Any additional logic can be added here if needed
-    } catch (error) {
-      console.error('Error setting presence:', error);
-    }
-
     i++;
-  }, 5000); // Change status every 5 seconds (5000 ms)
+  }, 5000); // Change status every 5 seconds
 };
