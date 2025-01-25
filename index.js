@@ -125,22 +125,16 @@ client.on('messageCreate', async (message) => {
     // Ignore messages from bots
     if (message.author.bot) return;
 
-
 if (message.content.toLowerCase() === '!ticket') {
   ticket.execute(message);
 }
 
-
-
-
 if(message.content.toLowerCase().startsWith('!suggestion')) {
     suggestion.execute(message);
 }
-
     // Handle bad words
     handleBadWords(message);
 });
-
 
 // Commands and Event Handling
 client.on('messageCreate', async (message) => {
@@ -150,7 +144,6 @@ client.on('messageCreate', async (message) => {
     if (message.content.toLowerCase() === '!announcement') {
     announcement.execute(message);
 }
-
     // Check if the message is a greeting in any language
     const response = handleGreeting(message);
 
@@ -316,7 +309,6 @@ for (const question of questionsToAsk) {
 
     await quizMessage.delete();
 }
-
 
             // Step 4: Display Results
 const result = activeQuizzes[message.author.id];
