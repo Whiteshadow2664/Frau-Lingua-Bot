@@ -352,7 +352,7 @@ await message.channel.send({ embeds: [resultEmbed] });
 
 client.once('ready', () => {
     console.log(`${client.user.tag} is online!`);
-
+status(client);
 });
 
 // Event when a member joins the server
