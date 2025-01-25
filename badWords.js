@@ -1,4 +1,4 @@
-const badWords = ['cunt', 'dick', 'nigga', 'horny', 'motherfucker', 'mf']; // List of bad words
+const badWords = ['cunt', 'dick', 'nigga', 'horny', 'motherfucker', 'mf' , 'cum', 'SMD' , 'suck my dick' , 'your mom' , 'Mutterfucker' , 'cock' , 'pussy' , '6000' 'fuck you']; // List of bad words
 const userOffenses = new Map(); // To track user offenses
 
 /**
@@ -54,7 +54,7 @@ const handleBadWords = async (message) => {
             // Send a warning specific to users with the "Moderator" role
             try {
                 await message.channel.send({
-                    content: `${member}, as a Moderator, please maintain decorum and avoid using inappropriate language.`,
+                    content: `${member}, as a Moderator, please maintain decorum and avoid using inappropriate language and I'm not friendly like Owner.`,
                 });
             } catch (error) {
                 return;
