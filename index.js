@@ -16,6 +16,7 @@ const { handleGreeting } = require('./greetingsHandler');
 const { handleMemberJoin, handleMemberLeave } = require('./welcomeHandler');
 const announcement = require('./commands/announcement');
 const { handleBadWords } = require('./badWords');
+const suggestion = require('./commands/suggestion');
 
 // Environment Variables
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
@@ -121,6 +122,10 @@ Object.keys(wordOfTheDayTimes).forEach((language) => {
 client.on('messageCreate', async (message) => {
     // Ignore messages from bots
     if (message.author.bot) return;
+
+   if(message.content.toLowerCase().startsWith('!suggestion')) {
+    suggestion.execute(message);
+}
 
     // Handle bad words
     handleBadWords(message);
