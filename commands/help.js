@@ -9,7 +9,7 @@ const embedColors = {
 
 module.exports = {
     name: 'help',
-    description: 'Displays quiz rules, Word of the Day feature, and study resources.',
+    description: 'Displays quiz rules, Word of the Day feature, study resources, and other server commands.',
     execute: async (message) => {
         const embed = new EmbedBuilder()
             .setTitle('Help Menu')
@@ -29,10 +29,18 @@ module.exports = {
 
                 '**3. Study Resources**\n' +
                 '• Use the command **!resources** to get helpful study resources for Russian, German, and French.\n' +
-                '• The bot will provide links to websites, books, and other learning materials.'
+                '• The bot will provide links to websites, books, and other learning materials.\n\n' +
+
+                '**4. Suggestions**\n' +
+                '• Use **!suggestion** to submit an idea or suggestion for the server.\n' +
+                '• The moderators will review your suggestion and take appropriate action.\n\n' +
+
+                '**5. Reporting Issues**\n' +
+                '• Use **!ticket** to report an issue or someone on the server.\n' +
+                '• Provide a brief description, and the moderators will handle your report promptly.'
             )
             .setColor(embedColors.default)
-            .setFooter({ text: 'Type !quiz to start, or use !resources for study materials. Good luck!' });
+            .setFooter({ text: 'Type !quiz to start, or use !resources, !suggestion, or !ticket for other features. Good luck!' });
 
         await message.channel.send({ embeds: [embed] });
     },
