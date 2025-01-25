@@ -8,7 +8,6 @@ module.exports = (client) => {
     'Type !help',
     'Type !quiz',
     'Monitoring You',
-
   ];
 
   let i = 0;
@@ -19,7 +18,7 @@ module.exports = (client) => {
 
     // Set the bot's presence (custom status)
     client.user.setPresence({
-      activities: [{ name: status }],
+      activities: [{ name: status, type: 'CUSTOM' }], // Set the activity type to CUSTOM
       status: 'online', // Set the bot's online status (online, idle, dnd, invisible)
     });
 
