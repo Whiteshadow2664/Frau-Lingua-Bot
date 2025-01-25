@@ -49,7 +49,7 @@ const embedColors = {
     russian: '#7907ff',
     german: '#f4ed09',
     french: '#09ebf6',
-    default: '#1cd86c',
+    default: '#acf508',
 };
 
 // Word of the Day Data for each language
