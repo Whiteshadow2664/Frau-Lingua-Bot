@@ -125,7 +125,12 @@ client.on('messageCreate', async (message) => {
     // Ignore messages from bots
     if (message.author.bot) return;
 
-   if(message.content.toLowerCase().startsWith('!suggestion')) {
+// Command for Ticket
+if (message.content.toLowerCase() === '!ticket') {
+  ticket.execute(message);
+}
+ 
+// Command for Suggestion if(message.content.toLowerCase().startsWith('!suggestion')) {
     suggestion.execute(message);
 }
 
