@@ -23,5 +23,5 @@ module.exports = (client) => {
     });
 
     i++;
-  }, 3000); // Change status every 5 seconds
+  }, 2000); // Change status every 5 seconds
 };
