@@ -1,3 +1,4 @@
+
 const { EmbedBuilder } = require('discord.js'); // Use EmbedBuilder instead of MessageEmbed
 
 module.exports = {
@@ -9,7 +10,7 @@ module.exports = {
     if (message.author.bot) return;
 
     // Get the suggestion channel by its ID
-    const suggestionChannel = message.guild.channels.cache.get('1330850741744697344');
+    const suggestionChannel = message.guild.channels.cache.get('1224730855717470299'); // Updated channel ID
 
     if (!suggestionChannel) {
       return message.reply('I could not find the suggestions channel.');
