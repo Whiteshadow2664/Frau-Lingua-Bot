@@ -17,6 +17,8 @@ const { handleMemberJoin, handleMemberLeave } = require('./welcomeHandler');
 const announcement = require('./commands/announcement');
 const { handleBadWords } = require('./badWords');
 const suggestion = require('./commands/suggestion');
+const ticket = require('./commands/ticket');
+const status = require('./status.js');
 
 // Environment Variables
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
