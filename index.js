@@ -126,6 +126,11 @@ client.on('messageCreate', async (message) => {
     // Ignore messages from bots
     if (message.author.bot) return;
 
+if (message.content.toLowerCase() === '!leaderboard') {
+   leaderboard.execute(message);
+}
+
+
 if (message.content.toLowerCase() === '!ticket') {
   ticket.execute(message);
 }
@@ -313,7 +318,7 @@ for (const question of questionsToAsk) {
 
             // Step 4: Display Results
 const result = activeQuizzes[message.author.id];
-delete activeQuizzes[message.author.id];
+
 
 // Create the detailed results text
 const detailedResultsText = result.detailedResults
@@ -338,6 +343,12 @@ const resultEmbed = new EmbedBuilder()
 
 // Send the result message
 await message.channel.send({ embeds: [resultEmbed] });
+// Update the leaderboard with quiz results
+const username = message.author.username; // Get the user's username
+const points = result.score; // Use the score from the quiz result
+// Reuse `selectedLanguage` and `selectedLevel` instead of redeclaring them
+leaderboard.updateLeaderboard(username, selectedLanguage, selectedLevel, points);
+delete activeQuizzes[message.author.id];
         } catch (error) {
             console.error(error);
             return message.channel.send('An error occurred. Please try again.');
