@@ -13,13 +13,13 @@ module.exports = (client) => {
   let i = 0;
 
   setInterval(() => {
-    if (i >= statuses.length) i = 0; // Reset index if at the end of the statuses
+    if (i >= statuses.length) i = 0;
     const status = statuses[i];
+    console.log(`Setting status: ${status}`);
 
-    // Set the bot's presence (custom status)
     client.user.setPresence({
-      activities: [{ name: status, type: 'CUSTOM' }], // Set the activity type to CUSTOM
-      status: 'online', // Set the bot's online status (online, idle, dnd, invisible)
+      activities: [{ name: status, type: 'PLAYING' }], // Example activity type
+      status: 'online',
     });
 
     i++;
