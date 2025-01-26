@@ -15,7 +15,6 @@ module.exports = (client) => {
   setInterval(() => {
     if (i >= statuses.length) i = 0;
     const status = statuses[i];
-    console.log(`Setting status: ${status}`);
 
     client.user.setPresence({
       activities: [{ name: status, type: 'PLAYING' }], // Example activity type
