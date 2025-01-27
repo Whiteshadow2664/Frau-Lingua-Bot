@@ -123,23 +123,16 @@ module.exports.execute = async (message) => {
             return message.channel.send(`No leaderboard data found for ${selectedLanguage.toUpperCase()} ${selectedLevel}.`);
         }
 
-        // Create the table-like format for the leaderboard
-        const leaderboardTable = leaderboardData.rows
-            .map(
-                (row, index) => 
-                `| **#${index + 1}** | ${row.username} | ${row.quizzes} | ${row.points} | ${row.avg_points.toFixed(2)} |`
-            )
-            .join('\n');
-
-        // Embed with the leaderboard table
         const leaderboardEmbed = new EmbedBuilder()
             .setTitle(`${selectedLanguage.charAt(0).toUpperCase() + selectedLanguage.slice(1)} Level ${selectedLevel} Leaderboard`)
             .setColor('#FFD700')
             .setDescription(
-                `**${selectedLanguage.charAt(0).toUpperCase() + selectedLanguage.slice(1)} Level ${selectedLevel} Leaderboard**\n\n` +
-                `| Rank | Username | Q | P | AVG |\n` +
-                `|------|----------|---|---|-----|\n` +
-                `${leaderboardTable}`
+                leaderboardData.rows
+                    .map(
+                        (row, index) =>
+                            `**#${index + 1}** ${row.username} - **Q:** ${row.quizzes} | **P:** ${row.points} | **AVG:** ${row.avg_points.toFixed(2)}`
+                    )
+                    .join('\n')
             );
 
         message.channel.send({ embeds: [leaderboardEmbed] });
