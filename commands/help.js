@@ -19,7 +19,9 @@ module.exports = {
                 '• Select a language by reacting to the flag: 🇩🇪 (German), 🇫🇷 (French), 🇷🇺 (Russian).\n' +
                 '• Choose the level of the quiz by reacting to A1, A2, etc.\n' +
                 '• The bot will ask **5 questions** with a time limit of **1 minute** for each.\n' +
-                '• At the end, the bot provides a **detailed result** to help you improve.\n\n' +
+                '• At the end, the bot provides a **detailed result** to help you improve.\n' +
+                '• Users who score **5 out of 5** will receive **1 extra point**.\n' +
+                '• In case of a tie (same score), the user with the higher **average score** across quizzes will rank higher.\n\n' +
 
                 '**2. Word of the Day**\n' +
                 '• The bot sends a new word daily in the respective language channels:\n' +
@@ -37,7 +39,13 @@ module.exports = {
 
                 '**5. Reporting Issues**\n' +
                 '• Use **!ticket** to report an issue or someone on the server.\n' +
-                '• Provide a brief description, and the moderators will handle your report promptly.'
+                '• Provide a brief description, and the moderators will handle your report promptly.\n\n' +
+
+                '**6. Leaderboard**\n' +
+                '• Use **!leaderboard <language> <level>** to view the leaderboard for a specific language and level.\n' +
+                '• The leaderboard ranks users based on their quiz scores, with bonus points for scoring 5 out of 5.\n' +
+                '• In case of a tie in scores, users are ranked by their **average quiz score**.\n\n' +
+                '**Good luck and keep learning!**'
             )
             .setColor(embedColors.default)
             .setFooter({ text: 'Type !quiz to start, or use !resources, !suggestion, or !ticket for other features. Good luck!' });
