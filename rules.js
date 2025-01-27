@@ -21,7 +21,7 @@ module.exports = (client) => {
       { name: '#12', value: 'Anyone offering paid tutoring services must be verified or approved by the server staff before advertising their services.', inline: false },
       { name: '#13', value: 'Follow Discord Rules.', inline: false },
     )
-    .setColor('#ff0000')  // Red color for emphasis
+    .setColor('#acf508')  // Red color for emphasis
     .setFooter({ text: 'Everything doesn\'t need to be mentioned in rules; use common sense. We expect all the members to be humble and respectful towards each other as well as welcoming towards new members.' })
     .setTimestamp();
 
