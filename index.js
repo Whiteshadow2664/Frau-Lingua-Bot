@@ -325,6 +325,13 @@ for (const question of questionsToAsk) {
             // Step 4: Display Results
 const result = activeQuizzes[message.author.id];
 
+// If the user scored exactly 5 points, add 1 extra point
+if (result.score === 5) {
+    result.score += 1;
+    // You can also notify the user about this bonus point if desired
+    message.channel.send(`${message.author}, congratulations! You've scored 5 points, so you get an additional point!`);
+}
+
 
 // Create the detailed results text
 const detailedResultsText = result.detailedResults
