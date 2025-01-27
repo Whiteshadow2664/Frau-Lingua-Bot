@@ -1,4 +1,3 @@
-
 const { EmbedBuilder } = require('discord.js');
 const { Pool } = require('pg');
 
@@ -137,9 +136,11 @@ module.exports.execute = async (message) => {
             .setTitle(`${selectedLanguage.charAt(0).toUpperCase() + selectedLanguage.slice(1)} Level ${selectedLevel} Leaderboard`)
             .setColor('#FFD700')
             .setDescription(
-                `| Rank | Username | Q | P | AVG |\n` +
-                `|------|----------|---|---|-----|\n` +
-                `${leaderboardTable}`
+                `\`\`\`
+| Rank | Username | Q | P | AVG |
+|------|----------|---|---|-----|
+${leaderboardTable}
+\`\`\``
             );
 
         message.channel.send({ embeds: [leaderboardEmbed] });
