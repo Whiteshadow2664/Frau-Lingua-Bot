@@ -31,7 +31,7 @@ module.exports = (client) => {
 
                 // Create the embed log for the action
                 const logEmbed = new EmbedBuilder()
-                    .setColor('RED')
+                    .setColor(0xacf508)  // Set color to #acf508
                     .setTitle('User Kicked for Suspicious Link')
                     .setDescription(`${message.author.tag} was kicked for sending a suspicious link: ${message.content}`)
                     .setTimestamp();
