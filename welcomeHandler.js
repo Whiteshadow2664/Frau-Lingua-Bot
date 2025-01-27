@@ -9,8 +9,6 @@ const handleMemberJoin = async (member) => {
     const channel = guild.channels.cache.find(ch => ch.name === 'welcome');
     if (channel) {
         await channel.send(`Hello <@${member.id}>, welcome to the server! You are member **#${memberCount}**!`);
-    } else {
-        console.error("Channel not found: 'welcome'");
     }
 };
 
@@ -23,8 +21,6 @@ const handleMemberLeave = async (member) => {
     const channel = guild.channels.cache.find(ch => ch.name === 'welcome');
     if (channel) {
         await channel.send(`${member.user.username} has left the server. We now have **${memberCount}** members.`);
-    } else {
-        console.error("Channel not found: 'welcome'");
     }
 };
 
