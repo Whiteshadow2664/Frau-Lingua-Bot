@@ -1,3 +1,4 @@
+
 const { EmbedBuilder } = require('discord.js');
 const { Pool } = require('pg');
 
@@ -112,7 +113,7 @@ module.exports.execute = async (message) => {
             `SELECT username, quizzes, points, (points::FLOAT / quizzes) AS avg_points
             FROM leaderboard
             WHERE language = $1 AND level = $2
-            ORDER BY points DESC
+            ORDER BY points DESC, avg_points DESC
             LIMIT 10`,
             [selectedLanguage, selectedLevel]
         );
@@ -123,16 +124,22 @@ module.exports.execute = async (message) => {
             return message.channel.send(`No leaderboard data found for ${selectedLanguage.toUpperCase()} ${selectedLevel}.`);
         }
 
+        // Create a table-like format with code block for the leaderboard
+        const leaderboardTable = leaderboardData.rows
+            .map(
+                (row, index) => 
+                `| **#${index + 1}** | ${row.username} | ${row.quizzes} | ${row.points} | ${row.avg_points.toFixed(2)} |`
+            )
+            .join('\n');
+
+        // Embed with the leaderboard in table format
         const leaderboardEmbed = new EmbedBuilder()
             .setTitle(`${selectedLanguage.charAt(0).toUpperCase() + selectedLanguage.slice(1)} Level ${selectedLevel} Leaderboard`)
             .setColor('#FFD700')
             .setDescription(
-                leaderboardData.rows
-                    .map(
-                        (row, index) =>
-                            `**#${index + 1}** ${row.username} - **Q:** ${row.quizzes} | **P:** ${row.points} | **AVG:** ${row.avg_points.toFixed(2)}`
-                    )
-                    .join('\n')
+                `| Rank | Username | Q | P | AVG |\n` +
+                `|------|----------|---|---|-----|\n` +
+                `${leaderboardTable}`
             );
 
         message.channel.send({ embeds: [leaderboardEmbed] });
