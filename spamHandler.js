@@ -13,74 +13,74 @@ const userTimeouts = new Map(); // Store users currently in timeout
 
 // Function to handle message creation (detect spam)
 const handleSpamDetection = async (message) => {
-    // Ignore bot messages or messages without content
-    if (message.author.bot || !message.content) return;
+  // Ignore bot messages or messages without content
+  if (message.author.bot || !message.content) return;
 
-    const userId = message.author.id;
-    const currentTimestamp = Date.now();
+  const userId = message.author.id;
+  const currentTimestamp = Date.now();
 
-    // Initialize user data if not already present
-    if (!userMessages.has(userId)) {
-        userMessages.set(userId, []);
-        userWarnings.set(userId, 0);
+  // Initialize user data if not already present
+  if (!userMessages.has(userId)) {
+    userMessages.set(userId, []);
+    userWarnings.set(userId, 0);
+  }
+
+  const userMessageHistory = userMessages.get(userId);
+
+  // Add the current message timestamp to the user's message history
+  userMessageHistory.push(currentTimestamp);
+
+  // Filter out messages older than the SPAM_TIMEFRAME
+  const recentMessages = userMessageHistory.filter(timestamp => currentTimestamp - timestamp < SPAM_TIMEFRAME);
+
+  // If user has exceeded spam limit
+  if (recentMessages.length >= SPAM_LIMIT) {
+    // Check if the user is already in a timeout
+    if (userTimeouts.has(userId)) {
+      // If the user is already in timeout, prevent further action
+      return;
     }
 
-    const userMessageHistory = userMessages.get(userId);
+    // Get current warning count
+    const warningCount = userWarnings.get(userId);
 
-    // Add the current message timestamp to the user's message history
-    userMessageHistory.push(currentTimestamp);
+    if (warningCount === 0) {
+      // First warning: Notify the user and increment their warning count
+      await message.channel.send(`${message.author}, ${WARNING_MESSAGE}`);
+      userWarnings.set(userId, 1);
+    } else if (warningCount === 1) {
+      // Second offense: Timeout the user (5 minutes mute)
+      const member = await message.guild.members.fetch(userId);
+      if (member) {
+        // Mute the user (adjust permissions or roles for timeout)
+        const role = message.guild.roles.cache.find(r => r.name === 'Muted'); // Ensure you have a "Muted" role
+        if (role) {
+          await member.roles.add(role); // Add the mute role to the user
+          await message.channel.send(`${message.author} has been timed out for 5 minutes due to repeated spamming.`);
+          userWarnings.set(userId, 0); // Reset the warning count
+          userTimeouts.set(userId, Date.now()); // Track the timeout duration
 
-    // Filter out messages older than the SPAM_TIMEFRAME
-    const recentMessages = userMessageHistory.filter(timestamp => currentTimestamp - timestamp <= SPAM_TIMEFRAME);
-
-    // If the user has sent more than the spam limit within the timeframe
-    if (recentMessages.length > SPAM_LIMIT) {
-        // Check if the user is already in a timeout
-        if (userTimeouts.has(userId)) {
-            // If the user is already in timeout, prevent further action
-            return;
+          // Remove the mute role after the timeout duration
+          setTimeout(async () => {
+            await member.roles.remove(role); // Remove the mute role after 5 minutes
+            userTimeouts.delete(userId); // Remove timeout tracking
+          }, TIMEOUT_DURATION);
         }
-
-        // Get current warning count
-        const warningCount = userWarnings.get(userId);
-
-        if (warningCount === 0) {
-            // First warning: Notify the user and increment their warning count
-            await message.channel.send(`${message.author}, ${WARNING_MESSAGE}`);
-            userWarnings.set(userId, 1);
-        } else if (warningCount === 1) {
-            // Second offense: Timeout the user (5 minutes mute)
-            const member = await message.guild.members.fetch(userId);
-            if (member) {
-                // Mute the user (adjust permissions or roles for timeout)
-                const role = message.guild.roles.cache.find(r => r.name === 'Muted'); // Ensure you have a "Muted" role
-                if (role) {
-                    await member.roles.add(role); // Add the mute role to the user
-                    await message.channel.send(`${message.author} has been timed out for 5 minutes due to repeated spamming.`);
-                    userWarnings.set(userId, 0); // Reset the warning count
-                    userTimeouts.set(userId, Date.now()); // Track the timeout duration
-
-                    // Remove the mute role after the timeout duration
-                    setTimeout(async () => {
-                        await member.roles.remove(role); // Remove the mute role after 5 minutes
-                        userTimeouts.delete(userId); // Remove timeout tracking
-                    }, TIMEOUT_DURATION);
-                }
-            }
-        }
-
-        // Delete the spam message
-        try {
-            await message.delete();
-        } catch (error) {
-            console.error('Error deleting spam message:', error);
-        }
+      }
     }
 
-    // Update the user's message history with recent messages
-    userMessages.set(userId, recentMessages);
+    // Delete the spam message(s)
+    try {
+      // Delete all spammed messages from the user in the recent timeframe
+      const messagesToDelete = message.channel.messages.cache.filter(msg => msg.author.id === userId && currentTimestamp - msg.createdTimestamp < SPAM_TIMEFRAME);
+      messagesToDelete.forEach(msg => msg.delete().catch(error => console.error('Error deleting spam message:', error)));
+    } catch (error) {
+      console.error('Error deleting spam messages:', error);
+    }
+  }
+
+  // Update the user's message history with recent messages
+  userMessages.set(userId, recentMessages);
 };
 
-module.exports = {
-    handleSpamDetection
-};
+module.exports = { handleSpamDetection };
