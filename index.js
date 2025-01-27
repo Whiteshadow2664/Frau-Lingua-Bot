@@ -375,9 +375,9 @@ delete activeQuizzes[message.author.id];
 
 client.once('ready', () => {
     console.log(`${client.user.tag} is online!`);
-status(client);
-linkFilter(client);
-rules(client);
+    status(client);
+    linkFilter(client);
+    rules(client);
 });
 
 // Event when a member joins the server
