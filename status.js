@@ -21,7 +21,7 @@ module.exports = (client) => {
     }
 
     client.user.setPresence({
-      activities: [{ name: status, type: 'PLAYING' }],
+      activities: [{ name: status, type: 'WATCHING' }], // You can also use 'WATCHING' or 'LISTENING' as per your preference
       status: 'online',
     });
 
