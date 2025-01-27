@@ -42,8 +42,8 @@ module.exports = {
                 '• Provide a brief description, and the moderators will handle your report promptly.\n\n' +
 
                 '**6. Leaderboard**\n' +
-                '• Use **!leaderboard <language> <level>** to view the leaderboard for a specific language and level.\n' +
-                '• The leaderboard ranks users based on their quiz scores, with bonus points for scoring 5 out of 5.\n' +
+                '• Use **!leaderboard** to view the leaderboard for a specific language and level.\n' +
+                '• The leaderboard ranks users based on their quiz scores, with bonus point for scoring 5 out of 5.\n' +
                 '• In case of a tie in scores, users are ranked by their **average quiz score**.\n\n' +
                 '**Good luck and keep learning!**'
             )
