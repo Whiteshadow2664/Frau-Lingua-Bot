@@ -57,7 +57,7 @@ module.exports.execute = async (message) => {
         const languageEmbed = new EmbedBuilder()
             .setTitle('Choose a Language for the Leaderboard')
             .setDescription('React to select the language:\n\n🇩🇪: German\n🇫🇷: French\n🇷🇺: Russian')
-            .setColor('#00FF00');
+            .setColor('#acf508');
 
         const languageMessage = await message.channel.send({ embeds: [languageEmbed] });
         const languageEmojis = ['🇩🇪', '🇫🇷', '🇷🇺'];
@@ -84,7 +84,7 @@ module.exports.execute = async (message) => {
         const levelEmbed = new EmbedBuilder()
             .setTitle(`Choose a Level for the ${selectedLanguage.charAt(0).toUpperCase() + selectedLanguage.slice(1)} Leaderboard`)
             .setDescription('React to select the level:\n\n🇦: A1\n🇧: A2\n🇨: B1\n🇩: B2\n🇪: C1\n🇫: C2')
-            .setColor('#00FF00');
+            .setColor('#acf508');
 
         const levelMessage = await message.channel.send({ embeds: [levelEmbed] });
         const levelEmojis = ['🇦', '🇧', '🇨', '🇩', '🇪', '🇫'];
