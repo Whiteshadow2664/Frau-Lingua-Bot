@@ -19,12 +19,26 @@ const responses = {
     }
 };
 
+// List of allowed channel IDs
+const allowedChannelIds = [
+    '818023867372011551',
+    '1233064967109087292',
+    '1225363050207514675',
+    '1225362787581296640',
+    '1303664003444379649'
+];
+
 let conversationState = {
     previousLanguage: null, // To track the last language used
     hasAskedHowAreYou: false, // To track if the bot has already asked "How are you?"
 };
 
 const handleGreeting = (message) => {
+    // Check if the message is from an allowed channel
+    if (!allowedChannelIds.includes(message.channel.id)) {
+        return null; // Ignore if the message is from a channel that is not in the allowed list
+    }
+
     const content = message.content.toLowerCase(); // Convert message to lowercase for matching
 
     // Check for greetings in each language
