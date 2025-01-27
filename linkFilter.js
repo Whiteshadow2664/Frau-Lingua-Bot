@@ -36,8 +36,8 @@ module.exports = (client) => {
                     .setDescription(`${message.author.tag} was kicked for sending a suspicious link: ${message.content}`)
                     .setTimestamp();
 
-                // Log the action to the specified log channel (1333351167941546018)
-                const logChannel = message.guild.channels.cache.get('1333351167941546018');
+                // Log the action to the specified log channel (1224730855717470299)
+                const logChannel = message.guild.channels.cache.get('1224730855717470299');
                 if (logChannel) logChannel.send({ embeds: [logEmbed] });
 
             } catch (err) {
