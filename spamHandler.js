@@ -1,4 +1,3 @@
-
 const { EmbedBuilder } = require('discord.js');
 
 // Spam detection thresholds
@@ -34,6 +33,12 @@ const handleSpamDetection = async (message) => {
   // Filter out messages older than the SPAM_TIMEFRAME
   const recentMessages = userMessageHistory.filter(timestamp => currentTimestamp - timestamp < SPAM_TIMEFRAME);
 
+  // Clean up old message history if it exceeds the max size
+  const MAX_HISTORY_SIZE = 100;
+  if (userMessageHistory.length > MAX_HISTORY_SIZE) {
+    userMessages.set(userId, userMessageHistory.slice(-MAX_HISTORY_SIZE));
+  }
+
   // If user has exceeded spam limit
   if (recentMessages.length >= SPAM_LIMIT) {
     // Check if the user is already in a timeout
@@ -53,7 +58,6 @@ const handleSpamDetection = async (message) => {
       // Second offense: Timeout the user (5 minutes mute)
       const member = await message.guild.members.fetch(userId);
       if (member) {
-        // Mute the user (adjust permissions or roles for timeout)
         const role = message.guild.roles.cache.find(r => r.name === 'Muted'); // Ensure you have a "Muted" role
         if (role) {
           await member.roles.add(role); // Add the mute role to the user
@@ -72,12 +76,15 @@ const handleSpamDetection = async (message) => {
 
     // Delete the spam messages
     try {
-      const messagesToDelete = message.channel.messages.cache.filter(msg => msg.author.id === userId && currentTimestamp - msg.createdTimestamp < SPAM_TIMEFRAME);
+      const messagesToDelete = await message.channel.messages.fetch({ limit: 100 }); // Fetch last 100 messages
+      const messagesToDeleteFiltered = messagesToDelete.filter(msg => msg.author.id === userId && currentTimestamp - msg.createdTimestamp < SPAM_TIMEFRAME);
       
       // Ensure the deletion of each message is handled properly
-      for (const msg of messagesToDelete.values()) {
-        await msg.delete().catch(error => console.error('Error deleting spam message:', error));
+      const deletePromises = [];
+      for (const msg of messagesToDeleteFiltered.values()) {
+        deletePromises.push(msg.delete().catch(error => console.error('Error deleting spam message:', error)));
       }
+      await Promise.all(deletePromises);
     } catch (error) {
       console.error('Error deleting spam messages:', error);
     }
@@ -87,4 +94,5 @@ const handleSpamDetection = async (message) => {
   userMessages.set(userId, recentMessages);
 };
 
+// Register the function with messageCreate event
 module.exports = { handleSpamDetection };
