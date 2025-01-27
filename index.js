@@ -20,6 +20,9 @@ const suggestion = require('./commands/suggestion');
 const ticket = require('./commands/ticket');
 const status = require('./status.js');
 const leaderboard = require('./leaderboard.js');
+const linkFilter = require('./linkFilter');
+
+
 
 // Environment Variables
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
@@ -367,6 +370,7 @@ delete activeQuizzes[message.author.id];
 client.once('ready', () => {
     console.log(`${client.user.tag} is online!`);
 status(client);
+linkFilter(client);
 });
 
 // Event when a member joins the server
