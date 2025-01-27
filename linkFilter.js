@@ -1,4 +1,4 @@
-const { MessageEmbed } = require('discord.js');
+const { EmbedBuilder } = require('discord.js');
 
 module.exports = (client) => {
     // List of suspicious patterns (you can add more as needed)
@@ -9,7 +9,7 @@ module.exports = (client) => {
         /discounts/i,             // Matches discount or offer links
         /.*\.ru$/,                // Matches Russian domain links (you can add more such patterns if needed)
         /.*\.xyz$/,               // Matches .xyz domain links (often used by suspicious websites)
-        /steamcommunity\.com/i   // Matches StreamCommunity.com (new addition)
+        /steamcommunity\.com/i   // Matches SteamCommunity.com (new addition)
     ];
 
     // Listener for new messages
@@ -28,11 +28,8 @@ module.exports = (client) => {
                 // Kick the user directly without sending a warning
                 await message.guild.members.kick(message.author, { reason: "Sent suspicious link." });
 
-                // Log the action (you can log this to a log channel)
-                console.log(`Kicked ${message.author.tag} for sending a suspicious link.`);
-
                 // Create the embed log for the action
-                const logEmbed = new MessageEmbed()
+                const logEmbed = new EmbedBuilder()
                     .setColor('RED')
                     .setTitle('User Kicked for Suspicious Link')
                     .setDescription(`${message.author.tag} was kicked for sending a suspicious link: ${message.content}`)
@@ -43,6 +40,7 @@ module.exports = (client) => {
                 if (logChannel) logChannel.send({ embeds: [logEmbed] });
 
             } catch (err) {
+                // Only log errors, no console.log for successful actions
                 console.error('Error kicking user:', err);
             }
         }
