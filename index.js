@@ -146,7 +146,11 @@ if(message.content.toLowerCase().startsWith('!suggestion')) {
 }
     // Handle bad words
     handleBadWords(message);
+});
 
+// Commands and Event Handling
+client.on('messageCreate', async (message) => {
+    if (message.author.bot) return;
 
 // Commands for Announcement
     if (message.content.toLowerCase() === '!announcement') {
