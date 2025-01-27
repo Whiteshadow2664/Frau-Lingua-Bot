@@ -1,4 +1,4 @@
-const badWords = ['cunt', 'dick', 'nigga', 'horny', 'motherfucker', 'mf', 'cum', 'SMD', 'suck my dick', 'your mom', 'Mutterfucker', 'cock', 'pussy', '6000', 'fuck you', 'Bitch'];
+const badWords = ['cunt', 'dick', 'nigga', 'horny', 'motherfucker', 'mf', 'cum', 'SMD', 'suck my dick', 'your mom', 'Mutterfucker', 'cock', 'pussy', '6000', 'fuck you', 'Bitch', 'hitler', 'Nazi'];
 const userOffenses = new Map(); // To track user offenses
 
 /**
