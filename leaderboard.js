@@ -123,7 +123,7 @@ module.exports.execute = async (message) => {
             return message.channel.send(`No leaderboard data found for ${selectedLanguage.toUpperCase()} ${selectedLevel}.`);
         }
 
-        // Create a table-like format with code block for the leaderboard
+        // Create the table-like format for the leaderboard
         const leaderboardTable = leaderboardData.rows
             .map(
                 (row, index) => 
@@ -131,16 +131,15 @@ module.exports.execute = async (message) => {
             )
             .join('\n');
 
-        // Embed with the leaderboard in table format
+        // Embed with the leaderboard table
         const leaderboardEmbed = new EmbedBuilder()
             .setTitle(`${selectedLanguage.charAt(0).toUpperCase() + selectedLanguage.slice(1)} Level ${selectedLevel} Leaderboard`)
             .setColor('#FFD700')
             .setDescription(
-                `\`\`\`
-| Rank | Username | Q | P | AVG |
-|------|----------|---|---|-----|
-${leaderboardTable}
-\`\`\``
+                `**${selectedLanguage.charAt(0).toUpperCase() + selectedLanguage.slice(1)} Level ${selectedLevel} Leaderboard**\n\n` +
+                `| Rank | Username | Q | P | AVG |\n` +
+                `|------|----------|---|---|-----|\n` +
+                `${leaderboardTable}`
             );
 
         message.channel.send({ embeds: [leaderboardEmbed] });
