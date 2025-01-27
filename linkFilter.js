@@ -23,8 +23,10 @@ module.exports = (client) => {
 
         if (foundSuspiciousLink) {
             try {
-                // Delete the suspicious message
-                await message.delete();
+                // Check if the message can be deleted (e.g., message exists and bot has permissions)
+                if (message.deletable) {
+                    await message.delete();
+                }
 
                 // Kick the user directly without sending a warning
                 await message.guild.members.kick(message.author, { reason: "Sent suspicious link." });
@@ -38,11 +40,17 @@ module.exports = (client) => {
 
                 // Log the action to the specified log channel (1224730855717470299)
                 const logChannel = message.guild.channels.cache.get('1224730855717470299');
-                if (logChannel) logChannel.send({ embeds: [logEmbed] });
+                if (logChannel) {
+                    logChannel.send({ embeds: [logEmbed] });
+                }
 
             } catch (err) {
-                // Only log errors, no console.log for successful actions
-                console.error('Error kicking user:', err);
+                // Gracefully handle errors
+                if (err.code === 10008) {
+                    console.error('The message is unknown or has been deleted already.');
+                } else {
+                    console.error('Error kicking user:', err);
+                }
             }
         }
     });
