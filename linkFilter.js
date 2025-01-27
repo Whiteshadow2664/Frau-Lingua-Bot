@@ -9,7 +9,8 @@ module.exports = (client) => {
         /discounts/i,             // Matches discount or offer links
         /.*\.ru$/,                // Matches Russian domain links (you can add more such patterns if needed)
         /.*\.xyz$/,               // Matches .xyz domain links (often used by suspicious websites)
-        /steamcommunity\.com/i   // Matches SteamCommunity.com (new addition)
+        /steamcommunity\.com/i,   // Matches SteamCommunity.com
+        /steamcomunity\.com/i     // Matches steamcomunity.com (added new pattern)
     ];
 
     // Listener for new messages
