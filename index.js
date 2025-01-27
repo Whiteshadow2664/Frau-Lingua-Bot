@@ -22,7 +22,6 @@ const status = require('./status.js');
 const leaderboard = require('./leaderboard.js');
 const linkFilter = require('./linkFilter');
 const { handleSpamDetection } = require('./spamHandler');
-const rules = require('./rules.js');  // Import the rules.js file
 
 // Environment Variables
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
@@ -377,7 +376,6 @@ client.once('ready', () => {
     console.log(`${client.user.tag} is online!`);
     status(client);
     linkFilter(client);
-    rules(client);
 });
 
 // Event when a member joins the server
