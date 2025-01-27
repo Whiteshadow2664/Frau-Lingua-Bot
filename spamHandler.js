@@ -1,3 +1,4 @@
+
 const { EmbedBuilder } = require('discord.js');
 
 // Spam detection thresholds
@@ -69,11 +70,14 @@ const handleSpamDetection = async (message) => {
       }
     }
 
-    // Delete the spam message(s)
+    // Delete the spam messages
     try {
-      // Delete all spammed messages from the user in the recent timeframe
       const messagesToDelete = message.channel.messages.cache.filter(msg => msg.author.id === userId && currentTimestamp - msg.createdTimestamp < SPAM_TIMEFRAME);
-      messagesToDelete.forEach(msg => msg.delete().catch(error => console.error('Error deleting spam message:', error)));
+      
+      // Ensure the deletion of each message is handled properly
+      for (const msg of messagesToDelete.values()) {
+        await msg.delete().catch(error => console.error('Error deleting spam message:', error));
+      }
     } catch (error) {
       console.error('Error deleting spam messages:', error);
     }
