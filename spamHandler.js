@@ -74,13 +74,11 @@ const handleSpamDetection = async (message) => {
       }
     }
 
-    // Delete the spam messages (only within the SPAM_TIMEFRAME)
+    // Delete the spam messages
     try {
       const messagesToDelete = await message.channel.messages.fetch({ limit: 100 }); // Fetch last 100 messages
-      const messagesToDeleteFiltered = messagesToDelete.filter(msg => 
-        msg.author.id === userId && currentTimestamp - msg.createdTimestamp < SPAM_TIMEFRAME
-      );
-
+      const messagesToDeleteFiltered = messagesToDelete.filter(msg => msg.author.id === userId && currentTimestamp - msg.createdTimestamp < SPAM_TIMEFRAME);
+      
       // Ensure the deletion of each message is handled properly
       const deletePromises = [];
       for (const msg of messagesToDeleteFiltered.values()) {
@@ -96,5 +94,12 @@ const handleSpamDetection = async (message) => {
   userMessages.set(userId, recentMessages);
 };
 
-// Register the function with messageCreate event (you might need to adjust for your Discord.js version)
-module.exports = { handleSpamDetection };
+// Register the function with messageCreate event
+client.on('messageCreate', async (message) => {
+  if (message.author.bot) return;
+
+  // Call the spam detection function
+  await handleSpamDetection(message);
+
+  // Other command handling...
+});
