@@ -325,13 +325,8 @@ for (const question of questionsToAsk) {
             // Step 4: Display Results
 const result = activeQuizzes[message.author.id];
 
-// If the user scored exactly 5 points, add 1 extra point
-if (result.score === 5) {
-    result.score += 1;
-    // You can also notify the user about this bonus point if desired
-    message.channel.send(`${message.author}, congratulations! You've scored 5 points, so you get an additional point!`);
-}
-
+// Add 1 extra point if the user scores exactly 5
+const finalScore = result.score === 5 ? result.score + 1 : result.score;
 
 // Create the detailed results text
 const detailedResultsText = result.detailedResults
@@ -347,7 +342,7 @@ const detailedResultsText = result.detailedResults
 const resultEmbed = new EmbedBuilder()
     .setTitle('Quiz Results')
     .setDescription(
-        `You scored ${result.score} out of ${result.detailedResults.length}!\n\n` + // Removed "in level ${result.level}"
+        `You scored ${finalScore} out of ${result.detailedResults.length}!\n\n` + // Use finalScore here
         `**Level:** ${result.level}\n` +
         `**Language:** ${result.language.charAt(0).toUpperCase() + result.language.slice(1)}\n\n` +
         `**Detailed Results:**\n${detailedResultsText}`
@@ -356,9 +351,11 @@ const resultEmbed = new EmbedBuilder()
 
 // Send the result message
 await message.channel.send({ embeds: [resultEmbed] });
+
 // Update the leaderboard with quiz results
 const username = message.author.username; // Get the user's username
-const points = result.score; // Use the score from the quiz result
+const points = finalScore; // Use the adjusted final score
+
 // Reuse `selectedLanguage` and `selectedLevel` instead of redeclaring them
 leaderboard.updateLeaderboard(username, selectedLanguage, selectedLevel, points);
 delete activeQuizzes[message.author.id];
