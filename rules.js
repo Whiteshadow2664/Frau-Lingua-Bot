@@ -1,4 +1,5 @@
 const { EmbedBuilder } = require('discord.js');
+const cron = require('node-cron'); // Import node-cron for scheduling
 
 module.exports = (client) => {
   const rulesChannelId = '1224667724110893199'; // Channel ID for the rules channel
@@ -13,20 +14,21 @@ module.exports = (client) => {
       { name: '#4', value: 'No inappropriate usernames, they will be changed.', inline: false },
       { name: '#5', value: 'No spamming in the discord server under any circumstance. (No arguing with mods on what is or is not spam)', inline: false },
       { name: '#6', value: 'No talking disrespectfully of other content creators.', inline: false },
-      { name: '#7', value: 'Please keep the server to English or Hindi, this is for our moderation team, if you can’t keep to English or Hindi it will be a kick.', inline: false },
+      { name: '#7', value: 'Please keep the server to English or Hindi, this is for our moderation team. If you can’t keep to English or Hindi, you will be kicked.', inline: false },
       { name: '#8', value: 'If we find someone under 13 y/o, they will be banned according to Discord TOS.', inline: false },
-      { name: '#9', value: 'Keep language and topics friendly, we want everyone to feel safe in this community.', inline: false },
+      { name: '#9', value: 'Keep language and topics friendly. We want everyone to feel safe in this community.', inline: false },
       { name: '#10', value: 'Just listen to mods, arguing or harassing mods will lead to a mute/kick/ban.', inline: false },
       { name: '#11', value: 'If any of the above rules are violated, staff reserves the right to take the necessary action against the offender.', inline: false },
       { name: '#12', value: 'Anyone offering paid tutoring services must be verified or approved by the server staff before advertising their services.', inline: false },
       { name: '#13', value: 'Follow Discord Rules.', inline: false },
+      { name: '#14', value: '**!ticket**: If you have any issues or need assistance, use the `!ticket` command to create a support ticket. If the bot is not working or you need immediate assistance, feel free to ping a moderator.', inline: false }, // Added ticket rule
     )
-    .setColor('#acf508')  // Red color for emphasis
-    .setFooter({ text: 'Everything doesn\'t need to be mentioned in rules; use common sense. We expect all the members to be humble and respectful towards each other as well as welcoming towards new members.' })
+    .setColor('#acf508')  // Green color for emphasis
+    .setFooter({ text: 'Everything doesn\'t need to be mentioned in rules; use common sense. We expect all members to be humble and respectful towards each other and welcoming towards new members.' })
     .setTimestamp();
 
-  // Send the embed message to the rules channel (replace 'rules-channel-id' with the actual channel ID)
-  client.once('ready', async () => {
+  // Schedule the message to be sent every day at 22:20 IST (10:20 PM)
+  cron.schedule('20 22 * * *', async () => {
     try {
       const rulesChannel = await client.channels.fetch(rulesChannelId);
       if (rulesChannel) {
@@ -46,5 +48,9 @@ module.exports = (client) => {
     } catch (error) {
       console.error('Error sending rules embed:', error);
     }
+  }, {
+    scheduled: true,
+    timezone: 'Asia/Kolkata', // Set timezone to IST (Indian Standard Time)
   });
+
 };
