@@ -21,7 +21,7 @@ const ticket = require('./commands/ticket');
 const status = require('./status.js');
 const leaderboard = require('./leaderboard.js');
 const linkFilter = require('./linkFilter');
-
+const { handleSpamDetection } = require('./spamHandler');
 
 
 // Environment Variables
@@ -126,8 +126,9 @@ Object.keys(wordOfTheDayTimes).forEach((language) => {
 
 // Check if the message is badwords in any language
 client.on('messageCreate', async (message) => {
-    // Ignore messages from bots
     if (message.author.bot) return;
+
+    await handleSpamDetection(message);
 
 if (message.content.toLowerCase() === '!leaderboard') {
    leaderboard.execute(message);
@@ -137,6 +138,8 @@ if (message.content.toLowerCase() === '!leaderboard') {
 if (message.content.toLowerCase() === '!ticket') {
   ticket.execute(message);
 }
+
+
 
 if(message.content.toLowerCase().startsWith('!suggestion')) {
     suggestion.execute(message);
