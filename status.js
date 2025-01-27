@@ -14,7 +14,7 @@ module.exports = (client) => {
       status = statuses[0]; // Good Morning
     } else if (currentHour >= 14 && currentHour < 22) {
       status = statuses[1]; // Good Afternoon
-    } else if (currentHour >= 22 || currentHour < 2) {
+    } else if (currentHour >= 22 && currentHour < 24) {
       status = statuses[2]; // Good Evening
     } else {
       status = statuses[3]; // Good Night
