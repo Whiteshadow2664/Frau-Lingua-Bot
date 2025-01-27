@@ -325,9 +325,6 @@ for (const question of questionsToAsk) {
             // Step 4: Display Results
 const result = activeQuizzes[message.author.id];
 
-// Add 1 extra point if the user scores exactly 5
-const finalScore = result.score === 5 ? result.score + 1 : result.score;
-
 // Create the detailed results text
 const detailedResultsText = result.detailedResults
     .map(
@@ -338,11 +335,14 @@ const detailedResultsText = result.detailedResults
     )
     .join('\n\n');
 
+// Final score logic (if the user scored exactly 5 points, add 1 extra point for leaderboard)
+const finalScore = result.score === 5 ? result.score + 1 : result.score; // Add bonus point for perfect score
+
 // Build the final result message
 const resultEmbed = new EmbedBuilder()
     .setTitle('Quiz Results')
     .setDescription(
-        `You scored ${finalScore} out of ${result.detailedResults.length}!\n\n` + // Use finalScore here
+        `You scored ${result.score} out of ${result.detailedResults.length}!\n\n` + // Display the original score
         `**Level:** ${result.level}\n` +
         `**Language:** ${result.language.charAt(0).toUpperCase() + result.language.slice(1)}\n\n` +
         `**Detailed Results:**\n${detailedResultsText}`
@@ -354,9 +354,8 @@ await message.channel.send({ embeds: [resultEmbed] });
 
 // Update the leaderboard with quiz results
 const username = message.author.username; // Get the user's username
-const points = finalScore; // Use the adjusted final score
+const points = finalScore; // Use the final score (including extra point if perfect)
 
-// Reuse `selectedLanguage` and `selectedLevel` instead of redeclaring them
 leaderboard.updateLeaderboard(username, selectedLanguage, selectedLevel, points);
 delete activeQuizzes[message.author.id];
         } catch (error) {
