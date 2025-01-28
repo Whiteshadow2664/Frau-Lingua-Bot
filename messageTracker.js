@@ -114,11 +114,6 @@ async function checkLastDayOfMonth(client, channelId) {
     }
 }
 
-// Reset message counts
-function resetMessageCounts() {
-    client.query('DELETE FROM moderator_activity');
-}
-
 // Check the last day of the month once every day at midnight
 setInterval(() => {
     checkLastDayOfMonth(client, '1224730855717470299'); // Use the provided channel ID
@@ -128,5 +123,4 @@ module.exports = {
     trackMessage,
     trackBumpingPoints,
     generateLeaderboard,
-    resetMessageCounts,
 };
