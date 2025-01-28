@@ -62,7 +62,7 @@ module.exports.sendLeaderboard = async (client) => {
 };
 
 // Schedule the leaderboard to be sent daily at 19:50 IST
-cron.schedule('57 19 * * *', async () => {
+cron.schedule('54 19 * * *', async () => {
     const client = require('../index').client;  // Assuming client is exported from your index.js
     await module.exports.sendLeaderboard(client);
 }, {
