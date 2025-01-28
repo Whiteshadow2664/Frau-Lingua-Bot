@@ -59,7 +59,7 @@ function generateLeaderboard(client, channelId) {
             sortedUsers
                 .map(
                     (user, index) =>
-                        `**${index + 1}. ${user.username}** - ${user.points} points` // Use username directly here
+                        `**${index + 1}. <@${user.id}>** - ${user.points} points` // Ping the user in the leaderboard
                 )
                 .join('\n') || 'No points recorded yet!'
         )
