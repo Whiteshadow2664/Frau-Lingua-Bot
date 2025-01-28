@@ -59,11 +59,11 @@ function generateLeaderboard(client, channelId) {
             sortedUsers
                 .map(
                     (user, index) =>
-                        `**${index + 1}. <@${user.id}>** - ${user.points} points`
+                        `**${index + 1}. ${user.username}** - ${user.points} points` // Use username directly here
                 )
                 .join('\n') || 'No points recorded yet!'
         )
-        .setFooter({ text: sortedUsers.length > 0 ? `🎉 Congratulations to <@${sortedUsers[0].id}> for leading!` : 'Start earning points to get featured!' });
+        .setFooter({ text: sortedUsers.length > 0 ? `🎉 Congratulations to ${sortedUsers[0].username} for leading!` : 'Start earning points to get featured!' });
 
     const channel = client.channels.cache.get(channelId);
     if (channel) channel.send({ embeds: [embed] });
