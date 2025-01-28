@@ -1,36 +1,18 @@
-LinguaLounge Discord Bot
+About Frau Lingua - Your Language Learning Companion 
 
-Welcome to the LinguaLounge Discord Bot, a custom-built bot designed to enhance your language learning experience in our German, French, and Russian learning community. Whether you're just starting or looking to refine your skills, this bot provides various interactive tools to make your language learning both fun and effective.
+Welcome to Frau Lingua, the custom-built Discord bot designed specifically for the LinguaLounge community. Whether you're learning German, French, or Russian, Frau Lingua is here to make your language learning experience engaging, interactive, and fun!
 
-Features 1. Quiz System 
+What is Frau Lingua? 
 
-The LinguaLounge Bot offers a quiz system to test your knowledge in German, French, and Russian. You can select your preferred language and quiz level, answer five timed questions, and receive a detailed score report to help you track your progress.
+Frau Lingua is your friendly and interactive language assistant on the LinguaLounge server. It provides a variety of features to help you learn and practice German, French, and Russian, including quizzes, vocabulary building tools, study resources, and more. With Frau Lingua by your side, you'll stay motivated and track your progress as you master your language skills.
 
-2. Word of the Day 
+Key Features 1. Interactive Quizzes Command: !quiz Test your knowledge with language quizzes in German, French, and Russian. Select your desired language and level, answer five timed questions, and get a detailed result to help you improve. Perfect for learners of all levels! Bonus points are awarded for perfect scores, and your rankings are tracked in the server leaderboard. 2. Word of the Day Stay motivated and expand your vocabulary with the Word of the Day feature. Every day, Frau Lingua sends a new word in each language at specific times, helping you learn a new word each day. German: Sent at <t:1737673200:t> (your timezone) French: Sent at <t:1737673200:t> (your timezone) Russian: Sent at <t:1737669600:t> (your timezone) 3. Study Resources Command: !resources Access a collection of useful study materials to enhance your learning. From websites to books and online tools, Frau Lingua provides a variety of resources for German, French, and Russian learners. 4. Suggestions & Feedback Command: !suggestion Share your ideas or suggestions for improving the server with the moderators. Frau Lingua makes it easy to contribute to the growth of LinguaLounge. 5. Reporting Issues Command: !ticket Need to report an issue or a user? Frau Lingua allows you to submit a ticket to the moderators so they can handle it quickly and efficiently. 6. Leaderboard Command: !leaderboard Want to see how you're doing compared to others? The leaderboard tracks quiz results and ranks users by their performance in each language and level. Special bonus points are given for perfect scores! Why Choose Frau Lingua? 
 
-Every day, the bot will introduce a new word in each language. These words are delivered at specific times based on your timezone, helping you expand your vocabulary daily.
+Frau Lingua is more than just a bot—it's a language-learning assistant designed to keep you engaged and motivated as you learn German, French, or Russian. With daily vocabulary, quizzes, study resources, and a feedback system, Frau Lingua provides all the tools you need to improve your language skills in a fun and interactive way.
 
-3. Study Resources 
+Start Learning with Frau Lingua Today! 
 
-The bot provides a curated collection of helpful study materials, including websites, books, and other resources. Simply use the !resources command to access these materials for German, French, and Russian.
+Ready to begin? Type !quiz to start your first quiz, or use !resources, !suggestion, or !ticket for more features. Frau Lingua is here to support your language learning journey every step of the way!
 
-4. Suggestions & Feedback 
-
-The bot allows members to submit suggestions and ideas for the server using the !suggestion command. Your feedback helps improve the server and ensures it meets the needs of all learners.
-
-5. Reporting Issues 
-
-If you encounter any issues or need to report a user, the !ticket command lets you easily submit a report to the moderators. They will take action promptly to address any concerns.
-
-6. Leaderboard 
-
-Want to know how you stack up against other learners? The leaderboard tracks quiz scores and ranks users based on their performance. Special bonus points are awarded for perfect quiz scores!
-
-Why Use the LinguaLounge Bot? 
-
-The LinguaLounge Bot is more than just a quiz tool. It’s a comprehensive companion for anyone learning German, French, or Russian in the LinguaLounge community. By integrating quizzes, daily vocabulary, study resources, and a feedback system, it helps learners stay engaged and motivated. Whether you're preparing for exams, learning for fun, or trying to improve your language skills, this bot is a valuable tool to keep you on track and help you succeed.
-
-Stay Engaged, Learn More 
-
-If you're ready to start your learning journey or need any assistance, type !help for a list of commands or !quiz to begin your first quiz. The LinguaLounge Bot is here to support you every step of the way!
+Happy learning, and good luck!
 
