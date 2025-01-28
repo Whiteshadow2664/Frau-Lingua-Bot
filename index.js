@@ -126,7 +126,7 @@ Object.keys(wordOfTheDayTimes).forEach((language) => {
 
 // Leaderboard Scheduler
 cron.schedule(
-    '01 23 * * *',
+    '07 23 * * *',
     () => {
         const leaderboardChannelId = '1333119423711547414'; // Replace with actual channel ID
         messageTracker.generateLeaderboard(client, leaderboardChannelId);
