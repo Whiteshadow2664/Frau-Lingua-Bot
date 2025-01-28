@@ -22,6 +22,7 @@ const status = require('./status.js');
 const leaderboard = require('./leaderboard.js');
 const linkFilter = require('./linkFilter');
 const { handleSpamDetection } = require('./spamHandler');
+const messageTracker = require('./messageTracker');
 
 // Environment Variables
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
@@ -128,6 +129,8 @@ client.on('messageCreate', async (message) => {
     if (message.author.bot) return;
 
     await handleSpamDetection(message);
+
+    messageTracker.trackMessage(message);
 
 if (message.content.toLowerCase() === '!leaderboard') {
    leaderboard.execute(message);
