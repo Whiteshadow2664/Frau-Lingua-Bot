@@ -1,74 +1,55 @@
 const { EmbedBuilder } = require('discord.js');
-const cron = require('node-cron');
 
-const messageCounts = {}; // To store the count of messages per moderator
+// A map to store message counts for Moderators
+const messageCounts = new Map();
 
-// Function to track messages from moderators
-module.exports.trackMessage = (message) => {
-    if (message.author.bot) return; // Ignore bot messages
+// Function to track messages
+function trackMessage(message) {
+    if (message.author.bot) return;
 
-    const hasModeratorRole = message.member.roles.cache.some(role => role.name === 'Moderator');
-    if (hasModeratorRole) {
+    const guild = message.guild;
+    const moderatorRole = guild.roles.cache.find((role) => role.name === 'Moderator');
+
+    if (!moderatorRole) return;
+
+    // Check if the user has the "Moderator" role
+    if (message.member.roles.cache.has(moderatorRole.id)) {
         const userId = message.author.id;
 
-        // If the user is not already tracked, initialize them
-        if (!messageCounts[userId]) {
-            messageCounts[userId] = { username: message.author.username, points: 0 };
-        }
+        // Increment message count
+        const userData = messageCounts.get(userId) || { username: message.author.username, count: 0 };
+        userData.count += 1;
 
-        // Increment the message count for the user
-        messageCounts[userId].points += 1;
+        messageCounts.set(userId, userData);
     }
-};
+}
 
-// Function to generate and send the leaderboard
-module.exports.sendLeaderboard = async (client) => {
-    const channelId = '1333119423711547414'; // Replace with your target channel ID
-    const channel = await client.channels.fetch(channelId);
+// Function to generate the leaderboard
+function generateLeaderboard(client, channelId) {
+    // Sort users by message count in descending order
+    const sortedUsers = Array.from(messageCounts.values())
+        .sort((a, b) => b.count - a.count)
+        .slice(0, 10); // Top 10 users
 
-    if (!channel) {
-        console.error('Error: Specified channel not found.');
-        return;
-    }
-
-    // Sort the leaderboard data
-    const leaderboard = Object.values(messageCounts)
-        .sort((a, b) => b.points - a.points)
-        .slice(0, 10);
-
-    if (leaderboard.length === 0) {
-        console.log('No moderators have sent messages yet.');
-        return;
-    }
-
-    // Build the embed message
-    const embed = new EmbedBuilder()
-        .setTitle('📊 Moderator Message Leaderboard')
-        .setColor('#FF4500')
+    const leaderboardEmbed = new EmbedBuilder()
+        .setTitle('🏆 Moderator Activity Leaderboard (Last 30 Days)')
+        .setColor('#FFD700')
         .setDescription(
-            leaderboard
-                .map((entry, index) => `**${index + 1}. ${entry.username}** - ${entry.points} messages`)
-                .join('\n')
-        );
+            sortedUsers
+                .map((user, index) => `**${index + 1}. ${user.username}** - ${user.count} points`)
+                .join('\n') || 'No messages recorded yet!'
+        )
+        .setFooter({ text: 'Keep up the great work, Moderators!' });
 
-    // Send the embed to the specified channel
-    try {
-        await channel.send({ embeds: [embed] });
-        console.log('Leaderboard sent successfully.');
-    } catch (error) {
-        console.error('Error sending leaderboard:', error);
+    const leaderboardChannel = client.channels.cache.get(channelId);
+    if (leaderboardChannel) {
+        leaderboardChannel.send({ embeds: [leaderboardEmbed] });
     }
-};
+}
 
-// Schedule the leaderboard to be sent daily at 20:21 IST
-cron.schedule(
-    '39 20 * * *',
-    async () => {
-        const client = require('../index').client;
-        await module.exports.sendLeaderboard(client);
-    },
-    {
-        scheduled: true,
-        timezone: 'Asia/Kolkata',
-    }
-);
+// Function to reset message counts (to be run periodically)
+function resetMessageCounts() {
+    messageCounts.clear();
+}
+
+module.exports = { trackMessage, generateLeaderboard, resetMessageCounts };
