@@ -123,17 +123,17 @@ Object.keys(wordOfTheDayTimes).forEach((language) => {
   });
 });
 
-// Daily Leaderboard Schedule
+
+// Leaderboard Scheduler
 cron.schedule(
-    '34 21 * * *', // 9:30 PM IST
+    '48 21 * * *',
     () => {
+        const leaderboardChannelId = '1333119423711547414'; // Replace with actual channel ID
         messageTracker.generateLeaderboard(client, leaderboardChannelId);
-        messageTracker.resetMessageCounts(); // Reset counts after sending
+        messageTracker.resetMessageCounts();
     },
-    {
-        timezone: 'Asia/Kolkata',
-    }
-); 
+    { timezone: 'Asia/Kolkata' }
+);
 
 
 // Check if the message is badwords in any language
