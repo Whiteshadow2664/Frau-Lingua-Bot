@@ -60,7 +60,7 @@ function generateLeaderboard(client, channelId) {
 
     const embed = new EmbedBuilder()
         .setTitle('🏆 Moderator Activity Leaderboard (Last 30 Days)')
-        .setColor('#FFD700')
+        .setColor('#acf508') // Changed color to #acf508
         .setDescription(
             sortedUsers
                 .map(
