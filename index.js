@@ -123,19 +123,6 @@ Object.keys(wordOfTheDayTimes).forEach((language) => {
   });
 });
 
-
-// Leaderboard Scheduler
-cron.schedule(
-    '49 23 * * *',
-    () => {
-        const leaderboardChannelId = '1333119423711547414'; // Replace with actual channel ID
-        messageTracker.generateLeaderboard(client, leaderboardChannelId);
-        messageTracker.resetMessageCounts();
-    },
-    { timezone: 'Asia/Kolkata' }
-);
-
-
 // Check if the message is badwords in any language
 client.on('messageCreate', async (message) => {
     if (message.author.bot) return;
