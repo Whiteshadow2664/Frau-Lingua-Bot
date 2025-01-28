@@ -1,41 +1,61 @@
 const { EmbedBuilder } = require('discord.js');
-const fs = require('fs');
+const { Client } = require('pg');
+require('dotenv').config(); // Load environment variables from .env file
 const moment = require('moment-timezone');
 
-const messageCounts = new Map();
-const dataFile = './messageCounts.json';
+// Initialize PostgreSQL client using DATABASE_URL from .env file
+const client = new Client({
+    connectionString: process.env.DATABASE_URL,
+    ssl: {
+        rejectUnauthorized: false, // Disable SSL verification for NeonTech (if necessary)
+    },
+});
 
-// Load saved message counts
-function loadMessageCounts() {
-    if (fs.existsSync(dataFile)) {
-        const data = JSON.parse(fs.readFileSync(dataFile, 'utf-8'));
-        data.forEach(([userId, userData]) => messageCounts.set(userId, userData));
-    }
+client.connect();
+
+// Create the moderator_activity table if it doesn't exist
+async function createTableIfNotExist() {
+    const createTableQuery = `
+        CREATE TABLE IF NOT EXISTS moderator_activity (
+            user_id VARCHAR(255) PRIMARY KEY,
+            username VARCHAR(255) NOT NULL,
+            points INT DEFAULT 0
+        );
+    `;
+    
+    await client.query(createTableQuery);
 }
 
-// Save message counts
-function saveMessageCounts() {
-    fs.writeFileSync(dataFile, JSON.stringify(Array.from(messageCounts.entries())));
-}
+// Call the function to ensure the table exists
+createTableIfNotExist().catch(err => console.error('Error creating table:', err));
 
 // Track messages
-function trackMessage(message) {
+async function trackMessage(message) {
     if (message.author.bot) return;
 
     const moderatorRole = message.guild.roles.cache.find((role) => role.name.toLowerCase() === 'moderator');
     if (!moderatorRole || !message.member.roles.cache.has(moderatorRole.id)) return;
 
     const userId = message.author.id;
-    // Initialize or update user data with points
-    const userData = messageCounts.get(userId) || { id: userId, username: message.author.username, points: 0 };
-    userData.points++; // Increment points for each message
-    messageCounts.set(userId, userData);
+    const username = message.author.username;
 
-    saveMessageCounts(); // Ensure we save the data after each message
+    // Check if the user exists in the table
+    const checkUserQuery = 'SELECT * FROM moderator_activity WHERE user_id = $1';
+    const res = await client.query(checkUserQuery, [userId]);
+
+    if (res.rows.length === 0) {
+        // User doesn't exist, so insert into the table
+        const insertQuery = 'INSERT INTO moderator_activity (user_id, username, points) VALUES ($1, $2, $3)';
+        await client.query(insertQuery, [userId, username, 0]);
+    } else {
+        // Update the user's points
+        const updateQuery = 'UPDATE moderator_activity SET points = points + 1 WHERE user_id = $1';
+        await client.query(updateQuery, [userId]);
+    }
 }
 
 // Track "bumping" messages from a specific bot
-function trackBumpingPoints(message) {
+async function trackBumpingPoints(message) {
     if (
         message.author.id === '735147814878969968' && // Bumping bot ID
         message.content.includes('Thx for bumping our Server! We will remind you in 2 hours!')
@@ -43,30 +63,38 @@ function trackBumpingPoints(message) {
         const mentionedUser = message.mentions.users.first();
         if (mentionedUser) {
             const userId = mentionedUser.id;
-            // Initialize or update user data with points
-            const userData = messageCounts.get(userId) || { id: userId, username: mentionedUser.username, points: 0 };
-            userData.points += 3; // Add 3 points for bumping
-            messageCounts.set(userId, userData);
+            const username = mentionedUser.username;
 
-            saveMessageCounts(); // Ensure we save the data after each bump
+            // Check if the user exists in the table
+            const checkUserQuery = 'SELECT * FROM moderator_activity WHERE user_id = $1';
+            const res = await client.query(checkUserQuery, [userId]);
+
+            if (res.rows.length === 0) {
+                // User doesn't exist, so insert into the table
+                const insertQuery = 'INSERT INTO moderator_activity (user_id, username, points) VALUES ($1, $2, $3)';
+                await client.query(insertQuery, [userId, username, 0]);
+            } else {
+                // Update the user's points
+                const updateQuery = 'UPDATE moderator_activity SET points = points + 3 WHERE user_id = $1';
+                await client.query(updateQuery, [userId]);
+            }
         }
     }
 }
 
 // Generate leaderboard
-function generateLeaderboard(client, channelId) {
-    const sortedUsers = Array.from(messageCounts.values())
-        .sort((a, b) => b.points - a.points) // Sort users by points in descending order
-        .slice(0, 10); // Take top 10 users
+async function generateLeaderboard(client, channelId) {
+    const res = await client.query('SELECT * FROM moderator_activity ORDER BY points DESC LIMIT 10');
+    const sortedUsers = res.rows;
 
     const embed = new EmbedBuilder()
-        .setTitle('🏆 Moderator Activity Leaderboard (Last 30 Days)')
+        .setTitle('🏆 Moderator Activity Leaderboard (This Month)')
         .setColor('#acf508') // Changed color to #acf508
         .setDescription(
             sortedUsers
                 .map(
                     (user, index) =>
-                        `**${index + 1}. <@${user.id}>** - ${user.points} points` // Ping the user in the leaderboard
+                        `**${index + 1}. <@${user.user_id}>** - ${user.points} points` // Ping the user in the leaderboard
                 )
                 .join('\n') || 'No points recorded yet!'
         )
@@ -77,22 +105,19 @@ function generateLeaderboard(client, channelId) {
 }
 
 // Check if today is the last day of the month and send the leaderboard if true
-function checkLastDayOfMonth(client, channelId) {
-    const today = moment().tz('Europe/Berlin'); // Ensure we're using Europe/Berlin time zone
-    const lastDay = moment().endOf('month'); // Get the last day of the current month
+async function checkLastDayOfMonth(client, channelId) {
+    const today = moment().tz('Europe/Berlin');
+    const lastDay = moment().endOf('month');
 
     if (today.isSame(lastDay, 'day')) {
-        generateLeaderboard(client, channelId); // Send leaderboard if today is the last day of the month
+        await generateLeaderboard(client, channelId); // Send leaderboard if today is the last day of the month
     }
 }
 
 // Reset message counts
 function resetMessageCounts() {
-    messageCounts.clear();
-    saveMessageCounts();
+    client.query('DELETE FROM moderator_activity');
 }
-
-loadMessageCounts();
 
 // Check the last day of the month once every day at midnight
 setInterval(() => {
@@ -104,6 +129,4 @@ module.exports = {
     trackBumpingPoints,
     generateLeaderboard,
     resetMessageCounts,
-    saveMessageCounts,
-    loadMessageCounts,
 };
