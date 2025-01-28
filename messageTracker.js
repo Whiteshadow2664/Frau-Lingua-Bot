@@ -88,7 +88,7 @@ async function generateLeaderboard(client, channelId) {
     const sortedUsers = res.rows;
 
     const embed = new EmbedBuilder()
-        .setTitle('🏆 Moderator Activity Leaderboard (This Month)')
+        .setTitle('🏆 Moderator of The Month')
         .setColor('#acf508') // Changed color to #acf508
         .setDescription(
             sortedUsers
