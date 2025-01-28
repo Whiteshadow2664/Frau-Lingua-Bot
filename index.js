@@ -123,6 +123,18 @@ Object.keys(wordOfTheDayTimes).forEach((language) => {
   });
 });
 
+// Daily Leaderboard Schedule
+cron.schedule(
+    '31 21 * * *', // 9:30 PM IST
+    () => {
+        messageTracker.generateLeaderboard(client, leaderboardChannelId);
+        messageTracker.resetMessageCounts(); // Reset counts after sending
+    },
+    {
+        timezone: 'Asia/Kolkata',
+    }
+); 
+
 
 // Check if the message is badwords in any language
 client.on('messageCreate', async (message) => {
