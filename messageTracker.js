@@ -1,5 +1,6 @@
 const { EmbedBuilder } = require('discord.js');
 const fs = require('fs');
+const moment = require('moment-timezone');
 
 const messageCounts = new Map();
 const dataFile = './messageCounts.json';
@@ -75,6 +76,16 @@ function generateLeaderboard(client, channelId) {
     if (channel) channel.send({ embeds: [embed] });
 }
 
+// Check if today is the last day of the month and send the leaderboard if true
+function checkLastDayOfMonth(client, channelId) {
+    const today = moment().tz('Europe/Berlin'); // Ensure we're using Europe/Berlin time zone
+    const lastDay = moment().endOf('month'); // Get the last day of the current month
+
+    if (today.isSame(lastDay, 'day')) {
+        generateLeaderboard(client, channelId); // Send leaderboard if today is the last day of the month
+    }
+}
+
 // Reset message counts
 function resetMessageCounts() {
     messageCounts.clear();
@@ -82,6 +93,11 @@ function resetMessageCounts() {
 }
 
 loadMessageCounts();
+
+// Check the last day of the month once every day at midnight
+setInterval(() => {
+    checkLastDayOfMonth(client, '1224730855717470299'); // Use the provided channel ID
+}, 86400000); // 86400000 ms = 24 hours
 
 module.exports = {
     trackMessage,
