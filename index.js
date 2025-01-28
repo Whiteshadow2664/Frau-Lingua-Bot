@@ -128,9 +128,9 @@ Object.keys(wordOfTheDayTimes).forEach((language) => {
 client.on('messageCreate', async (message) => {
     if (message.author.bot) return;
 
-    await handleSpamDetection(message);
-
     messageTracker.trackMessage(message);
+
+    await handleSpamDetection(message);
 
 if (message.content.toLowerCase() === '!leaderboard') {
    leaderboard.execute(message);
