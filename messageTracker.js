@@ -25,9 +25,12 @@ function trackMessage(message) {
     if (!moderatorRole || !message.member.roles.cache.has(moderatorRole.id)) return;
 
     const userId = message.author.id;
-    const userData = messageCounts.get(userId) || { id: message.author.id, username: message.author.username, points: 0 };
-    userData.points++; // 1 point per message
+    // Initialize or update user data with points
+    const userData = messageCounts.get(userId) || { id: userId, username: message.author.username, points: 0 };
+    userData.points++; // Increment points for each message
     messageCounts.set(userId, userData);
+
+    saveMessageCounts(); // Ensure we save the data after each message
 }
 
 // Track "bumping" messages from a specific bot
@@ -39,9 +42,12 @@ function trackBumpingPoints(message) {
         const mentionedUser = message.mentions.users.first();
         if (mentionedUser) {
             const userId = mentionedUser.id;
-            const userData = messageCounts.get(userId) || { id: mentionedUser.id, username: mentionedUser.username, points: 0 };
-            userData.points += 3; // 3 points for being mentioned in a bumping message
+            // Initialize or update user data with points
+            const userData = messageCounts.get(userId) || { id: userId, username: mentionedUser.username, points: 0 };
+            userData.points += 3; // Add 3 points for bumping
             messageCounts.set(userId, userData);
+
+            saveMessageCounts(); // Ensure we save the data after each bump
         }
     }
 }
@@ -49,8 +55,8 @@ function trackBumpingPoints(message) {
 // Generate leaderboard
 function generateLeaderboard(client, channelId) {
     const sortedUsers = Array.from(messageCounts.values())
-        .sort((a, b) => b.points - a.points)
-        .slice(0, 10);
+        .sort((a, b) => b.points - a.points) // Sort users by points in descending order
+        .slice(0, 10); // Take top 10 users
 
     const embed = new EmbedBuilder()
         .setTitle('🏆 Moderator Activity Leaderboard (Last 30 Days)')
