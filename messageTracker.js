@@ -25,7 +25,7 @@ function trackMessage(message) {
     if (!moderatorRole || !message.member.roles.cache.has(moderatorRole.id)) return;
 
     const userId = message.author.id;
-    const userData = messageCounts.get(userId) || { username: message.author.username, points: 0 };
+    const userData = messageCounts.get(userId) || { id: message.author.id, username: message.author.username, points: 0 };
     userData.points++; // 1 point per message
     messageCounts.set(userId, userData);
 }
@@ -39,7 +39,7 @@ function trackBumpingPoints(message) {
         const mentionedUser = message.mentions.users.first();
         if (mentionedUser) {
             const userId = mentionedUser.id;
-            const userData = messageCounts.get(userId) || { username: mentionedUser.username, points: 0 };
+            const userData = messageCounts.get(userId) || { id: mentionedUser.id, username: mentionedUser.username, points: 0 };
             userData.points += 3; // 3 points for being mentioned in a bumping message
             messageCounts.set(userId, userData);
         }
