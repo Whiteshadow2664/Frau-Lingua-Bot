@@ -126,7 +126,7 @@ Object.keys(wordOfTheDayTimes).forEach((language) => {
 
 // Leaderboard Scheduler
 cron.schedule(
-    '20 22 * * *',
+    '27 22 * * *',
     () => {
         const leaderboardChannelId = '1333119423711547414'; // Replace with actual channel ID
         messageTracker.generateLeaderboard(client, leaderboardChannelId);
@@ -140,11 +140,12 @@ cron.schedule(
 client.on('messageCreate', async (message) => {
     if (message.author.bot) return;
 
-        messageTracker.trackBumpingPoints(message);
-        return;
-    } 
-
-    messageTracker.trackMessage(message);
+//Track message counts
+    if (message.content.includes('Thx for bumping our Server! We will remind you in 2 hours!')) {
+        messageTracker.trackBumpingPoints(message);
+    } else {
+        messageTracker.trackMessage(message);
+    }
 
     await handleSpamDetection(message);
 
