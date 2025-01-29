@@ -74,7 +74,7 @@ async function trackMessage(message) {
 // Track "bumping" messages from a specific bot
 async function trackBumpingPoints(message) {
     if (
-        message.author.id === '540129267728515072' && // Bumping bot ID
+        message.author.id === '735147814878969968' && // Bumping bot ID
         message.content.includes('Thx for bumping our Server! We will remind you in 2 hours!')
     ) {
         const mentionedUser = message.mentions.users.first();
