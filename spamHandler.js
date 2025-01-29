@@ -1,6 +1,6 @@
 const { EmbedBuilder, PermissionsBitField } = require('discord.js');
 
-const SPAM_LIMIT = 5; // Number of messages in timeframe
+const SPAM_LIMIT = 5; // Number of messages allowed within the timeframe
 const SPAM_TIMEFRAME = 5000; // Timeframe in milliseconds (5 seconds)
 const WARNING_MESSAGE = 'Please avoid spamming!';
 const TIMEOUT_DURATION = 300000; // Timeout duration in milliseconds (5 minutes)
@@ -51,8 +51,8 @@ const handleSpamDetection = async (message) => {
             `${message.author} has been timed out for 5 minutes due to repeated spamming.`
           );
 
-          // Reset warnings after timeout
-          userWarnings.set(userId, 0); 
+          // After timeout, reset the warning count to 0 for the next offenses
+          userWarnings.set(userId, 0);
           userTimeouts.set(userId, Date.now()); // Track timeout duration
         }
       } catch (error) {
