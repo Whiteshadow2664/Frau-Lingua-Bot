@@ -9,6 +9,8 @@ module.exports = (client) => {
   const updateStatus = () => {
     const currentHour = new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata', hour: '2-digit', hour12: false });
 
+    console.log(`Current Hour: ${currentHour}`); // Debugging line to check the current hour
+
     let status;
     if (currentHour >= 4 && currentHour < 12) {
       status = statuses[0]; // Good Morning
@@ -20,12 +22,16 @@ module.exports = (client) => {
       status = statuses[3]; // Good Night
     }
 
-    client.user.setPresence({
-      activities: [{ name: status, type: 'WATCHING' }], // You can also use 'WATCHING' or 'LISTENING' as per your preference
-      status: 'online',
-    });
-
     console.log(`Updating status to: ${status} (IST Time: ${currentHour} hrs)`);
+
+    // Set the bot presence
+    client.user.setPresence({
+      activities: [{ name: status, type: 'WATCHING' }],
+      status: 'online', // Sets the status to 'online'
+    })
+    .then(() => console.log('Status updated successfully'))
+    .catch(console.error); // Handle errors
+
   };
 
   updateStatus(); // Set initial status when bot starts
