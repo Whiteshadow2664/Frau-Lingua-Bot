@@ -32,7 +32,7 @@ if (!DISCORD_TOKEN) {
     process.exit(1);
 }
 
-const { Client, GatewayIntentBits, Partials } = require('discord.js');
+
 
 const client = new Client({
   intents: [
