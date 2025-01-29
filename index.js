@@ -32,17 +32,20 @@ if (!DISCORD_TOKEN) {
     process.exit(1);
 }
 
+const { Client, GatewayIntentBits, Partials } = require('discord.js');
+
 const client = new Client({
-    intents: [
-        GatewayIntentBits.Guilds,
-        GatewayIntentBits.GuildMessages,
-        GatewayIntentBits.MessageContent,
-        GatewayIntentBits.GuildMessageReactions,
-GatewayIntentBits.GuildMembers,
-GatewayIntentBits.Presences,
-    ],
-    partials: [Partials.Message, Partials.Channel, Partials.Reaction],
+  intents: [
+    GatewayIntentBits.Guilds,                  // For guild-related events
+    GatewayIntentBits.GuildMessages,           // For reading messages in guilds
+    GatewayIntentBits.MessageContent,          // Required for reading message content
+    GatewayIntentBits.GuildMessageReactions,   // For tracking reactions
+    GatewayIntentBits.GuildMembers,            // For tracking member updates and joins
+    GatewayIntentBits.Presences,               // For monitoring presence (status)
+  ],
+  partials: [Partials.Message, Partials.Channel, Partials.Reaction], // For handling partial data
 });
+
 
 // Express Server to Keep Bot Alive
 const app = express();
