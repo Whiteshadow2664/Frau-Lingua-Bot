@@ -1,85 +1,103 @@
-const { EmbedBuilder } = require('discord.js');
+const { EmbedBuilder, PermissionsBitField } = require('discord.js');
 
-// Spam detection thresholds
-const SPAM_LIMIT = 5; // Number of messages (5 messages)
-const SPAM_TIMEFRAME = 5000; // Timeframe in milliseconds (5 seconds)
+const SPAM_LIMIT = 5; // Number of messages in timeframe
+const SPAM_TIMEFRAME = 5000; // 5 seconds
 const WARNING_MESSAGE = 'Please avoid spamming!';
-const TIMEOUT_DURATION = 300000; // Timeout duration in milliseconds (5 minutes)
+const TIMEOUT_DURATION = 300000; // 5 minutes timeout
 
-// Track user messages and warnings
-const userMessages = new Map(); // Store user messages and their timestamps
-const userWarnings = new Map(); // Store warnings count for users
-const userTimeouts = new Map(); // Store users currently in timeout
+const userMessages = new Map();
+const userWarnings = new Map();
+const userTimeouts = new Map();
 
-// Function to handle message creation (detect spam)
 const handleSpamDetection = async (message) => {
-  // Ignore bot messages or messages without content
   if (message.author.bot || !message.content) return;
 
   const userId = message.author.id;
   const currentTimestamp = Date.now();
 
-  // Initialize user data if not already present
   if (!userMessages.has(userId)) {
     userMessages.set(userId, []);
     userWarnings.set(userId, 0);
   }
 
   const userMessageHistory = userMessages.get(userId);
-
-  // Add the current message timestamp to the user's message history
   userMessageHistory.push(currentTimestamp);
 
-  // Filter out messages older than the SPAM_TIMEFRAME
-  const recentMessages = userMessageHistory.filter(timestamp => currentTimestamp - timestamp < SPAM_TIMEFRAME);
+  const recentMessages = userMessageHistory.filter(
+    (timestamp) => currentTimestamp - timestamp < SPAM_TIMEFRAME
+  );
 
-  // If user has exceeded spam limit
   if (recentMessages.length >= SPAM_LIMIT) {
-    // Check if the user is already in a timeout
-    if (userTimeouts.has(userId)) {
-      // If the user is already in timeout, prevent further action
-      return;
-    }
+    if (userTimeouts.has(userId)) return; // User already timed out
 
-    // Get current warning count
     const warningCount = userWarnings.get(userId);
 
     if (warningCount === 0) {
-      // First warning: Notify the user and increment their warning count
       await message.channel.send(`${message.author}, ${WARNING_MESSAGE}`);
       userWarnings.set(userId, 1);
     } else if (warningCount === 1) {
-      // Second offense: Timeout the user (5 minutes mute)
-      const member = await message.guild.members.fetch(userId);
-      if (member) {
-        // Mute the user (adjust permissions or roles for timeout)
-        const role = message.guild.roles.cache.find(r => r.name === 'Muted'); // Ensure you have a "Muted" role
-        if (role) {
-          await member.roles.add(role); // Add the mute role to the user
-          await message.channel.send(`${message.author} has been timed out for 5 minutes due to repeated spamming.`);
-          userWarnings.set(userId, 0); // Reset the warning count
-          userTimeouts.set(userId, Date.now()); // Track the timeout duration
+      try {
+        const member = await message.guild.members.fetch(userId);
+        if (member) {
+          if (member.moderatable) {
+            await member.timeout(TIMEOUT_DURATION, 'Spamming'); // Use Discord timeout feature
+            await message.channel.send(
+              `${message.author} has been timed out for 5 minutes due to repeated spamming.`
+            );
+          } else {
+            let muteRole = message.guild.roles.cache.find((r) => r.name === 'Muted');
+            if (!muteRole) {
+              muteRole = await message.guild.roles.create({
+                name: 'Muted',
+                color: 'GRAY',
+                permissions: [],
+              });
 
-          // Remove the mute role after the timeout duration
-          setTimeout(async () => {
-            await member.roles.remove(role); // Remove the mute role after 5 minutes
-            userTimeouts.delete(userId); // Remove timeout tracking
-          }, TIMEOUT_DURATION);
+              message.guild.channels.cache.forEach(async (channel) => {
+                await channel.permissionOverwrites.create(muteRole, {
+                  SendMessages: false,
+                  Speak: false,
+                });
+              });
+            }
+            await member.roles.add(muteRole);
+            await message.channel.send(
+              `${message.author} has been muted for 5 minutes due to repeated spamming.`
+            );
+            setTimeout(async () => {
+              await member.roles.remove(muteRole);
+            }, TIMEOUT_DURATION);
+          }
+
+          userWarnings.set(userId, 0);
+          userTimeouts.set(userId, Date.now());
         }
+      } catch (error) {
+        console.error('Error muting user:', error);
       }
     }
 
-    // Delete the spam message(s)
+    // **Deleting Spam Messages**
     try {
-      // Delete all spammed messages from the user in the recent timeframe
-      const messagesToDelete = message.channel.messages.cache.filter(msg => msg.author.id === userId && currentTimestamp - msg.createdTimestamp < SPAM_TIMEFRAME);
-      messagesToDelete.forEach(msg => msg.delete().catch(error => console.error('Error deleting spam message:', error)));
-    } catch (error) {
-      console.error('Error deleting spam messages:', error);
+      const messages = await message.channel.messages.fetch({ limit: 100 });
+      const userMessages = messages.filter(
+        (msg) => msg.author.id === userId && currentTimestamp - msg.createdTimestamp < SPAM_TIMEFRAME
+      );
+
+      for (const msg of userMessages.values()) {
+        try {
+          await msg.delete();
+        } catch (deleteError) {
+          if (deleteError.code !== 10008) {
+            console.error('Error deleting message:', deleteError);
+          }
+        }
+      }
+    } catch (fetchError) {
+      console.error('Error fetching messages:', fetchError);
     }
   }
 
-  // Update the user's message history with recent messages
   userMessages.set(userId, recentMessages);
 };
 
