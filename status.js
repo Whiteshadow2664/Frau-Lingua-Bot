@@ -3,14 +3,11 @@ module.exports = (client) => {
   const status = 'Type !help';
 
   const updateStatus = () => {
-    console.log(`Setting status to: ${status}`);
-
     // Set the bot presence
     client.user.setPresence({
       activities: [{ name: status, type: 'PLAYING' }],  // You can use 'PLAYING', 'WATCHING', or 'LISTENING'
       status: 'online', // Sets the status to 'online'
     })
-    .then(() => console.log('Status updated successfully'))
     .catch(console.error); // Handle errors
   };
 
