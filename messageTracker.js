@@ -82,12 +82,17 @@ async function trackBumpingPoints(message) {
             const userId = mentionedUser.id;
             const username = mentionedUser.username;
 
+            console.log(`Bump message received: ${message.content}`);
+            console.log(`Bumping user: ${mentionedUser.username}`);
+
             try {
                 const res = await pool.query('SELECT * FROM moderator_activity WHERE user_id = $1', [userId]);
 
                 if (res.rows.length === 0) {
+                    // Insert a new row if the user doesn't exist
                     await pool.query('INSERT INTO moderator_activity (user_id, username, points) VALUES ($1, $2, $3)', [userId, username, 3]);
                 } else {
+                    // Update points for the user
                     await pool.query('UPDATE moderator_activity SET points = points + 3 WHERE user_id = $1', [userId]);
                 }
             } catch (err) {
