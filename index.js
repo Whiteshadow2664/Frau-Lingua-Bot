@@ -32,18 +32,15 @@ if (!DISCORD_TOKEN) {
     process.exit(1);
 }
 
-
-
 const client = new Client({
-  intents: [
-GatewayIntentBits.Guilds,
-GatewayIntentBits.GuildMessages,
-GatewayIntentBits.MessageContent,
-GatewayIntentBits.GuildMessageReactions,
+    intents: [
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.MessageContent,
+        GatewayIntentBits.GuildMessageReactions,
 GatewayIntentBits.GuildMembers,
-GatewayIntentBits.Presences
-  ],
-  partials: [Partials.Message, Partials.Channel, Partials.Reaction], // For handling partial data
+    ],
+    partials: [Partials.Message, Partials.Channel, Partials.Reaction],
 });
 
 
