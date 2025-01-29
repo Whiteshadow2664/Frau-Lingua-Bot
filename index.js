@@ -36,12 +36,12 @@ if (!DISCORD_TOKEN) {
 
 const client = new Client({
   intents: [
-    GatewayIntentBits.Guilds,                  // For guild-related events
-    GatewayIntentBits.GuildMessages,           // For reading messages in guilds
-    GatewayIntentBits.MessageContent,          // Required for reading message content
-    GatewayIntentBits.GuildMessageReactions,   // For tracking reactions
-    GatewayIntentBits.GuildMembers,            // For tracking member updates and joins
-    GatewayIntentBits.Presences,               // For monitoring presence (status)
+GatewayIntentBits.Guilds,
+GatewayIntentBits.GuildMessages,
+GatewayIntentBits.MessageContent,
+GatewayIntentBits.GuildMessageReactions,
+GatewayIntentBits.GuildMembers,
+GatewayIntentBits.Presences
   ],
   partials: [Partials.Message, Partials.Channel, Partials.Reaction], // For handling partial data
 });
