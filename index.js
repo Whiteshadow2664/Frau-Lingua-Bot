@@ -61,9 +61,9 @@ const embedColors = {
 
 // Word of the Day Data for each language
 const wordOfTheDayChannelIds = {
-  russian: '1333834611251216426', // Replace with actual Russian channel ID
-  german: '1333834611251216426',   // Replace with actual German channel ID
-  french: '1333834611251216426',   // Replace with actual French channel ID
+  russian: '1303664003444379649', // Replace with actual Russian channel ID
+  german: '1225363050207514675',   // Replace with actual German channel ID
+  french: '1225362787581296640',   // Replace with actual French channel ID
 };
 
 // Word of the Day Function
@@ -104,9 +104,9 @@ const embed = new EmbedBuilder()
 
 // Word of the Day Schedule for each language
 const wordOfTheDayTimes = {
-  russian: '00 22 * * *',  // 03:30 AM IST for Russian
-  german: '00 22 * * *',   // 04:30 AM IST for German
-  french: '00 22 * * *',   // 04:30 AM IST for French
+  russian: '30 03 * * *',  // 03:30 AM IST for Russian
+  german: '30 04 * * *',   // 04:30 AM IST for German
+  french: '30 04 * * *',   // 04:30 AM IST for French
 };
 
 Object.keys(wordOfTheDayTimes).forEach((language) => {
