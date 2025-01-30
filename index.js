@@ -23,6 +23,7 @@ const leaderboard = require('./leaderboard.js');
 const linkFilter = require('./linkFilter');
 const { handleSpamDetection } = require('./spamHandler');
 const messageTracker = require('./messageTracker');
+const dmHandler = require('./dmHandler');
 
 // Environment Variables
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
@@ -383,6 +384,7 @@ delete activeQuizzes[message.author.id];
 client.once('ready', () => {
     console.log(`${client.user.tag} is online!`);
     linkFilter(client);
+    dmHandler(client);
 });
 
 // Event when a member joins the server
