@@ -52,7 +52,7 @@ app.get('/', (req, res) => {
 });
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
-
+dmHandler(client);
 // Embed Colors
 const embedColors = {
     russian: '#7907ff',
@@ -381,11 +381,9 @@ delete activeQuizzes[message.author.id];
     }
 }); 
 
-    linkFilter(client);
-    dmHandler(client);
 client.once('ready', () => {
     console.log(`${client.user.tag} is online!`);
-    
+    linkFilter(client);
 });
 
 // Event when a member joins the server
