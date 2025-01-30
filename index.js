@@ -381,10 +381,11 @@ delete activeQuizzes[message.author.id];
     }
 }); 
 
-client.once('ready', () => {
-    console.log(`${client.user.tag} is online!`);
     linkFilter(client);
     dmHandler(client);
+client.once('ready', () => {
+    console.log(`${client.user.tag} is online!`);
+    
 });
 
 // Event when a member joins the server
