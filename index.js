@@ -24,6 +24,7 @@ const linkFilter = require('./linkFilter');
 const { handleSpamDetection } = require('./spamHandler');
 const messageTracker = require('./messageTracker');
 const dmHandler = require('./dmHandler');
+dmHandler(client);
 
 // Environment Variables
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
