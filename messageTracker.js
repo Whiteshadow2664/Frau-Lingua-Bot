@@ -134,18 +134,22 @@ async function generateLeaderboard(discordClient, channelId) {
 
 // Check if today is the last day of the month and send the leaderboard if true
 async function checkLastDayOfMonth(discordClient, channelId) {
-    const today = moment().tz('Europe/Berlin');
-    const lastDay = moment().endOf('month'); 
+    const today = moment().tz('Asia/Kolkata');
+    const lastDay = moment().endOf('month').tz('Asia/Kolkata'); 
 
+    // Check if today is the last day of the month
     if (today.isSame(lastDay, 'day')) {
-        await generateLeaderboard(discordClient, channelId);
+        // Check if the current time is 16:47 IST
+        if (today.hour() === 16 && today.minute() === 47) {
+            await generateLeaderboard(discordClient, channelId);
+        }
     }
 } 
 
-// Schedule a daily check for the last day of the month
+// Schedule a check for the last day of the month every minute
 setInterval(() => {
-    checkLastDayOfMonth(client, '1224730855717470299'); // Use the provided channel ID
-}, 86400000); // 86400000 ms = 24 hours 
+    checkLastDayOfMonth(client, '1334788665561452607'); // Use the provided channel ID
+}, 60000); // 60000 ms = 1 minute
 
 module.exports = {
     trackMessage,
