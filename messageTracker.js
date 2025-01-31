@@ -135,7 +135,7 @@ async function generateLeaderboard(discordClient, channelId) {
 // Check if today is the last day of the month and the time is 17:20 IST
 async function checkSendLeaderboard(discordClient, channelId) {
     const now = moment().tz('Asia/Kolkata'); // IST Timezone
-    const targetTime = moment().tz('Asia/Kolkata').set({ hour: 17, minute: 20, second: 0, millisecond: 0 });
+    const targetTime = moment().tz('Asia/Kolkata').set({ hour: 17, minute: 22, second: 0, millisecond: 0 });
 
     // Check if today is the last day of the month and it's exactly 17:20 IST
     if (now.isSame(targetTime, 'minute') && now.date() === moment().endOf('month').date()) {
@@ -143,10 +143,10 @@ async function checkSendLeaderboard(discordClient, channelId) {
     }
 }
 
-// Schedule a daily check for the last day of the month
+// Schedule a check every minute
 setInterval(() => {
-    checkLastDayOfMonth(client, '1224730855717470299'); // Use the provided channel ID
-}, 86400000); // 86400000 ms = 24 hours
+    checkSendLeaderboard(client, '1334788665561452607'); // Use the provided channel ID
+}, 60000); // 60000 ms = 1 minute
 
 module.exports = {
     trackMessage,
