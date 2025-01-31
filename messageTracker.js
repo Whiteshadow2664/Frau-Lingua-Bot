@@ -124,12 +124,7 @@ async function generateLeaderboard(discordClient, channelId) {
             .setFooter({ text: sortedUsers.length > 0 ? `🎉 Congratulations to ${sortedUsers[0].username} for leading!` : 'Start earning points to get featured!' });
 
         const channel = discordClient.channels.cache.get(channelId);
-        if (channel) {
-            channel.send({ embeds: [embed] });
-            console.log("Leaderboard sent successfully!");
-        } else {
-            console.error("Channel not found");
-        }
+        if (channel) channel.send({ embeds: [embed] });
     } catch (err) {
         console.error('Error generating leaderboard:', err);
         console.log('Reinitializing database connection...');
@@ -139,16 +134,16 @@ async function generateLeaderboard(discordClient, channelId) {
 
 // Check if today is the last day of the month and send the leaderboard if true
 async function checkLastDayOfMonth(client, channelId) {
-    const today = moment().tz('Asia/Kolkata');
+    const today = moment().tz('Asia/Kolkata'); // Use IST (Asia/Kolkata)
     const lastDay = moment().endOf('month');
 
-    // If today is the last day of the month, send the leaderboard at 13:30 IST
+    // If today is the last day of the month, schedule sending the leaderboard at 14:14 IST (2:14 PM)
     if (today.isSame(lastDay, 'day')) {
-        const targetTime = today.clone().set({ hour: 14, minute: 03, second: 0, millisecond: 0 });
+        const targetTime = today.clone().set({ hour: 14, minute: 14, second: 0, millisecond: 0 });  // 14:14 IST (2:14 PM)
         const msUntilTargetTime = targetTime.diff(today);
 
         if (msUntilTargetTime > 0) {
-            console.log(`Scheduling leaderboard for 13:30 IST today.`);
+            console.log(`Scheduling leaderboard for 14:14 IST today.`);
             setTimeout(() => {
                 generateLeaderboard(client, channelId);
             }, msUntilTargetTime);
@@ -158,25 +153,31 @@ async function checkLastDayOfMonth(client, channelId) {
     }
 }
 
-// Schedule a daily check for the last day of the month
+// Schedule a daily check for the last day of the month at 14:10 IST (4 minutes before the sending time)
 const scheduleCheckAt = (client) => {
     const now = moment().tz('Asia/Kolkata');  // Get current time in IST
 
-    // Calculate time until midnight of the last day of the month
-    const nextCheckTime = now.clone().endOf('month').set({ hour: 14, minute: 01, second: 0, millisecond: 0 });
+    // Calculate the time until 14:10 IST (4 minutes before the send time)
+    const nextCheckTime = now.clone().set({ hour: 14, minute: 10, second: 0, millisecond: 0 });
 
-    // If today is the last day but the time has passed, adjust the check for the next day
+    // If the check time has already passed, adjust it for the next day
+    if (now.isAfter(nextCheckTime)) {
+        nextCheckTime.add(1, 'days');
+    }
+
     const msUntilNextCheck = nextCheckTime.diff(now);
 
+    console.log(`Scheduling next check for last day of the month at 14:10 IST.`);
+
+    // Schedule the check to happen at 14:10 IST
     setTimeout(() => {
-        checkLastDayOfMonth(client, '1334788665561452607');  // Check for the last day of the month at 13:30 IST
+        checkLastDayOfMonth(client, '1334788665561452607');  // Check for the last day of the month at 14:10 IST
         setInterval(() => {
             checkLastDayOfMonth(client, '1334788665561452607');
         }, 86400000); // 86400000 ms = 24 hours
     }, msUntilNextCheck);
 };
 
-// Export function for external use
 module.exports = {
     trackMessage,
     trackBumpingPoints,
