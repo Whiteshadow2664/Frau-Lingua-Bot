@@ -133,20 +133,26 @@ async function generateLeaderboard(discordClient, channelId) {
 } 
 
 // Check if today is the last day of the month and send the leaderboard if true
-async function checkLastDayOfMonth(discordClient, channelId) {
-    const today = moment().tz('Europe/Berlin');
-    const lastDay = moment().endOf('month'); 
+// Update the function to check the time in IST and send the leaderboard at 16:39 IST
 
-    if (today.isSame(lastDay, 'day')) {
-        await generateLeaderboard(discordClient, channelId);
-    }
-} 
+async function checkLastDayOfMonth(discordClient, channelId) {
+    // Get today's date in IST
+    const today = moment().tz('Asia/Kolkata'); 
+    const lastDay = moment().endOf('month'); 
+
+    // Check if today is the last day of the month
+    if (today.isSame(lastDay, 'day')) {
+        // Check if it's 16:39 IST
+        if (today.hour() === 16 && today.minute() === 39) {
+            await generateLeaderboard(discordClient, channelId);
+        }
+    }
+}
 
 // Schedule a daily check for the last day of the month
 setInterval(() => {
-    checkLastDayOfMonth(client, '1224730855717470299'); // Use the provided channel ID
-}, 86400000); // 86400000 ms = 24 hours 
-
+    checkLastDayOfMonth(client, '1334788665561452607'); // Use the new channel ID
+}, 60000); // Check every minute for 16:39 IST
 module.exports = {
     trackMessage,
     trackBumpingPoints,
