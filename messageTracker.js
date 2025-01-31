@@ -2,13 +2,31 @@ const { EmbedBuilder } = require('discord.js');
 const { Pool } = require('pg');
 require('dotenv').config(); // Load environment variables
 
-// Create a single database connection pool
+// Create a single database connection pool with proper handling
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
     ssl: {
         rejectUnauthorized: false, // Required for NeonTech
     },
+    max: 10, // Limit pool size to avoid too many connections
+    idleTimeoutMillis: 30000, // Close idle connections after 30s
+    connectionTimeoutMillis: 5000, // Wait max 5s for a connection
 });
+
+// Function to execute queries safely with automatic reconnection
+async function executeQuery(query, params = []) {
+    let client;
+    try {
+        client = await pool.connect(); // Get a client from the pool
+        const result = await client.query(query, params);
+        return result;
+    } catch (err) {
+        console.error('❌ Database error:', err);
+        return null;
+    } finally {
+        if (client) client.release(); // Always release client back to pool
+    }
+}
 
 // Function to create the moderator_activity table if it doesn't exist
 async function createTableIfNotExist() {
@@ -19,14 +37,7 @@ async function createTableIfNotExist() {
             points INT DEFAULT 0
         );
     `;
-
-    try {
-        const client = await pool.connect();
-        await client.query(createTableQuery);
-        client.release();
-    } catch (err) {
-        console.error('Error creating table:', err);
-    }
+    await executeQuery(createTableQuery);
 }
 
 // Ensure the table exists on startup
@@ -43,18 +54,15 @@ async function trackMessage(message) {
     const username = message.author.username;
 
     try {
-        const client = await pool.connect();
-        const res = await client.query('SELECT * FROM moderator_activity WHERE user_id = $1', [userId]);
+        const res = await executeQuery('SELECT * FROM moderator_activity WHERE user_id = $1', [userId]);
 
-        if (res.rows.length === 0) {
-            await client.query('INSERT INTO moderator_activity (user_id, username, points) VALUES ($1, $2, $3)', [userId, username, 1]);
+        if (res && res.rows.length === 0) {
+            await executeQuery('INSERT INTO moderator_activity (user_id, username, points) VALUES ($1, $2, $3)', [userId, username, 1]);
         } else {
-            await client.query('UPDATE moderator_activity SET points = points + 1 WHERE user_id = $1', [userId]);
+            await executeQuery('UPDATE moderator_activity SET points = points + 1 WHERE user_id = $1', [userId]);
         }
-
-        client.release();
     } catch (err) {
-        console.error('Error tracking message:', err);
+        console.error('❌ Error tracking message:', err);
     }
 }
 
@@ -70,7 +78,6 @@ async function trackBumpingPoints(message) {
 
         if (!mentionedUser) {
             console.log('⚠ No user mentioned in bump message. Checking manually...');
-            // Try extracting user from the message content if format changed
             const userIdMatch = message.content.match(/<@!?(\d+)>/);
             if (userIdMatch) {
                 mentionedUser = await message.client.users.fetch(userIdMatch[1]);
@@ -84,16 +91,13 @@ async function trackBumpingPoints(message) {
             console.log(`✅ Bump credited to: ${username} (${userId})`);
 
             try {
-                const client = await pool.connect();
-                const res = await client.query('SELECT * FROM moderator_activity WHERE user_id = $1', [userId]);
+                const res = await executeQuery('SELECT * FROM moderator_activity WHERE user_id = $1', [userId]);
 
-                if (res.rows.length === 0) {
-                    await client.query('INSERT INTO moderator_activity (user_id, username, points) VALUES ($1, $2, $3)', [userId, username, 3]);
+                if (res && res.rows.length === 0) {
+                    await executeQuery('INSERT INTO moderator_activity (user_id, username, points) VALUES ($1, $2, $3)', [userId, username, 3]);
                 } else {
-                    await client.query('UPDATE moderator_activity SET points = points + 3 WHERE user_id = $1', [userId]);
+                    await executeQuery('UPDATE moderator_activity SET points = points + 3 WHERE user_id = $1', [userId]);
                 }
-
-                client.release();
             } catch (err) {
                 console.error('❌ Error tracking bumping points:', err);
             }
@@ -106,9 +110,9 @@ async function trackBumpingPoints(message) {
 // Generate and display the moderator leaderboard
 async function generateLeaderboard(discordClient, channelId) {
     try {
-        const client = await pool.connect();
-        const res = await client.query('SELECT * FROM moderator_activity ORDER BY points DESC LIMIT 10');
-        client.release();
+        const res = await executeQuery('SELECT * FROM moderator_activity ORDER BY points DESC LIMIT 10');
+
+        if (!res) return;
 
         const sortedUsers = res.rows;
 
