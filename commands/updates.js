@@ -18,10 +18,10 @@ module.exports = {
                     value: `
 We have added several new commands to enhance your experience:
 
-1. **!Leaderboard**: View the quiz leaderboard and check out top performers.
-2. **!Suggestion**: Share your ideas and suggestions to help improve the server.
-3. **!Ticket**: Open a ticket to report any issues or concerns to the moderation team.
-4. **!Resources**: Access helpful resources to make the most of the bot and server.
+1. **!leaderboard**: View the quiz leaderboard and check out top performers.
+2. **!suggestion**: Share your ideas and suggestions to help improve the server.
+3. **!ticket**: Open a ticket to report any issues or concerns to the moderation team.
+4. **!resources**: Access helpful resources to make the most of the bot and server.
                     `,
                     inline: false
                 },
