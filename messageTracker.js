@@ -19,6 +19,16 @@ function initializeDatabase() {
         console.log('Reinitializing database connection...');
         initializeDatabase(); // Reconnect if the connection is lost
     });
+
+    // Implement the heartbeat mechanism to prevent termination of the connection
+    setInterval(async () => {
+        try {
+            // Run a simple query to keep the connection alive
+            await pool.query('SELECT 1');
+        } catch (err) {
+            console.error('Error during heartbeat query:', err);
+        }
+    }, 15 * 60 * 1000); // Run every 15 minutes
 }
 
 // Initialize the database connection
