@@ -133,9 +133,9 @@ async function generateLeaderboard(discordClient, channelId) {
 }
 
 // Schedule the leaderboard message at 14:47 IST every 30 days
-async function sendMessageAtScheduledTime(discordClient, channelId) {
+async function sendMessageAtScheduledTime(client, channelId) {
     const currentTime = moment().tz('Asia/Kolkata'); // IST (Indian Standard Time)
-    const scheduledTime = currentTime.clone().set({ hour: 15, minute: 13, second: 0, millisecond: 0 });
+    const scheduledTime = currentTime.clone().set({ hour: 15, minute: 14, second: 0, millisecond: 0 });
 
     // If the scheduled time has already passed today, schedule it for the same time 30 days later
     if (currentTime.isAfter(scheduledTime)) {
@@ -147,19 +147,22 @@ async function sendMessageAtScheduledTime(discordClient, channelId) {
 
     // Set a timeout to send the message at the scheduled time
     setTimeout(async () => {
-        await generateLeaderboard(discordClient, channelId);
+        await generateLeaderboard(client, channelId);
         console.log(`Message sent at ${scheduledTime.format()}`);
 
         // After the message is sent, set the next scheduled message for 30 days later
         setTimeout(async () => {
-            await generateLeaderboard(discordClient, channelId);
+            await generateLeaderboard(client, channelId);
             console.log(`Message sent at ${scheduledTime.add(30, 'days').format()}`);
         }, 86400000 * 30); // Schedule the next message in 30 days
     }, delay);
 }
 
-// Start the first scheduled send
-sendMessageAtScheduledTime(client, '1334788665561452607'); // Provide the correct channel ID
+// When your bot client is ready, start the scheduled message
+client.once('ready', () => {
+    console.log(`Logged in as ${client.user.tag}`);
+    sendMessageAtScheduledTime(client, '1334788665561452607'); // Provide the correct channel ID
+});
 
 module.exports = {
     trackMessage,
