@@ -152,4 +152,5 @@ module.exports = {
     trackMessage,
     trackBumpingPoints,
     generateLeaderboard,
+    setClient,  // Add setClient to the exports
 };
