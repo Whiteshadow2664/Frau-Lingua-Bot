@@ -132,12 +132,13 @@ async function generateLeaderboard(discordClient, channelId) {
     }
 }
 
-// Check if today is the last day of the month and send the leaderboard if true
-async function checkLastDayOfMonth(discordClient, channelId) {
-    const today = moment().tz('Europe/Berlin');
-    const lastDay = moment().endOf('month');
+// Check if today is the last day of the month and the time is 17:20 IST
+async function checkSendLeaderboard(discordClient, channelId) {
+    const now = moment().tz('Asia/Kolkata'); // IST Timezone
+    const targetTime = moment().tz('Asia/Kolkata').set({ hour: 17, minute: 20, second: 0, millisecond: 0 });
 
-    if (today.isSame(lastDay, 'day')) {
+    // Check if today is the last day of the month and it's exactly 17:20 IST
+    if (now.isSame(targetTime, 'minute') && now.date() === moment().endOf('month').date()) {
         await generateLeaderboard(discordClient, channelId);
     }
 }
