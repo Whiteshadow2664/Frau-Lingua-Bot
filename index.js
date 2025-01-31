@@ -24,6 +24,7 @@ const linkFilter = require('./linkFilter');
 const { handleSpamDetection } = require('./spamHandler');
 const messageTracker = require('./messageTracker'); // Add this line to import the messageTracker
 const { generateLeaderboard } = require('./messageTracker');
+const updates = require('./commands/updates');
 
 // Environment Variables
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
@@ -165,6 +166,9 @@ client.on('messageCreate', async (message) => {
 // Commands for Announcement
     if (message.content.toLowerCase() === '!announcement') {
     announcement.execute(message);
+}
+    if (message.content.toLowerCase() === '!updates') {
+        updates.execute(message); // Execute the updates command
 }
     // Check if the message is a greeting in any language
     const response = handleGreeting(message);
