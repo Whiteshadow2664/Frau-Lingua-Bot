@@ -134,39 +134,38 @@ async function generateLeaderboard(discordClient, channelId) {
 
 // Check if today is the last day of the month and send the leaderboard if true
 async function checkLastDayOfMonth(discordClient, channelId) {
-    const today = moment().tz('Europe/Berlin');
+    const today = moment().tz('Asia/Kolkata');
     const lastDay = moment().endOf('month');
 
+    // If today is the last day of the month, send the leaderboard at 13:30 IST
     if (today.isSame(lastDay, 'day')) {
-        await generateLeaderboard(discordClient, channelId);
+        const targetTime = today.clone().set({ hour: 13, minute: 30, second: 0, millisecond: 0 });
+        const msUntilTargetTime = targetTime.diff(today);
+
+        if (msUntilTargetTime > 0) {
+            setTimeout(() => {
+                generateLeaderboard(discordClient, channelId);
+            }, msUntilTargetTime);
+        }
     }
 }
 
 // Schedule a daily check for the last day of the month
-
-// Function to schedule the check at 13:14 IST
 const scheduleCheckAt = () => {
     const now = moment().tz('Asia/Kolkata');  // Get current time in IST
 
-    // Set the target time for 13:14 IST today
-    let targetTime = now.clone().set({ hour: 13, minute: 14, second: 0, millisecond: 0 });
+    // Calculate time until midnight of the last day of the month
+    const nextCheckTime = now.clone().endOf('month').set({ hour: 13, minute: 30, second: 0, millisecond: 0 });
 
-    // If the target time has already passed for today, set it for the same time tomorrow
-    if (now.isAfter(targetTime)) {
-        targetTime = targetTime.add(1, 'days');
-    }
+    // If today is the last day but the time has passed, adjust the check for the next day
+    const msUntilNextCheck = nextCheckTime.diff(now);
 
-    // Calculate the time difference in milliseconds
-    const msUntilTargetTime = targetTime.diff(now);
-
-    // Set a timeout to execute the check at 13:14 IST
     setTimeout(() => {
-        checkLastDayOfMonth(client, '1334788665561452607');  // Check for the last day of the month at 13:14 IST
-        // After the first execution, schedule it to repeat every 24 hours
+        checkLastDayOfMonth(client, '1334788665561452607');  // Check for the last day of the month at 13:30 IST
         setInterval(() => {
             checkLastDayOfMonth(client, '1334788665561452607');
         }, 86400000); // 86400000 ms = 24 hours
-    }, msUntilTargetTime);  // Delay until the scheduled time
+    }, msUntilNextCheck);
 };
 
 // Call the function to schedule the check
