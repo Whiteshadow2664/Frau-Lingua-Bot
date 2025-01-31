@@ -124,7 +124,12 @@ async function generateLeaderboard(discordClient, channelId) {
             .setFooter({ text: sortedUsers.length > 0 ? `🎉 Congratulations to ${sortedUsers[0].username} for leading!` : 'Start earning points to get featured!' });
 
         const channel = discordClient.channels.cache.get(channelId);
-        if (channel) channel.send({ embeds: [embed] });
+        if (channel) {
+            channel.send({ embeds: [embed] });
+            console.log("Leaderboard sent successfully!");
+        } else {
+            console.error("Channel not found");
+        }
     } catch (err) {
         console.error('Error generating leaderboard:', err);
         console.log('Reinitializing database connection...');
@@ -143,9 +148,12 @@ async function checkLastDayOfMonth(client, channelId) {
         const msUntilTargetTime = targetTime.diff(today);
 
         if (msUntilTargetTime > 0) {
+            console.log(`Scheduling leaderboard for 13:30 IST today.`);
             setTimeout(() => {
                 generateLeaderboard(client, channelId);
             }, msUntilTargetTime);
+        } else {
+            console.log("Target time already passed for today.");
         }
     }
 }
@@ -155,7 +163,7 @@ const scheduleCheckAt = (client) => {
     const now = moment().tz('Asia/Kolkata');  // Get current time in IST
 
     // Calculate time until midnight of the last day of the month
-    const nextCheckTime = now.clone().endOf('month').set({ hour: 13, minute: 37, second: 0, millisecond: 0 });
+    const nextCheckTime = now.clone().endOf('month').set({ hour: 13, minute: 30, second: 0, millisecond: 0 });
 
     // If today is the last day but the time has passed, adjust the check for the next day
     const msUntilNextCheck = nextCheckTime.diff(now);
@@ -168,7 +176,7 @@ const scheduleCheckAt = (client) => {
     }, msUntilNextCheck);
 };
 
-// Call the function to schedule the check
+// Export function for external use
 module.exports = {
     trackMessage,
     trackBumpingPoints,
