@@ -72,12 +72,12 @@ async function trackBumpingPoints(message) {
         message.author.id === '735147814878969968' && // Bumping bot ID
         message.content.includes('Thx for bumping our Server!')
     ) {
-        console.log(`✅ Bump detected: ${message.content}`);
+        
 
         let mentionedUser = message.mentions.users.first();
 
         if (!mentionedUser) {
-            console.log('⚠ No user mentioned in bump message. Checking manually...');
+            
             const userIdMatch = message.content.match(/<@!?(\d+)>/);
             if (userIdMatch) {
                 mentionedUser = await message.client.users.fetch(userIdMatch[1]);
@@ -88,7 +88,7 @@ async function trackBumpingPoints(message) {
             const userId = mentionedUser.id;
             const username = mentionedUser.username;
 
-            console.log(`✅ Bump credited to: ${username} (${userId})`);
+            
 
             try {
                 const res = await executeQuery('SELECT * FROM moderator_activity WHERE user_id = $1', [userId]);
