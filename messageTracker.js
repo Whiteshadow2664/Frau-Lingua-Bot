@@ -142,10 +142,6 @@ async function checkLastDayOfMonth(discordClient, channelId) {
     }
 }
 
-// Schedule a daily check for the last day of the month
-setInterval(() => {
-    checkLastDayOfMonth(client, '1224730855717470299'); // Use the provided channel ID
-}, 86400000); // 86400000 ms = 24 hours
 
 module.exports = {
     trackMessage,
