@@ -23,6 +23,8 @@ const leaderboard = require('./leaderboard.js');
 const linkFilter = require('./linkFilter');
 const { handleSpamDetection } = require('./spamHandler');
 const messageTracker = require('./messageTracker');
+messageTracker
+messageTracker.setClient(client);
 
 // Environment Variables
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
