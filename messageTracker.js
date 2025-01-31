@@ -124,28 +124,15 @@ async function generateLeaderboard(discordClient, channelId) {
             .setFooter({ text: sortedUsers.length > 0 ? `🎉 Congratulations to ${sortedUsers[0].username} for leading!` : 'Start earning points to get featured!' });
 
         const channel = discordClient.channels.cache.get(channelId);
-        if (channel) channel.send({ embeds: [embed] });
+        if (channel) {
+            channel.send({ embeds: [embed] });
+        }
     } catch (err) {
         console.error('Error generating leaderboard:', err);
         console.log('Reinitializing database connection...');
         initializeDatabase(); // Reconnect if the query fails
     }
 }
-
-// Check if today is the last day of the month and send the leaderboard if true
-async function checkLastDayOfMonth(discordClient, channelId) {
-    const today = moment().tz('Europe/Berlin');
-    const lastDay = moment().endOf('month');
-
-    if (today.isSame(lastDay, 'day')) {
-        await generateLeaderboard(discordClient, channelId);
-    }
-}
-
-// Schedule a daily check for the last day of the month
-setInterval(() => {
-    checkLastDayOfMonth(client, '1224730855717470299'); // Use the provided channel ID
-}, 86400000); // 86400000 ms = 24 hours
 
 module.exports = {
     trackMessage,
