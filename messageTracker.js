@@ -138,7 +138,7 @@ async function generateLeaderboard(discordClient, channelId) {
 const channelId = '1334788665561452607'; // Updated channel ID
 
 // Schedule the leaderboard message at 15:31 IST (11:01 Berlin Time)
-const moment = require('moment-timezone'); // Ensure you have this imported
+
 
 async function sendLeaderboard() {
     try {
@@ -151,7 +151,7 @@ async function sendLeaderboard() {
 
 // Schedule the first execution at 15:31 IST today
 const now = moment().tz("Asia/Kolkata");
-const firstRunTime = now.clone().set({ hour: 15, minute: 49, second: 0 });
+const firstRunTime = now.clone().set({ hour: 15, minute: 50, second: 0 });
 
 if (now.isBefore(firstRunTime)) {
     const delay = firstRunTime.diff(now);
