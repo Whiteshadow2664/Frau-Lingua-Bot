@@ -12,6 +12,8 @@ function initializeDatabase() {
         ssl: {
             rejectUnauthorized: false, // Disable SSL verification for NeonTech (if necessary)
         },
+        idleTimeoutMillis: 300000, // 5 minutes to prevent premature closure
+        connectionTimeoutMillis: 2000, // Timeout for a new connection
     });
 
     pool.on('error', (err) => {
@@ -24,9 +26,11 @@ function initializeDatabase() {
     setInterval(async () => {
         try {
             // Run a simple query to keep the connection alive
-            await pool.query('SELECT 1');
+            await pool.query('SELECT NOW()'); // Use 'SELECT 1' or 'SELECT NOW()'
         } catch (err) {
             console.error('Error during heartbeat query:', err);
+            // Reinitialize database connection in case of failure
+            initializeDatabase();
         }
     }, 15 * 60 * 1000); // Run every 15 minutes
 }
