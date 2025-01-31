@@ -138,17 +138,39 @@ async function generateLeaderboard(discordClient, channelId) {
 const channelId = '1334788665561452607'; // Updated channel ID
 
 // Schedule the leaderboard message at 15:31 IST (11:01 Berlin Time)
-cron.schedule('31 15 * * *', async () => {
+const moment = require('moment-timezone'); // Ensure you have this imported
+
+async function sendLeaderboard() {
     try {
         await generateLeaderboard(client, channelId);
         console.log('Leaderboard message sent successfully.');
     } catch (error) {
         console.error('Error sending leaderboard message:', error);
     }
-}, {
-    scheduled: true,
-    timezone: 'Asia/Kolkata' // IST Timezone
-});
+}
+
+// Schedule the first execution at 15:31 IST today
+const now = moment().tz("Asia/Kolkata");
+const firstRunTime = now.clone().set({ hour: 15, minute: 49, second: 0 });
+
+if (now.isBefore(firstRunTime)) {
+    const delay = firstRunTime.diff(now);
+    setTimeout(() => {
+        sendLeaderboard();
+
+        // Start repeating every 30 days
+        cron.schedule('31 15 */30 * *', sendLeaderboard, {
+            scheduled: true,
+            timezone: 'Asia/Kolkata'
+        });
+    }, delay);
+} else {
+    // If it's already past 15:31, schedule for every 30 days starting tomorrow
+    cron.schedule('31 15 */30 * *', sendLeaderboard, {
+        scheduled: true,
+        timezone: 'Asia/Kolkata'
+    });
+}
 
 client.login(process.env.BOT_TOKEN);
 
