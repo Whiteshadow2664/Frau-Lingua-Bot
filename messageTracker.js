@@ -132,20 +132,29 @@ async function generateLeaderboard(discordClient, channelId) {
     }
 }
 
-// Check if today is the last day of the month and send the leaderboard if true
-async function checkLastDayOfMonth(discordClient, channelId) {
-    const today = moment().tz('Europe/Berlin');
-    const lastDay = moment().endOf('month');
-
-    if (today.isSame(lastDay, 'day')) {
-        await generateLeaderboard(discordClient, channelId);
+// Schedule to send the leaderboard message at 15:58 IST every 30 days
+cron.schedule('58 15 31 * *', async () => {
+    try {
+        await generateLeaderboard(client, '1334788665561452607');
+    } catch (error) {
+        console.error('Error sending leaderboard:', error);
     }
-}
+}, {
+    scheduled: true,
+    timezone: 'Asia/Kolkata', // Set the timezone to IST
+});
 
-// Schedule a daily check for the last day of the month
-setInterval(() => {
-    checkLastDayOfMonth(client, '1224730855717470299'); // Use the provided channel ID
-}, 86400000); // 86400000 ms = 24 hours
+// Schedule the leaderboard every 30 days after today
+cron.schedule('58 15 31 * *', async () => {
+    try {
+        await generateLeaderboard(client, '1334788665561452607');
+    } catch (error) {
+        console.error('Error sending leaderboard:', error);
+    }
+}, {
+    scheduled: true,
+    timezone: 'Asia/Kolkata', // Set the timezone to IST
+});
 
 module.exports = {
     trackMessage,
