@@ -62,15 +62,26 @@ async function trackMessage(message) {
 async function trackBumpingPoints(message) {
     if (
         message.author.id === '735147814878969968' && // Bumping bot ID
-        message.content.includes('Thx for bumping our Server! We will remind you in 2 hours!')
+        message.content.includes('Thx for bumping our Server!')
     ) {
-        const mentionedUser = message.mentions.users.first();
+        console.log(`✅ Bump detected: ${message.content}`);
+
+        let mentionedUser = message.mentions.users.first();
+
+        if (!mentionedUser) {
+            console.log('⚠ No user mentioned in bump message. Checking manually...');
+            // Try extracting user from the message content if format changed
+            const userIdMatch = message.content.match(/<@!?(\d+)>/);
+            if (userIdMatch) {
+                mentionedUser = await message.client.users.fetch(userIdMatch[1]);
+            }
+        }
+
         if (mentionedUser) {
             const userId = mentionedUser.id;
             const username = mentionedUser.username;
 
-            console.log(`Bump message received: ${message.content}`);
-            console.log(`Bumping user: ${mentionedUser.username}`);
+            console.log(`✅ Bump credited to: ${username} (${userId})`);
 
             try {
                 const client = await pool.connect();
@@ -84,8 +95,10 @@ async function trackBumpingPoints(message) {
 
                 client.release();
             } catch (err) {
-                console.error('Error tracking bumping points:', err);
+                console.error('❌ Error tracking bumping points:', err);
             }
+        } else {
+            console.log('❌ No valid user found for bumping message.');
         }
     }
 }
@@ -117,7 +130,7 @@ async function generateLeaderboard(discordClient, channelId) {
             channel.send({ embeds: [embed] });
         }
     } catch (err) {
-        console.error('Error generating leaderboard:', err);
+        console.error('❌ Error generating leaderboard:', err);
     }
 }
 
