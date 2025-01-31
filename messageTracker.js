@@ -133,29 +133,24 @@ async function generateLeaderboard(discordClient, channelId) {
     }
 }
 
-// Schedule to send the leaderboard message at 15:58 IST every 30 days
-cron.schedule('58 15 31 * *', async () => {
-    try {
-        await generateLeaderboard(client, '1334788665561452607');
-    } catch (error) {
-        console.error('Error sending leaderboard:', error);
-    }
+
+// Schedule the leaderboard sending every 30 days (on the 31st day at 15:58 IST)
+cron.schedule('11 16 31 * *', async () => {
+    if (client) {
+        try {
+            await generateLeaderboard(client, '1334788665561452607');
+        } catch (error) {
+            console.error('Error sending leaderboard:', error);
+        }
+    } else {
+        console.error('Client is not defined');
+    }
 }, {
-    scheduled: true,
-    timezone: 'Asia/Kolkata', // Set the timezone to IST
+    scheduled: true,
+    timezone: 'Asia/Kolkata', // Set the timezone to IST
 });
 
-// Schedule the leaderboard every 30 days after today
-cron.schedule('58 15 31 * *', async () => {
-    try {
-        await generateLeaderboard(client, '1334788665561452607');
-    } catch (error) {
-        console.error('Error sending leaderboard:', error);
-    }
-}, {
-    scheduled: true,
-    timezone: 'Asia/Kolkata', // Set the timezone to IST
-});
+
 
 module.exports = {
     trackMessage,
