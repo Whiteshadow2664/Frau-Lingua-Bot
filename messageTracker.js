@@ -143,9 +143,34 @@ async function checkLastDayOfMonth(discordClient, channelId) {
 }
 
 // Schedule a daily check for the last day of the month
-setInterval(() => {
-    checkLastDayOfMonth(client, '1224730855717470299'); // Use the provided channel ID
-}, 86400000); // 86400000 ms = 24 hours
+
+// Function to schedule the check at 13:14 IST
+const scheduleCheckAt = () => {
+    const now = moment().tz('Asia/Kolkata');  // Get current time in IST
+
+    // Set the target time for 13:14 IST today
+    let targetTime = now.clone().set({ hour: 13, minute: 14, second: 0, millisecond: 0 });
+
+    // If the target time has already passed for today, set it for the same time tomorrow
+    if (now.isAfter(targetTime)) {
+        targetTime = targetTime.add(1, 'days');
+    }
+
+    // Calculate the time difference in milliseconds
+    const msUntilTargetTime = targetTime.diff(now);
+
+    // Set a timeout to execute the check at 13:14 IST
+    setTimeout(() => {
+        checkLastDayOfMonth(client, '1334788665561452607');  // Check for the last day of the month at 13:14 IST
+        // After the first execution, schedule it to repeat every 24 hours
+        setInterval(() => {
+            checkLastDayOfMonth(client, '1334788665561452607');
+        }, 86400000); // 86400000 ms = 24 hours
+    }, msUntilTargetTime);  // Delay until the scheduled time
+};
+
+// Call the function to schedule the check
+scheduleCheckAt();
 
 module.exports = {
     trackMessage,
