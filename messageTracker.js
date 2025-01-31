@@ -111,7 +111,7 @@ async function generateLeaderboard(discordClient, channelId) {
         const sortedUsers = res.rows;
 
         const embed = new EmbedBuilder()
-            .setTitle('🏆 Moderator of The Month')
+            .setTitle('MODERATOR LEADERBOARD')
             .setColor('#acf508') // Custom color
             .setDescription(
                 sortedUsers
