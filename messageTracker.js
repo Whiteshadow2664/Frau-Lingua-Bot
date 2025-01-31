@@ -135,7 +135,7 @@ async function generateLeaderboard(discordClient, channelId) {
 
 
 // Schedule the leaderboard sending every 30 days (on the 31st day at 15:58 IST)
-cron.schedule('13 16 31 * *', async () => {
+cron.schedule('16 16 31 * *', async () => {
     if (client) {
         try {
             await generateLeaderboard(client, '1334788665561452607');
