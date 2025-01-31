@@ -22,7 +22,7 @@ const status = require('./status.js');
 const leaderboard = require('./leaderboard.js');
 const linkFilter = require('./linkFilter');
 const { handleSpamDetection } = require('./spamHandler');
-const messageTracker = require('./messageTracker');
+const { scheduleCheckAt } = require('./messageTracker');  // Import the function
 
 // Environment Variables
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
