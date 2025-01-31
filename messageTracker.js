@@ -152,8 +152,10 @@ cron.schedule('16 16 31 * *', async () => {
 
 
 
-module.imports = {
+module.exports = {
     trackMessage,
     trackBumpingPoints,
     generateLeaderboard,
+    initializeDatabase,
+    // other exports...
 };
