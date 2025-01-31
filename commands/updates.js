@@ -1,36 +1,43 @@
-// commands/updates.js
 const { EmbedBuilder } = require('discord.js');
 
 module.exports = {
     execute: async (message) => {
-        // You can modify the updates as needed
-        const updates = [
-            {
-                title: 'Update 1: New Quiz Languages Added!',
-                description: 'We have added support for new languages in our vocabulary quizzes! Try them now!'
-            },
-            {
-                title: 'Update 2: Improved Leaderboard System',
-                description: 'The leaderboard now shows the top moderators and their points more clearly.'
-            },
-            {
-                title: 'Update 3: !updates Command Added',
-                description: 'A new command, **!updates**, has been added to show all the latest updates about the bot.'
-            },
-            // Add more updates here as necessary
-        ];
-
+        // Embed content
         const embed = new EmbedBuilder()
-            .setTitle('Bot Updates')
-            .setColor('#00ff00') // You can choose any color
-            .setDescription('Here are the latest updates about the bot:')
+            .setTitle('Frau Lingua 1.0.3 - Update Information') // Heading
+            .setColor('#acf508') // Updated color
+            .setDescription('We are excited to share with you the latest updates for Frau Lingua 1.0.3! Please take a moment to review the improvements and new features that have been added:')
             .addFields(
-                updates.map(update => ({
-                    name: update.title,
-                    value: update.description
-                }))
+                {
+                    name: '🗓️ Date of Update',
+                    value: 'January 23, 2025',
+                    inline: false
+                },
+                {
+                    name: '✨ New Features for Users',
+                    value: `
+We have added several new commands to enhance your experience:
+
+1. **!Leaderboard**: View the quiz leaderboard and check out top performers.
+2. **!Suggestion**: Share your ideas and suggestions to help improve the server.
+3. **!Ticket**: Open a ticket to report any issues or concerns to the moderation team.
+4. **!Resources**: Access helpful resources to make the most of the bot and server.
+                    `,
+                    inline: false
+                },
+                {
+                    name: '🔒 Security Enhancements',
+                    value: `
+We’ve also implemented important security measures to ensure a safe and enjoyable environment for everyone:
+
+1. **Suspicious Links**: Any suspicious links will now automatically kick the member who sent them, while also notifying the moderators in a dedicated channel and removing the link.
+2. **Spam Detection**: We’ve improved our spam detection to keep conversations clean and free from disruptions.
+3. **Bad Words Detection**: Offensive language is now flagged and dealt with appropriately to maintain a positive community atmosphere.
+                    `,
+                    inline: false
+                }
             )
-            .setFooter({ text: 'Stay tuned for more updates!' });
+            .setFooter({ text: 'We’re constantly improving. Stay tuned for future updates!' });
 
         // Send the embed in the channel
         await message.channel.send({ embeds: [embed] });
