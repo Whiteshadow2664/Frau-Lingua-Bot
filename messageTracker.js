@@ -144,7 +144,7 @@ async function checkLastDayOfMonth(client, channelId) {
 
     // If today is the last day of the month, send the leaderboard at 13:30 IST
     if (today.isSame(lastDay, 'day')) {
-        const targetTime = today.clone().set({ hour: 13, minute: 48, second: 0, millisecond: 0 });
+        const targetTime = today.clone().set({ hour: 13, minute: 53, second: 0, millisecond: 0 });
         const msUntilTargetTime = targetTime.diff(today);
 
         if (msUntilTargetTime > 0) {
@@ -163,7 +163,7 @@ const scheduleCheckAt = (client) => {
     const now = moment().tz('Asia/Kolkata');  // Get current time in IST
 
     // Calculate time until midnight of the last day of the month
-    const nextCheckTime = now.clone().endOf('month').set({ hour: 13, minute: 48, second: 0, millisecond: 0 });
+    const nextCheckTime = now.clone().endOf('month').set({ hour: 13, minute: 53, second: 0, millisecond: 0 });
 
     // If today is the last day but the time has passed, adjust the check for the next day
     const msUntilNextCheck = nextCheckTime.diff(now);
