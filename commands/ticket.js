@@ -56,8 +56,6 @@ module.exports = {
         ],
       });
 
-      console.log(`Ticket Channel Created: ${ticketChannel.name} in Category: ${category.name}`);
-
       // Get the Moderator role
       const modRole = message.guild.roles.cache.find(role => role.name === 'Moderator');
       if (!modRole) {
@@ -89,7 +87,7 @@ module.exports = {
             await channel.send(`Hey <@&${modRole.id}>, please assist ${message.author.username} with their ticket.`);
           }
         } catch (timeoutError) {
-          console.error('Error tagging Moderator role:', timeoutError);
+          message.channel.send('Error tagging Moderator role.');
         }
       }, 5 * 60 * 1000); // 5 minutes
 
@@ -112,7 +110,6 @@ module.exports = {
             message.channel.send(`Ticket for ${message.author.username} has been closed.`);
           }
         } catch (closeError) {
-          console.error('Error closing ticket:', closeError);
           message.channel.send('There was an error closing your ticket.');
         }
       });
@@ -128,12 +125,11 @@ module.exports = {
             }
           }
         } catch (deleteError) {
-          console.error('Error during ticket expiration:', deleteError);
+          message.channel.send('Error during ticket expiration.');
         }
       });
 
     } catch (error) {
-      console.error('Error creating ticket:', error);
       message.channel.send(`There was an error creating your ticket: ${error.message}`);
     }
   },
