@@ -22,7 +22,7 @@ const status = require('./status.js');
 const leaderboard = require('./leaderboard.js');
 const linkFilter = require('./linkFilter');
 const { handleSpamDetection } = require('./spamHandler');
-const messageTracker = require('./messageTracker');
+const { generateLeaderboard } = require('./messageTracker');
 
 // Environment Variables
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
@@ -141,12 +141,14 @@ if (message.content.toLowerCase() === '!leaderboard') {
    leaderboard.execute(message);
 }
 
+if (message.content.toLowerCase() === '!modrank') {
+    // Trigger the leaderboard generation function
+    await generateLeaderboard(message.client, message.channel.id);
+}
 
 if (message.content.toLowerCase() === '!ticket') {
   ticket.execute(message);
 }
-
-
 
 if(message.content.toLowerCase().startsWith('!suggestion')) {
     suggestion.execute(message);
