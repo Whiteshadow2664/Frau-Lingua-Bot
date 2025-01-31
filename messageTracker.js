@@ -132,23 +132,37 @@ async function generateLeaderboard(discordClient, channelId) {
     }
 }
 
-// Check if today is the last day of the month and send the leaderboard if true
-async function checkLastDayOfMonth(discordClient, channelId) {
-    const today = moment().tz('Europe/Berlin');
-    const lastDay = moment().endOf('month');
+// Schedule the leaderboard message at 14:47 IST every 30 days
+async function sendMessageAtScheduledTime(discordClient, channelId) {
+    const currentTime = moment().tz('Asia/Kolkata'); // IST (Indian Standard Time)
+    const scheduledTime = currentTime.clone().set({ hour: 15, minute: 13, second: 0, millisecond: 0 }); 
 
-    if (today.isSame(lastDay, 'day')) {
-        await generateLeaderboard(discordClient, channelId);
-    }
-}
+    // If the scheduled time has already passed today, schedule it for the same time 30 days later
+    if (currentTime.isAfter(scheduledTime)) {
+        scheduledTime.add(30, 'days');
+    } 
 
-// Schedule a daily check for the last day of the month
-setInterval(() => {
-    checkLastDayOfMonth(client, '1224730855717470299'); // Use the provided channel ID
-}, 86400000); // 86400000 ms = 24 hours
+    // Calculate the delay
+    const delay = scheduledTime.diff(currentTime); 
+
+    // Set a timeout to send the message at the scheduled time
+    setTimeout(async () => {
+        await generateLeaderboard(discordClient, channelId);
+        console.log(`Message sent at ${scheduledTime.format()}`); 
+
+        // After the message is sent, set the next scheduled message for 30 days later
+        setTimeout(async () => {
+            await generateLeaderboard(discordClient, channelId);
+            console.log(`Message sent at ${scheduledTime.add(30, 'days').format()}`);
+        }, 86400000 * 30); // Schedule the next message in 30 days
+    }, delay);
+} 
+
+// Start the first scheduled send
+sendMessageAtScheduledTime(client, '1334788665561452607'); // Provide the correct channel ID 
 
 module.exports = {
-    trackMessage,
-    trackBumpingPoints,
-    generateLeaderboard,
+    trackMessage,
+    trackBumpingPoints,
+    generateLeaderboard,
 };
