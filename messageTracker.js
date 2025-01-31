@@ -134,35 +134,35 @@ async function generateLeaderboard(discordClient, channelId) {
 
 // Schedule the leaderboard message at 14:47 IST every 30 days
 async function sendMessageAtScheduledTime(discordClient, channelId) {
-    const currentTime = moment().tz('Asia/Kolkata'); // IST (Indian Standard Time)
-    const scheduledTime = currentTime.clone().set({ hour: 15, minute: 13, second: 0, millisecond: 0 }); 
+    const currentTime = moment().tz('Asia/Kolkata'); // IST (Indian Standard Time)
+    const scheduledTime = currentTime.clone().set({ hour: 15, minute: 13, second: 0, millisecond: 0 });
 
-    // If the scheduled time has already passed today, schedule it for the same time 30 days later
-    if (currentTime.isAfter(scheduledTime)) {
-        scheduledTime.add(30, 'days');
-    } 
+    // If the scheduled time has already passed today, schedule it for the same time 30 days later
+    if (currentTime.isAfter(scheduledTime)) {
+        scheduledTime.add(30, 'days');
+    }
 
-    // Calculate the delay
-    const delay = scheduledTime.diff(currentTime); 
+    // Calculate the delay
+    const delay = scheduledTime.diff(currentTime);
 
-    // Set a timeout to send the message at the scheduled time
-    setTimeout(async () => {
-        await generateLeaderboard(discordClient, channelId);
-        console.log(`Message sent at ${scheduledTime.format()}`); 
+    // Set a timeout to send the message at the scheduled time
+    setTimeout(async () => {
+        await generateLeaderboard(discordClient, channelId);
+        console.log(`Message sent at ${scheduledTime.format()}`);
 
-        // After the message is sent, set the next scheduled message for 30 days later
-        setTimeout(async () => {
-            await generateLeaderboard(discordClient, channelId);
-            console.log(`Message sent at ${scheduledTime.add(30, 'days').format()}`);
-        }, 86400000 * 30); // Schedule the next message in 30 days
-    }, delay);
-} 
+        // After the message is sent, set the next scheduled message for 30 days later
+        setTimeout(async () => {
+            await generateLeaderboard(discordClient, channelId);
+            console.log(`Message sent at ${scheduledTime.add(30, 'days').format()}`);
+        }, 86400000 * 30); // Schedule the next message in 30 days
+    }, delay);
+}
 
 // Start the first scheduled send
-sendMessageAtScheduledTime(client, '1334788665561452607'); // Provide the correct channel ID 
+sendMessageAtScheduledTime(client, '1334788665561452607'); // Provide the correct channel ID
 
 module.exports = {
-    trackMessage,
-    trackBumpingPoints,
-    generateLeaderboard,
+    trackMessage,
+    trackBumpingPoints,
+    generateLeaderboard,
 };
