@@ -133,7 +133,7 @@ async function generateLeaderboard(discordClient, channelId) {
 }
 
 // Check if today is the last day of the month and send the leaderboard if true
-async function checkLastDayOfMonth(discordClient, channelId) {
+async function checkLastDayOfMonth(client, channelId) {
     const today = moment().tz('Asia/Kolkata');
     const lastDay = moment().endOf('month');
 
@@ -144,18 +144,18 @@ async function checkLastDayOfMonth(discordClient, channelId) {
 
         if (msUntilTargetTime > 0) {
             setTimeout(() => {
-                generateLeaderboard(discordClient, channelId);
+                generateLeaderboard(client, channelId);
             }, msUntilTargetTime);
         }
     }
 }
 
 // Schedule a daily check for the last day of the month
-const scheduleCheckAt = () => {
+const scheduleCheckAt = (client) => {
     const now = moment().tz('Asia/Kolkata');  // Get current time in IST
 
     // Calculate time until midnight of the last day of the month
-    const nextCheckTime = now.clone().endOf('month').set({ hour: 13, minute: 30, second: 0, millisecond: 0 });
+    const nextCheckTime = now.clone().endOf('month').set({ hour: 13, minute: 37, second: 0, millisecond: 0 });
 
     // If today is the last day but the time has passed, adjust the check for the next day
     const msUntilNextCheck = nextCheckTime.diff(now);
@@ -169,10 +169,9 @@ const scheduleCheckAt = () => {
 };
 
 // Call the function to schedule the check
-scheduleCheckAt();
-
 module.exports = {
     trackMessage,
     trackBumpingPoints,
     generateLeaderboard,
+    scheduleCheckAt
 };
