@@ -22,6 +22,7 @@ const status = require('./status.js');
 const leaderboard = require('./leaderboard.js');
 const linkFilter = require('./linkFilter');
 const { handleSpamDetection } = require('./spamHandler');
+const messageTracker = require('./messageTracker'); // Add this line to import the messageTracker
 const { generateLeaderboard } = require('./messageTracker');
 
 // Environment Variables
