@@ -181,5 +181,5 @@ module.exports = {
     trackMessage,
     trackBumpingPoints,
     generateLeaderboard,
-    scheduleCheckAt
+    scheduleCheckAt,  // Ensure this is included in the exports
 };
