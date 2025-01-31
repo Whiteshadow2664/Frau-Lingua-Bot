@@ -152,7 +152,7 @@ cron.schedule('13 16 31 * *', async () => {
 
 
 
-module.exports = {
+module.imports = {
     trackMessage,
     trackBumpingPoints,
     generateLeaderboard,
