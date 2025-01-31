@@ -135,7 +135,7 @@ async function generateLeaderboard(discordClient, channelId) {
 // Check if today is the last day of the month and the time is 17:20 IST
 async function checkSendLeaderboard(discordClient, channelId) {
     const now = moment().tz('Asia/Kolkata'); // IST Timezone
-    const targetTime = moment().tz('Asia/Kolkata').set({ hour: 17, minute: 22, second: 0, millisecond: 0 });
+    const targetTime = moment().tz('Asia/Kolkata').set({ hour: 17, minute: 30, second: 0, millisecond: 0 });
 
     // Check if today is the last day of the month and it's exactly 17:20 IST
     if (now.isSame(targetTime, 'minute') && now.date() === moment().endOf('month').date()) {
