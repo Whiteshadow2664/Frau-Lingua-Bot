@@ -22,7 +22,7 @@ const status = require('./status.js');
 const leaderboard = require('./leaderboard.js');
 const linkFilter = require('./linkFilter');
 const { handleSpamDetection } = require('./spamHandler');
-const messageTracker = require('./messageTracker');
+const { checkLastDayOfMonth } = require('./messageTracker');
 
 // Environment Variables
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
@@ -383,6 +383,11 @@ delete activeQuizzes[message.author.id];
 client.once('ready', () => {
     console.log(`${client.user.tag} is online!`);
     linkFilter(client);
+
+    // Pass the client and channelId to the checkLastDayOfMonth function
+    setInterval(() => {
+        checkLastDayOfMonth(client, '1224730855717470299'); // Pass client and channel ID
+    }, 86400000); // Run once a day (24 hours)
 });
 
 // Event when a member joins the server
