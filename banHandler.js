@@ -1,60 +1,43 @@
 const { EmbedBuilder } = require('discord.js');
 
-const ALLOWED_USER_ID = '540129267728515072'; // Your Discord ID
-
 async function handleBanCommand(message) {
-    if (message.author.bot) return; // Ignore bot messages
-
-    // Check if the command is used by the allowed user
-    if (message.author.id !== ALLOWED_USER_ID) {
-        return message.reply("You are not authorized to use this command.");
-    }
-
-    // Ensure the message is a reply
-    if (!message.reference) return;
-
     try {
-        // Fetch the replied-to message
-        const referencedMessage = await message.channel.messages.fetch(message.reference.messageId);
-        if (!referencedMessage) return;
+        if (
+            message.author.id !== '540129267728515072' && 
+            message.author.username !== 'whiteshadow_2664'
+        ) return;
 
-        const targetUserId = referencedMessage.author.id;
+        const args = message.content.split(' ');
+        const mention = message.mentions.users.first();
 
-        // Ensure "ban" is in the message and the bot is mentioned
-        if (!message.content.toLowerCase().includes('ban') || !message.mentions.has(message.client.user)) return;
-
-        // Fetch messages from the user across the last 100 messages in the channel
-        const fetchedMessages = await message.channel.messages.fetch({ limit: 100 });
-        const userMessages = fetchedMessages.filter(msg => msg.author.id === targetUserId);
-
-        // Delete the user's messages
-        await message.channel.bulkDelete(userMessages, true);
-
-        // Attempt to fetch the member from the guild
-        let targetMember = message.guild.members.cache.get(targetUserId);
-
-        if (targetMember) {
-            // Ban the user if they are still in the server
-            await targetMember.ban({ reason: `Banned by ${message.author.tag}` });
-        } else {
-            // Ban the user by ID if they have already left the server
-            await message.guild.bans.create(targetUserId, { reason: `Banned by ${message.author.tag}` });
+        if (!mention) {
+            return message.reply('You must mention a user to ban.');
         }
 
-        // Confirmation message
-        await message.reply('Yes boss!');
+        const member = await message.guild.members.fetch(mention.id).catch(() => null);
 
-        // Send an embed with confirmation
+        if (member) {
+            await message.guild.members.ban(member, { reason: 'Banned by bot command' });
+        } else {
+            await message.guild.bans.create(mention.id, { reason: 'Banned by bot command' });
+        }
+
+        // Attempt to delete messages (if still available)
+        const fetchedMessages = await message.channel.messages.fetch({ limit: 100 });
+        const userMessages = fetchedMessages.filter(m => m.author.id === mention.id);
+        await Promise.all(userMessages.map(m => m.delete().catch(() => null))); // Ignore errors
+
+        // Confirmation Embed
         const embed = new EmbedBuilder()
             .setTitle('User Banned')
-            .setDescription(`**User ID: ${targetUserId}** has been banned.`)
+            .setDescription(`**${mention.tag}** has been banned.`)
             .setColor('#acf508');
 
         await message.channel.send({ embeds: [embed] });
 
     } catch (error) {
         console.error('Error banning user:', error);
-        message.reply('There was an error banning this user.');
+        message.reply('There was an error banning the user.');
     }
 }
 
