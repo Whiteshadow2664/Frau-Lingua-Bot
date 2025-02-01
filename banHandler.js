@@ -2,7 +2,7 @@ const { EmbedBuilder } = require('discord.js');
 
 async function handleBanCommand(message) {
     try {
-        // Ensure the message mentions the bot and includes "ban"
+        // Ensure the bot is mentioned and "ban" is in the message
         if (!message.mentions.has(message.client.user) || !message.content.toLowerCase().includes('ban')) return;
 
         // Restrict access to only whiteshadow_2664 (by ID)
@@ -20,19 +20,28 @@ async function handleBanCommand(message) {
             await message.guild.bans.create(mention.id, { reason: 'Banned by bot command' });
         }
 
-        // Delete recent messages (if available)
-        const fetchedMessages = await message.channel.messages.fetch({ limit: 100 });
-        const userMessages = fetchedMessages.filter(m => m.author.id === mention.id);
-        await Promise.all(userMessages.map(m => m.delete().catch(() => null))); // Ignore errors
+        // Delete messages from all channels
+        message.guild.channels.cache.forEach(async (channel) => {
+            if (channel.isTextBased()) {
+                try {
+                    const fetchedMessages = await channel.messages.fetch({ limit: 100 });
+                    const userMessages = fetchedMessages.filter(m => m.author.id === mention.id);
+                    await Promise.all(userMessages.map(m => m.delete().catch(() => null))); // Ignore errors
+                } catch (err) {
+                    console.error(`Error deleting messages in ${channel.name}:`, err);
+                }
+            }
+        });
 
-        // Check if the message has already been processed
+        // Prevent duplicate execution
         if (message.processedBan) return;
-        message.processedBan = true; // Mark as processed
+        message.processedBan = true;
 
         // Send confirmation embed
         const embed = new EmbedBuilder()
             .setTitle('User Banned')
             .setDescription(`**${mention.tag}** has been banned.`)
+            .addFields({ name: 'User ID', value: mention.id, inline: false })
             .setColor('#acf508');
 
         await message.channel.send({ embeds: [embed] });
