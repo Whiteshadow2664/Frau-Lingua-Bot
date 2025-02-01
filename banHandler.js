@@ -14,15 +14,17 @@ async function handleBanCommand(message) {
         // Fetch the member (if still in the server)
         const member = await message.guild.members.fetch(mention.id).catch(() => null);
 
-        // Ban the user, whether they are in the server or not
         if (member) {
+            // Member still in the server, ban them
             await message.guild.members.ban(member, { reason: 'Banned by bot command' });
+            console.log(`Banned member: ${mention.tag} (${mention.id})`);
         } else {
-            // Ban the user even if they have left the server
+            // User is not in the server, ban them by ID
             await message.guild.bans.create(mention.id, { reason: 'Banned by bot command' });
+            console.log(`Banned user who left: ${mention.tag} (${mention.id})`);
         }
 
-        // Delete messages from the banned user, whether they are still in the server or not
+        // Delete messages from the banned user
         message.guild.channels.cache.forEach(async (channel) => {
             if (channel.isTextBased()) {
                 try {
