@@ -21,8 +21,9 @@ const ticket = require('./commands/ticket');
 const leaderboard = require('./leaderboard.js');
 const linkFilter = require('./linkFilter');
 const { handleSpamDetection } = require('./spamHandler');
-const messageTracker = require('./messageTracker'); // Add this line to import the messageTracker
-const { generateLeaderboard } = require('./messageTracker');
+
+const modRank = require('./modrank'); // Adjust the path if necessary
+
 const updates = require('./commands/updates');
 const { handleBanCommand } = require('./banHandler');
 const { updateBotStatus } = require('./statusUpdater');
@@ -133,22 +134,24 @@ client.on('messageCreate', async (message) => {
 
     await handleBanCommand(message);
 
-//Track message counts
-    if (message.content.includes('Thx for bumping our Server! We will remind you in 2 hours!')) {
-        messageTracker.trackBumpingPoints(message);
-    } else {
-        messageTracker.trackMessage(message);
+// Track bumping points for the bump bot
+    await modRank.trackBumpingPoints(message); 
+
+    // Handle !modrank command
+    if (message.content.toLowerCase() === '!modrank') {
+        await modRank.execute(message); // Display the leaderboard
+    } 
+
+    // Optional: Update mod rank when a moderator sends a message
+    const moderatorRole = message.guild.roles.cache.find(role => role.name.toLowerCase() === 'moderator');
+    if (moderatorRole && message.member.roles.cache.has(moderatorRole.id)) {
+        await modRank.updateModRank(message.author.id, message.author.username, message.guild); // Update points for moderators
     }
 
     await handleSpamDetection(message);
 await handleBanCommand(message);
 if (message.content.toLowerCase() === '!leaderboard') {
    leaderboard.execute(message);
-}
-
-if (message.content.toLowerCase() === '!modrank') {
-    // Trigger the leaderboard generation function
-    await generateLeaderboard(message.client, message.channel.id);
 }
 
 if (message.content.toLowerCase() === '!ticket') {
