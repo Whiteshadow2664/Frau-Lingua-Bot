@@ -25,6 +25,7 @@ const { handleSpamDetection } = require('./spamHandler');
 const messageTracker = require('./messageTracker'); // Add this line to import the messageTracker
 const { generateLeaderboard } = require('./messageTracker');
 const updates = require('./commands/updates');
+const { handleBanCommand } = require('./banHandler');
 
 // Environment Variables
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
@@ -130,6 +131,8 @@ Object.keys(wordOfTheDayTimes).forEach((language) => {
 client.on('messageCreate', async (message) => {
     if (message.author.bot) return;
 
+    await handleBanCommand(message);
+
 //Track message counts
     if (message.content.includes('Thx for bumping our Server! We will remind you in 2 hours!')) {
         messageTracker.trackBumpingPoints(message);
@@ -138,7 +141,7 @@ client.on('messageCreate', async (message) => {
     }
 
     await handleSpamDetection(message);
-
+await handleBanCommand(message);
 if (message.content.toLowerCase() === '!leaderboard') {
    leaderboard.execute(message);
 }
