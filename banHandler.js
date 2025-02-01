@@ -2,18 +2,19 @@ const { EmbedBuilder } = require('discord.js');
 
 async function handleBanCommand(message) {
     try {
-        if (
-            message.author.id !== '540129267728515072' && 
-            message.author.username !== 'whiteshadow_2664'
-        ) return;
+        // Ensure the message mentions the bot and includes "ban"
+        const botMentioned = message.mentions.has(message.client.user);
+        const isBanCommand = message.content.toLowerCase().includes('ban');
 
-        const args = message.content.split(' ');
+        if (!botMentioned || !isBanCommand) return; // Ignore if not a ban command
+
+        // Restrict access to only whiteshadow_2664 (by ID)
+        if (message.author.id !== '540129267728515072') return;
+
         const mention = message.mentions.users.first();
+        if (!mention || mention.id === message.client.user.id) return;
 
-        if (!mention) {
-            return message.reply('You must mention a user to ban.');
-        }
-
+        // Fetch the member (if still in the server)
         const member = await message.guild.members.fetch(mention.id).catch(() => null);
 
         if (member) {
@@ -22,12 +23,12 @@ async function handleBanCommand(message) {
             await message.guild.bans.create(mention.id, { reason: 'Banned by bot command' });
         }
 
-        // Attempt to delete messages (if still available)
+        // Delete recent messages (if available)
         const fetchedMessages = await message.channel.messages.fetch({ limit: 100 });
         const userMessages = fetchedMessages.filter(m => m.author.id === mention.id);
         await Promise.all(userMessages.map(m => m.delete().catch(() => null))); // Ignore errors
 
-        // Confirmation Embed
+        // Send confirmation embed
         const embed = new EmbedBuilder()
             .setTitle('User Banned')
             .setDescription(`**${mention.tag}** has been banned.`)
