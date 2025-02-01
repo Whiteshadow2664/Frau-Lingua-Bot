@@ -26,6 +26,7 @@ const { generateLeaderboard } = require('./messageTracker');
 const updates = require('./commands/updates');
 const { handleBanCommand } = require('./banHandler');
 const { updateBotStatus } = require('./statusUpdater');
+const { updateModRank, trackMessage, trackBumpingPoints, generateLeaderboard } = require('./modrank'); // Import your functions
 
 // Environment Variables
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
