@@ -30,9 +30,10 @@ function getRandomCity() {
 // Status messages array
 let statuses = [
     { type: ActivityType.Playing, text: `Welcome to the LinguaLounge` },
-    { type: ActivityType.Watching, text: `Ich bin Frau Lingua` },
+    { type: ActivityType.Watching, text: `Ich   heiße Frau Lingua` },
     { type: ActivityType.Listening, text: `Ich komme aus ${getRandomCity()}` },
-    { type: ActivityType.Playing, text: getGreeting() }  // Dynamic greeting based on time of day
+    { type: ActivityType.Playing, text: getGreeting() },  // Dynamic greeting based on time of day
+    { type: ActivityType.Playing, text: `Type !help` }  // New status for the help command
 ];
 
 let currentStatusIndex = 0;
