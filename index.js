@@ -134,22 +134,26 @@ client.on('messageCreate', async (message) => {
 
     await handleBanCommand(message);
 
-//Track message counts
-    if (message.content.includes('Thx for bumping our Server! We will remind you in 2 hours!')) {
-        messageTracker.trackBumpingPoints(message);
-    } else {
-        messageTracker.trackMessage(message);
+// Command to display the leaderboard
+    if (message.content.toLowerCase() === '!modrank') {
+        await execute(message);
+        return;
+    } 
+
+    // Track bumping points
+    if (message.content.includes('Thx for bumping our Server!')) {
+        trackBumpingPoints(message);
+    } 
+
+    // Example for updating mod rank for a specific moderator action (replace with real conditions)
+    if (message.content.includes('some action by a moderator')) {
+        await updateModRank(message.author.id, message.author.username, message.guild, 1);  // Example point increment
     }
 
     await handleSpamDetection(message);
 await handleBanCommand(message);
 if (message.content.toLowerCase() === '!leaderboard') {
    leaderboard.execute(message);
-}
-
-if (message.content.toLowerCase() === '!modrank') {
-    // Trigger the leaderboard generation function
-    await generateLeaderboard(message.client, message.channel.id);
 }
 
 if (message.content.toLowerCase() === '!ticket') {
