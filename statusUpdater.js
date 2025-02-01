@@ -1,9 +1,10 @@
 const { ActivityType } = require('discord.js');
 const moment = require('moment-timezone');
 
-// List of German cities
+// Extended list of German cities
 const germanCities = [
-    'Berlin', 'Munich', 'Hamburg', 'Cologne', 'Frankfurt', 'Stuttgart', 'Düsseldorf', 'Dresden', 'Leipzig', 'Nuremberg'
+    'Berlin', 'Munich', 'Hamburg', 'Cologne', 'Frankfurt', 'Stuttgart', 'Düsseldorf', 'Dresden', 'Leipzig', 'Nuremberg',
+    'Bremen', 'Hannover', 'Münster', 'Aachen', 'Freiburg', 'Heidelberg', 'Mainz', 'Würzburg', 'Kassel', 'Paderborn'
 ];
 
 // Function to get the current greeting based on the time of day in Germany (CET/CEST)
