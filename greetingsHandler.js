@@ -41,6 +41,11 @@ const handleGreeting = (message) => {
 
     const content = message.content.toLowerCase(); // Convert message to lowercase for matching
 
+    // Special response for "Ich liebe Frau Lingua"
+    if (content === 'ich liebe frau lingua') {
+        return 'Ich liebe dich auch ❤️';
+    }
+
     // Check for greetings in each language
     for (const [language, greetingsList] of Object.entries(greetings)) {
         if (greetingsList.some(greeting => content.includes(greeting))) {
