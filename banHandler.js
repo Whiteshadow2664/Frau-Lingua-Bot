@@ -3,10 +3,7 @@ const { EmbedBuilder } = require('discord.js');
 async function handleBanCommand(message) {
     try {
         // Ensure the message mentions the bot and includes "ban"
-        const botMentioned = message.mentions.has(message.client.user);
-        const isBanCommand = message.content.toLowerCase().includes('ban');
-
-        if (!botMentioned || !isBanCommand) return; // Ignore if not a ban command
+        if (!message.mentions.has(message.client.user) || !message.content.toLowerCase().includes('ban')) return;
 
         // Restrict access to only whiteshadow_2664 (by ID)
         if (message.author.id !== '540129267728515072') return;
@@ -27,6 +24,10 @@ async function handleBanCommand(message) {
         const fetchedMessages = await message.channel.messages.fetch({ limit: 100 });
         const userMessages = fetchedMessages.filter(m => m.author.id === mention.id);
         await Promise.all(userMessages.map(m => m.delete().catch(() => null))); // Ignore errors
+
+        // Check if the message has already been processed
+        if (message.processedBan) return;
+        message.processedBan = true; // Mark as processed
 
         // Send confirmation embed
         const embed = new EmbedBuilder()
