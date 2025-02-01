@@ -1,13 +1,14 @@
 const { ActivityType } = require('discord.js');
+const moment = require('moment-timezone');
 
 // List of German cities
 const germanCities = [
     'Berlin', 'Munich', 'Hamburg', 'Cologne', 'Frankfurt', 'Stuttgart', 'Düsseldorf', 'Dresden', 'Leipzig', 'Nuremberg'
 ];
 
-// Function to get the current greeting based on the time of day
+// Function to get the current greeting based on the time of day in Germany (CET/CEST)
 function getGreeting() {
-    const hour = new Date().getHours(); // Get the current hour of the day
+    const hour = moment().tz('Europe/Berlin').hour(); // Get the current hour in Germany timezone
 
     if (hour >= 5 && hour < 12) {
         return 'Guten Morgen'; // Morning (5 AM to 12 PM)
@@ -20,7 +21,7 @@ function getGreeting() {
     }
 }
 
-// Function to get the random German city for the "Ich komme and [city]" status
+// Function to get the random German city for the "Ich komme aus [city]" status
 function getRandomCity() {
     const randomIndex = Math.floor(Math.random() * germanCities.length);
     return germanCities[randomIndex];
@@ -29,7 +30,7 @@ function getRandomCity() {
 // Status messages array
 let statuses = [
     { type: ActivityType.Playing, text: `Welcome to the LinguaLounge` },
-    { type: ActivityType.Watching, text: `I'm Frau Lingua` },
+    { type: ActivityType.Watching, text: `Ich bin Frau Lingua` },
     { type: ActivityType.Listening, text: `Ich komme aus ${getRandomCity()}` },
     { type: ActivityType.Playing, text: getGreeting() }  // Dynamic greeting based on time of day
 ];
