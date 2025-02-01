@@ -26,6 +26,7 @@ const messageTracker = require('./messageTracker'); // Add this line to import t
 const { generateLeaderboard } = require('./messageTracker');
 const updates = require('./commands/updates');
 const { handleBanCommand } = require('./banHandler');
+const { updateBotStatus } = require('./statusUpdater');
 
 // Environment Variables
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
@@ -393,6 +394,8 @@ delete activeQuizzes[message.author.id];
 client.once('ready', () => {
     console.log(`${client.user.tag} is online!`);
     linkFilter(client);
+    // Start the status update cycle
+    setInterval(() => updateBotStatus(client), 10000); // Update every 10 seconds
 });
 
 // Event when a member joins the server
