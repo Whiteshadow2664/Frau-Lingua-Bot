@@ -21,12 +21,11 @@ const ticket = require('./commands/ticket');
 const leaderboard = require('./leaderboard.js');
 const linkFilter = require('./linkFilter');
 const { handleSpamDetection } = require('./spamHandler');
-
-
+const messageTracker = require('./messageTracker'); // Add this line to import the messageTracker
+const { generateLeaderboard } = require('./messageTracker');
 const updates = require('./commands/updates');
 const { handleBanCommand } = require('./banHandler');
 const { updateBotStatus } = require('./statusUpdater');
-const { updateModRank, trackMessage, trackBumpingPoints, generateLeaderboard } = require('./modrank'); // Import your functions
 
 // Environment Variables
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
@@ -134,26 +133,22 @@ client.on('messageCreate', async (message) => {
 
     await handleBanCommand(message);
 
-// Command to display the leaderboard
-    if (message.content.toLowerCase() === '!modrank') {
-        await execute(message);
-        return;
-    } 
-
-    // Track bumping points
-    if (message.content.includes('Thx for bumping our Server!')) {
-        trackBumpingPoints(message);
-    } 
-
-    // Example for updating mod rank for a specific moderator action (replace with real conditions)
-    if (message.content.includes('some action by a moderator')) {
-        await updateModRank(message.author.id, message.author.username, message.guild, 1);  // Example point increment
+//Track message counts
+    if (message.content.includes('Thx for bumping our Server! We will remind you in 2 hours!')) {
+        messageTracker.trackBumpingPoints(message);
+    } else {
+        messageTracker.trackMessage(message);
     }
 
     await handleSpamDetection(message);
 await handleBanCommand(message);
 if (message.content.toLowerCase() === '!leaderboard') {
    leaderboard.execute(message);
+}
+
+if (message.content.toLowerCase() === '!modrank') {
+    // Trigger the leaderboard generation function
+    await generateLeaderboard(message.client, message.channel.id);
 }
 
 if (message.content.toLowerCase() === '!ticket') {
