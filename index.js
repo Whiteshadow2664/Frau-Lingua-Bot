@@ -21,9 +21,7 @@ const ticket = require('./commands/ticket');
 const leaderboard = require('./leaderboard.js');
 const linkFilter = require('./linkFilter');
 const { handleSpamDetection } = require('./spamHandler');
-
 const modRank = require('./modrank'); // Adjust the path if necessary
-
 const updates = require('./commands/updates');
 const { handleBanCommand } = require('./banHandler');
 const { updateBotStatus } = require('./statusUpdater');
@@ -147,8 +145,7 @@ client.on('messageCreate', async (message) => {
     if (moderatorRole && message.member.roles.cache.has(moderatorRole.id)) {
         await modRank.updateModRank(message.author.id, message.author.username, message.guild); // Update points for moderators
     }
-
-    await handleSpamDetection(message);
+        await handleSpamDetection(message);
 await handleBanCommand(message);
 if (message.content.toLowerCase() === '!leaderboard') {
    leaderboard.execute(message);
