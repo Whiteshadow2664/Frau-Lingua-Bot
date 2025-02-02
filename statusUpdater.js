@@ -3,7 +3,9 @@ const moment = require('moment-timezone');
 
 const germanCities = [
     'Berlin', 'Munich', 'Hamburg', 'Cologne', 'Frankfurt', 'Stuttgart', 'Düsseldorf', 'Dresden', 'Leipzig', 'Nuremberg',
-    'Bremen', 'Hannover', 'Münster', 'Aachen', 'Freiburg', 'Heidelberg', 'Mainz', 'Würzburg', 'Kassel', 'Paderborn'
+    'Bremen', 'Hannover', 'Münster', 'Aachen', 'Freiburg', 'Heidelberg', 'Mainz', 'Würzburg', 'Kassel', 'Paderborn',
+    'Essen', 'Dortmund', 'Bonn', 'Mannheim', 'Karlsruhe', 'Kiel', 'Magdeburg', 'Rostock', 'Saarbrücken', 'Lübeck',
+    'Erfurt', 'Regensburg', 'Osnabrück', 'Göttingen', 'Chemnitz', 'Cottbus', 'Koblenz', 'Ulm', 'Bielefeld', 'Flensburg'
 ];
 
 function getGreeting() {
