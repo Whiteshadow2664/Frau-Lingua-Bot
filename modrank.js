@@ -123,6 +123,9 @@ async function execute(message) {
                 leaderboard += `**#${index + 1}** | **${row.days_as_mod} Days** | **${row.username}** - **P:** ${row.points} | **AVG:** ${avgPoints}\n`;
             });
 
+            leaderboard += `\n\n**Q** - No. of quizzes\n**P** - Points\n**AVG** - Average points per moderator`;
+            });
+
             const embed = new EmbedBuilder()
                 .setColor('#acf508')
                 .setTitle('Moderator Leaderboard')
