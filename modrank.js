@@ -18,7 +18,7 @@ function keepDBAlive() {
     setInterval(async () => {
         try {
             await pool.query('SELECT 1');  // Simple query to prevent Neon from terminating the connection
-            console.log('DB connection refreshed');
+            
         } catch (error) {
             console.error('Error keeping DB alive:', error);
         }
