@@ -31,11 +31,11 @@ let currentStatusIndex = 0;
 async function updateBotStatus(client) {
     try {
         const statuses = [
-            { type: ActivityType.Playing, text: `Have a nice day` },
-            { type: ActivityType.Watching, text: `Ich heiße Frau Lingua` },
-            { type: ActivityType.Listening, text: `Ich komme aus ${getRandomCity()}` },  // Dynamically get city
+            // Dynamically get city
             { type: ActivityType.Playing, text: getGreeting() },  // Dynamically get greeting
-            { type: ActivityType.Playing, text: `Type !help` }
+            { type: ActivityType.Playing, text: `Type !help` },
+            { type: ActivityType.Watching, text: `Ich heiße Frau Lingua` },
+            { type: ActivityType.Listening, text: `Ich komme aus ${getRandomCity()}` },{ type: ActivityType.Playing, text: `Have a nice day` } 
         ];
 
         const status = statuses[currentStatusIndex];
