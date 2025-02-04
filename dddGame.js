@@ -43,12 +43,12 @@ module.exports = {
                     }
 
                     const embed = new EmbedBuilder()
-                        .setTitle('Die Das Der')
-                        .setDescription(`What is the correct article for **"${question.word}"**?\n\n🇦: Die\n🇧: Das\n🇨: Der`)
-                        .setColor('#acf508')
-                        .setFooter({ text: 'React with the correct answer!' });
+    .setTitle('Die Das Der')
+    .setDescription(`What is the correct article for **"${question.word}"**?\n\nA) Die\nB) Das\nC) Der`)
+    .setColor('#acf508')
+    .setFooter({ text: 'React with the correct answer!' });
 
-                    lastQuestionMessage = await message.channel.send({ embeds: [embed] });
+lastQuestionMessage = await message.channel.send({ embeds: [embed] });
 
                     const answerEmojis = ['🇦', '🇧', '🇨'];
                     const correctAnswer = question.correct;
