@@ -148,13 +148,14 @@ module.exports.execute = async (message) => {
             .setTitle(`${selectedLanguage.charAt(0).toUpperCase() + selectedLanguage.slice(1)} Level ${selectedLevel} Leaderboard`)
             .setColor('#FFD700')
             .setDescription(
-                leaderboardData.rows
-                    .map(
-                        (row, index) =>
-                            `**#${index + 1}** ${row.username} - **Q:** ${row.quizzes} | **P:** ${row.points} | **AVG:** ${row.avg_points.toFixed(2)}`
-                    )
-                    .join('\n')
-            );
+    leaderboardData.rows
+        .map(
+            (row, index) =>
+                `**#${index + 1}** ${row.username} - **Q:** ${row.quizzes} | **P:** ${row.points} | **AVG:** ${row.avg_points.toFixed(2)}`
+        )
+        .join('\n') + 
+    `\n\n**Q** - No. of quizzes\n**P** - Points\n**AVG** - Average points per quiz`
+);
 
         message.channel.send({ embeds: [leaderboardEmbed] });
     } catch (error) {
