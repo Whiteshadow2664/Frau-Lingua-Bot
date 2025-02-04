@@ -18,7 +18,7 @@ function keepDBAlive() {
     setInterval(async () => {
         try {
             await pool.query('SELECT 1');  // Simple query to prevent Neon from terminating the connection
-            
+            console.log('DB connection refreshed');
         } catch (error) {
             console.error('Error keeping DB alive:', error);
         }
@@ -121,9 +121,6 @@ async function execute(message) {
             result.rows.forEach((row, index) => {
                 const avgPoints = (row.points / row.days_as_mod).toFixed(2);
                 leaderboard += `**#${index + 1}** | **${row.days_as_mod} Days** | **${row.username}** - **P:** ${row.points} | **AVG:** ${avgPoints}\n`;
-            });
-
-            leaderboard += `\n\n**Q** - No. of quizzes\n**P** - Points\n**AVG** - Average points per moderator`;
             });
 
             const embed = new EmbedBuilder()
