@@ -131,10 +131,6 @@ Object.keys(wordOfTheDayTimes).forEach((language) => {
 client.on('messageCreate', async (message) => {
     if (message.author.bot) return;
 
-    if (message.content.toLowerCase() === '!ddd') {
-        dddGame.execute(message);
-    }
-
     await handleBanCommand(message);
 
 // Track bumping points for the bump bot
@@ -154,6 +150,10 @@ client.on('messageCreate', async (message) => {
 await handleBanCommand(message);
 if (message.content.toLowerCase() === '!leaderboard') {
    leaderboard.execute(message);
+}
+
+if (message.content.toLowerCase() === '!ddd') {
+        dddGame.execute(message);
 }
 
 if (message.content.toLowerCase() === '!ticket') {
