@@ -154,6 +154,17 @@ if (message.content.toLowerCase() === '!leaderboard') {
    leaderboard.execute(message);
 }
 
+if (message.content.toLowerCase() === "!ws") {
+    handleWorksheet(message, client);
+}
+// Track bumps when Disboard sends a message
+await bumpTracker.trackBump(message);
+
+// Show bump leaderboard on `!brank` command
+if (message.content.toLowerCase() === '!brank') {
+    await bumpTracker.showBumpLeaderboard(message);
+}
+
 if (message.content.toLowerCase() === '!ddd') {
         dddGame.execute(message);
 }
