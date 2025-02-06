@@ -35,7 +35,7 @@ async function updateBotStatus(client) {
             { type: ActivityType.Playing, text: getGreeting() },  // Dynamically get greeting
             { type: ActivityType.Playing, text: `Type !help` },
             { type: ActivityType.Watching, text: `Ich heiße Frau Lingua` },
-            { type: ActivityType.Listening, text: `Ich komme aus ${getRandomCity()}` },{ type: ActivityType.Playing, text: `Have a Nice Day` } 
+            { type: ActivityType.Listening, text: `Ich komme aus ${getRandomCity()}` },{ type: ActivityType.Playing, text: `Have a Nice Day!` } 
         ];
 
         const status = statuses[currentStatusIndex];
