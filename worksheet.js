@@ -29,7 +29,7 @@ module.exports = async (message, client) => {
     const embed = new EmbedBuilder()
         .setTitle(`📚 ${detectedLanguage.name} Worksheet`)
         .setColor(detectedLanguage.color)
-        .setDescription(`${worksheetText}`)
+        .setDescription(`\`\`\`${worksheetText}\`\`\``)
         .setFooter({ text: "📖 Keep Learning & Improving!" });
 
     const targetChannel = await client.channels.fetch(detectedLanguage.channelId);
