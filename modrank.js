@@ -8,6 +8,26 @@ let pool = new Pool({
     connectionTimeoutMillis: 5000  // Ensures quick reconnection
 });
 
+// Step 1: Place this function just after the pool connection setup
+async function createTable() {
+    try {
+        await pool.query(`
+            CREATE TABLE IF NOT EXISTS mod_rank (
+                user_id TEXT PRIMARY KEY,
+                username TEXT NOT NULL,
+                points INT DEFAULT 0,
+                joined_at TIMESTAMP DEFAULT NOW()
+            );
+        `);
+        console.log('✅ mod_rank table checked/created.');
+    } catch (error) {
+        console.error('❌ Error creating mod_rank table:', error);
+    }
+}
+
+// Step 2: Call the function right after the pool setup
+createTable();  // Ensure table exists on startup
+
 const BUMP_BOT_ID = '735147814878969968';
 const BUMP_MESSAGE = 'Thx for bumping our Server! We will remind you in 2 hours!';
 
