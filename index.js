@@ -26,6 +26,8 @@ const updates = require('./commands/updates');
 const { handleBanCommand } = require('./banHandler');
 const { updateBotStatus } = require('./statusUpdater');
 const dddGame = require('./dddGame');
+const bumpTracker = require('./bumpTracker');
+const handleWorksheet = require('./worksheet');
 
 // Environment Variables
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
