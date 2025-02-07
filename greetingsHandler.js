@@ -19,14 +19,12 @@ const responses = {
     }
 };
 
-// List of allowed channel IDs
-const allowedChannelIds = [
-    '818023867372011551',
-    '1233064967109087292',
-    '1225363050207514675',
-    '1225362787581296640',
-    '1303664003444379649'
-];
+// Define language-specific channels
+const languageChannels = {
+    german: '1225363050207514675',
+    french: '1225362787581296640',
+    russian: '1303664003444379649',
+};
 
 let conversationState = {
     previousLanguage: null, // To track the last language used
@@ -34,14 +32,9 @@ let conversationState = {
 };
 
 const handleGreeting = (message) => {
-    // Check if the message is from an allowed channel
-    if (!allowedChannelIds.includes(message.channel.id)) {
-        return null; // Ignore if the message is from a channel that is not in the allowed list
-    }
-
     const content = message.content.toLowerCase(); // Convert message to lowercase for matching
 
-    // Special response for "Ich liebe Frau Lingua"
+    // Special response for "Ich liebe Frau Lingua" (allowed in all channels)
     if (content === 'ich liebe frau lingua') {
         return 'Ich liebe dich auch ❤️';
     }
@@ -49,6 +42,11 @@ const handleGreeting = (message) => {
     // Check for greetings in each language
     for (const [language, greetingsList] of Object.entries(greetings)) {
         if (greetingsList.some(greeting => content.includes(greeting))) {
+            // Only respond if the message is in the correct channel for that language
+            if (message.channel.id !== languageChannels[language]) {
+                return null; // Ignore messages from incorrect channels
+            }
+
             // If the user starts a new greeting
             conversationState.previousLanguage = language;
             conversationState.hasAskedHowAreYou = true; // Mark that the bot has asked "How are you?"
@@ -61,7 +59,11 @@ const handleGreeting = (message) => {
         const language = conversationState.previousLanguage;
         conversationState.previousLanguage = null; // Reset after completing the conversation
         conversationState.hasAskedHowAreYou = false; // Reset the flag
-        return responses[language].haveNiceDay; // Respond with "Have a nice day"
+        
+        // Only respond if in the correct channel
+        if (message.channel.id === languageChannels[language]) {
+            return responses[language].haveNiceDay; // Respond with "Have a nice day"
+        }
     }
 
     // Return null if no match is found
