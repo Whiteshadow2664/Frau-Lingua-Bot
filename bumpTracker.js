@@ -1,11 +1,11 @@
 const { Client, EmbedBuilder } = require('discord.js');
 const { Pool } = require('pg');
 
-const pool = new Pool({
+let pool = new Pool({
     connectionString: process.env.DATABASE_URL,
     ssl: { rejectUnauthorized: false },
-    idleTimeoutMillis: 30000,
-    connectionTimeoutMillis: 5000
+    idleTimeoutMillis: 30000, // Close idle connections after 30s
+    connectionTimeoutMillis: 5000 // Ensures quick reconnection
 });
 
 // Ensure the table exists
@@ -29,6 +29,35 @@ const BUMP_BOT_ID = '735147814878969968';
 const BUMP_MESSAGE = 'Thx for bumping our Server! We will remind you in 2 hours!';
 
 /**
+ * Keeps the database connection alive by running a query every 5 minutes.
+ */
+function keepDBAlive() {
+    setInterval(async () => {
+        try {
+            await pool.query('SELECT 1'); // Simple query to prevent database termination
+        } catch (error) {
+            console.error('Error keeping DB alive:', error);
+        }
+    }, 5 * 60 * 1000); // Runs every 5 minutes
+}
+keepDBAlive(); // Start keep-alive function
+
+/**
+ * Handles unexpected database connection errors and reconnects.
+ */
+pool.on('error', async (err) => {
+    console.error('Unexpected DB connection error:', err);
+    await pool.end(); // Close the current pool
+    pool = new Pool({ 
+        connectionString: process.env.DATABASE_URL, 
+        ssl: { rejectUnauthorized: false },
+        idleTimeoutMillis: 30000,
+        connectionTimeoutMillis: 5000
+    });
+    console.log('Reconnected to database.');
+});
+
+/**
  * Tracks bump count for a user when a bump message is detected.
  */
 async function trackUserBump(message) {
@@ -49,7 +78,7 @@ async function trackUserBump(message) {
                     bump_count = bump_tracker.bump_count + 1
             `, [mentionedUser.id, mentionedUser.username]);
         } finally {
-            client.release();
+            client.release(); // Release connection back to the pool
         }
     } catch (error) {
         console.error('Error tracking user bump:', error);
@@ -67,26 +96,29 @@ async function showBumpLeaderboard(message) {
                 SELECT username, bump_count FROM bump_tracker
                 WHERE bump_count > 0 
                 ORDER BY bump_count DESC
+                LIMIT 10
             `);
 
             if (result.rows.length === 0) {
                 return message.channel.send('No bumps recorded yet.');
             }
 
-            let leaderboard = '**Bump Leaderboard**\n';
+            let leaderboard = '**Rank - Username - Bumps**\n'; // Removed "Disboard Bumps"
             result.rows.forEach((row, index) => {
-                leaderboard += `**#${index + 1}** | **${row.username}** - **Bumps:** ${row.bump_count}\n`;
+                leaderboard += `#${index + 1} - **${row.username}** - ${row.bump_count} bumps\n`;
             });
 
+            leaderboard += '\nKeep bumping to climb the ranks!';
+
             const embed = new EmbedBuilder()
-                .setColor('#00ff99')
-                .setTitle('Bump Leaderboard')
-                .setDescription(leaderboard)
-                .setTimestamp();
+                .setColor('#acf508')
+                .setTitle('📢 DISBOARD BUMPS')
+                .setDescription(leaderboard);
+                // Removed .setTimestamp()
 
             message.channel.send({ embeds: [embed] });
         } finally {
-            client.release();
+            client.release(); // Release connection back to the pool
         }
     } catch (error) {
         console.error('Error fetching bump leaderboard:', error);
