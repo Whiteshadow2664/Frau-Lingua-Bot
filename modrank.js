@@ -94,8 +94,7 @@ async function updateModRank(userId, username, guild) {
  * Tracks bump points when a bump message is detected.
  */
 async function trackBumpingPoints(message) {
-    // Log the message to check content
-    console.log(`Received message: ${message.content} from ${message.author.id}`);
+    
 
     // Ensure the message is from the bump bot and contains the expected bump message
     if (message.author.id !== BUMP_BOT_ID || !message.content.includes(BUMP_MESSAGE)) return;
