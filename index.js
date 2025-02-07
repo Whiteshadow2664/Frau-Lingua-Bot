@@ -159,6 +159,28 @@ if (message.content.toLowerCase() === '!leaderboard') {
 if (message.content.toLowerCase() === "!ws") {
     handleWorksheet(message, client);
 }
+
+if (message.content === '!afk') {
+        afkHandler.handleAFKCommand(message);
+    } else {
+        afkHandler.handleMention(message);
+        afkHandler.handleAFKRemoval(message);
+    }
+
+    // Check if the message starts with the !purge command and is not from the bot itself
+    if (message.content.startsWith('!purge') && !message.author.bot) {
+        // Split the message content after the command name to get arguments
+        const args = message.content.slice('!purge'.length).trim().split(/ +/);
+
+        // Ensure the args array has the right structure
+        if (args.length < 1 || isNaN(args[0])) {
+            return message.reply('Please provide a valid number of messages to purge.');
+        }
+
+        // Call the execute function from purge.js, passing the message and args
+        purgeCommand.execute(message, args);
+    }
+
 // Track bumps when Disboard sends a message
 await bumpTracker.trackUserBump(message); 
 if (message.content.toLowerCase() === '!bumps') {
