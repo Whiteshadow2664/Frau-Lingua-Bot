@@ -28,6 +28,8 @@ const { updateBotStatus } = require('./statusUpdater');
 const dddGame = require('./dddGame');
 const bumpTracker = require('./bumpTracker');
 const handleWorksheet = require('./worksheet');
+const afkHandler = require('./afk.js');
+const purgeCommand = require('./purge.js');
 
 // Environment Variables
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
