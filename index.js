@@ -26,7 +26,6 @@ const updates = require('./commands/updates');
 const { handleBanCommand } = require('./banHandler');
 const { updateBotStatus } = require('./statusUpdater');
 const dddGame = require('./dddGame');
-const bumpTracker = require('./bumpTracker');
 const handleWorksheet = require('./worksheet');
 const afkHandler = require('./afk.js');
 const purgeCommand = require('./purge.js');
@@ -181,11 +180,7 @@ if (message.content === '!afk') {
         purgeCommand.execute(message, args);
     }
 
-// Track bumps when Disboard sends a message
-await bumpTracker.trackUserBump(message); 
-if (message.content.toLowerCase() === '!bumps') {
-        await bumpTracker.showBumpLeaderboard(message);
-}
+
 
 if (message.content.toLowerCase() === '!ddd') {
         dddGame.execute(message);
