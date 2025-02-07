@@ -94,16 +94,10 @@ async function updateModRank(userId, username, guild) {
  * Tracks bump points when a bump message is detected.
  */
 async function trackBumpingPoints(message) {
-    
-
-    // Ensure the message is from the bump bot and contains the expected bump message
-    if (message.author.id !== BUMP_BOT_ID || !message.content.includes(BUMP_MESSAGE)) return;
+    if (message.author.id !== BUMP_BOT_ID || !message.content.startsWith(BUMP_MESSAGE)) return;
 
     const mentionedUser = message.mentions.users.first();
     if (!mentionedUser) return;
-
-    // Log the mentioned user to ensure it's detected correctly
-    console.log(`Mentioned user: ${mentionedUser.username}`);
 
     try {
         const client = await pool.connect();
