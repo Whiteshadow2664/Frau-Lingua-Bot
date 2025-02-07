@@ -61,14 +61,16 @@ pool.on('error', async (err) => {
  * Tracks bump count for a user when a bump message is detected.
  */
 async function trackUserBump(message) {
-    if (message.author.id !== BUMP_BOT_ID || !message.content.startsWith(BUMP_MESSAGE)) return;
+    // Ensure the message is from the bump bot and contains the expected bump message
+    if (message.author.id !== BUMP_BOT_ID || !message.content.includes(BUMP_MESSAGE)) return;
 
-    const mentionedUser = message.mentions.users.first();
-    if (!mentionedUser) return;
+    const mentionedUser = message.mentions.users.first(); // Get the first mentioned user
+    if (!mentionedUser) return; // If no user is mentioned, exit
 
     try {
         const client = await pool.connect();
         try {
+            // Insert or update the mentioned user in the bump_tracker table
             await client.query(`
                 INSERT INTO bump_tracker (user_id, username, bump_count)
                 VALUES ($1, $2, 1)
