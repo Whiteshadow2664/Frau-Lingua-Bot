@@ -158,11 +158,9 @@ if (message.content.toLowerCase() === "!ws") {
     handleWorksheet(message, client);
 }
 // Track bumps when Disboard sends a message
-await bumpTracker.trackBump(message);
-
-// Show bump leaderboard on `!brank` command
-if (message.content.toLowerCase() === '!brank') {
-    await bumpTracker.showBumpLeaderboard(message);
+await bumpTracker.trackUserBump(message); 
+if (message.content.toLowerCase() === '!bumps') {
+        await bumpTracker.showBumpLeaderboard(message);
 }
 
 if (message.content.toLowerCase() === '!ddd') {
