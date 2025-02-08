@@ -153,7 +153,7 @@ async function executeModRank(message) {
         return message.channel.send('No moderator activity recorded yet.');
       }
 
-      let leaderboard = ''; // Remove the extra blank line at the start
+      let leaderboard = ''; // Initialize the leaderboard string
       result.rows.forEach((row, index) => {
         const avgPoints = (row.points / row.days_as_mod).toFixed(2);
         leaderboard += `**#${index + 1}** | **${row.days_as_mod} Days** | **${row.username}** - **P:** ${row.points} | **AVG:** ${avgPoints}\n`;
@@ -164,9 +164,10 @@ async function executeModRank(message) {
 
       const embed = new EmbedBuilder()
         .setColor('#acf508')
-        .setTitle('Moderator Leaderboard')  // Title is already here
-        .setDescription(leaderboard)  // No title needed in the description
+        .setTitle('Moderator Leaderboard')
+        .setDescription(leaderboard)
         .setTimestamp();
+
       message.channel.send({ embeds: [embed] });
     } finally {
       client.release();
