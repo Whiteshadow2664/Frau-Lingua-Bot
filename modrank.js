@@ -123,7 +123,8 @@ if (!mentionedUser) return;
 
       // If the mentioned user is a moderator, award points as well
       const member = message.guild.members.cache.get(mentionedUser.id);
-      if (member && member.roles.cache.some(role => role.name.toLowerCase() === 'moderator')) {
+      const guildMember = await message.guild.members.fetch(mentionedUser.id).catch(() => null);
+if (guildMember && guildMember.roles.cache.some(role => role.name.toLowerCase() === 'moderator')) {
         await client.query(`
           INSERT INTO mod_rank (user_id, username, points, joined_at)
           VALUES ($1, $2, 3, NOW())
