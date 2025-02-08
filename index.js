@@ -145,21 +145,28 @@ Object.keys(wordOfTheDayTimes).forEach((language) => {
 client.on('messageCreate', async (message) => {
     if (message.author.bot) return;
 
-    await handleBanCommand(message);
 
-// Track bumping points for the bump bot
-    await modRank.trackBumpingPoints(message); 
 
-    // Handle !modrank command
-    if (message.content.toLowerCase() === '!modrank') {
-        await modRank.execute(message); // Display the leaderboard
-    } 
+  if (message.content.toLowerCase() === '!modrank') {
+    // Call the function to display the mod leaderboard
+    modRank.executeModRank(message);
+  }
 
-    // Optional: Update mod rank when a moderator sends a message
-    const moderatorRole = message.guild.roles.cache.find(role => role.name.toLowerCase() === 'moderator');
-    if (moderatorRole && message.member.roles.cache.has(moderatorRole.id)) {
-        await modRank.updateModRank(message.author.id, message.author.username, message.guild); // Update points for moderators
-    }
+  if (message.content.toLowerCase() === '!bumps') {
+    // Call the function to display the bump leaderboard
+    modRank.executeBumpLeaderboard(message);
+  }
+
+
+
+
+
+
+
+
+
+
+
         await handleSpamDetection(message);
 await handleBanCommand(message);
 if (message.content.toLowerCase() === '!leaderboard') {
