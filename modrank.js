@@ -155,10 +155,10 @@ async function executeModRank(message) {
       }
 
       let leaderboard = 'Moderator Leaderboard\n';
-      result.rows.forEach((row, index) => {
-        const avgPoints = (row.points / row.days_as_mod).toFixed(2);
-        leaderboard += `#${index + 1} | ${row.username} - P: ${row.points} | Days: ${row.days_as_mod} | AVG: ${avgPoints}\n`;
-      });
+result.rows.forEach((row, index) => {
+  const avgPoints = (row.points / row.days_as_mod).toFixed(2);
+  leaderboard += `**#${index + 1}** | **${row.days_as_mod} days** | **${row.username}** - **P:** ${row.points} | **AVG:** ${avgPoints}\n`;
+});
 
       // Add cheering for the top moderator
       leaderboard += `\n🎉 Congratulations to **#1** for being the top moderator! 🎉`;
