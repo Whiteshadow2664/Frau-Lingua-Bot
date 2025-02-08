@@ -101,10 +101,9 @@ async function updateModRank(userId, username, guild) {
  * Tracks bump points when a bump message is detected.
  */
 async function trackBumpingPoints(message) {
-  if (message.author.id !== BUMP_BOT_ID || !message.content.toLowerCase().includes(BUMP_MESSAGE.toLowerCase().trim())) return;
+  if (message.author.id !== BUMP_BOT_ID || !message.content.startsWith(BUMP_MESSAGE)) return;
 
   const mentionedUser = message.mentions.users.first();
-
   if (!mentionedUser) return;
 
   try {
@@ -112,21 +111,22 @@ async function trackBumpingPoints(message) {
     try {
       // Update bump leaderboard for the user
       await client.query(`
-    INSERT INTO bump_leaderboard (user_id, username, bumps) 
-    VALUES ($1, $2, 1) 
-    ON CONFLICT (user_id) 
-    DO UPDATE SET username = EXCLUDED.username, bumps = bump_leaderboard.bumps + 1
-`, [mentionedUser.id, mentionedUser.username]);
+        INSERT INTO bump_leaderboard (user_id, username, bumps)
+        VALUES ($1, $2, 1)
+        ON CONFLICT (user_id) DO UPDATE
+        SET username = EXCLUDED.username, bumps = bump_leaderboard.bumps + 1
+      `, [mentionedUser.id, mentionedUser.username]);
 
-// If the mentioned user is a moderator, award points in mod_rank
-if (member && member.roles.cache.some(role => role.name.toLowerCase() === 'moderator')) {
-    await client.query(`
-        INSERT INTO mod_rank (user_id, username, points, joined_at) 
-        VALUES ($1, $2, 3, NOW()) 
-        ON CONFLICT (user_id) 
-        DO UPDATE SET username = EXCLUDED.username, points = mod_rank.points + 3
-    `, [mentionedUser.id, mentionedUser.username]);
-}
+      // If the mentioned user is a moderator, award points as well
+      const member = message.guild.members.cache.get(mentionedUser.id);
+      if (member && member.roles.cache.some(role => role.name.toLowerCase() === 'moderator')) {
+        await client.query(`
+          INSERT INTO mod_rank (user_id, username, points, joined_at)
+          VALUES ($1, $2, 3, NOW())
+          ON CONFLICT (user_id) DO UPDATE
+          SET username = EXCLUDED.username, points = mod_rank.points + 3
+        `, [mentionedUser.id, mentionedUser.username]);
+      }
     } finally {
       client.release(); // Release connection back to the pool
     }
