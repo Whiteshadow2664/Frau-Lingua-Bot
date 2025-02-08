@@ -103,8 +103,12 @@ async function updateModRank(userId, username, guild) {
 async function trackBumpingPoints(message) {
   if (message.author.id !== BUMP_BOT_ID || !message.content.startsWith(BUMP_MESSAGE)) return;
 
-  const mentionedUser = message.mentions.users.first();
-  if (!mentionedUser) return;
+  const mentionMatch = message.content.match(/<@!?(\d+)>/); // Extract user ID from mention
+if (!mentionMatch) return;
+
+const mentionedUserId = mentionMatch[1]; // Extracted user ID
+const mentionedUser = await message.client.users.fetch(mentionedUserId).catch(() => null);
+if (!mentionedUser) return;
 
   try {
     const client = await pool.connect();
