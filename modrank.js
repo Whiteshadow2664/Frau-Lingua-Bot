@@ -101,8 +101,11 @@ async function updateModRank(userId, username, guild) {
  * Tracks bump points when a bump message is detected.
  */
 async function trackBumpingPoints(message) {
-  if (message.author.id !== BUMP_BOT_ID || !message.content.startsWith(BUMP_MESSAGE)) return;
+  console.log(`Checking bump message from ${message.author.id}: ${message.content}`);
 
+  if (message.author.id === BUMP_BOT_ID && message.content.includes('Thx for bumping our Server!')) {
+  trackBumpingPoints(message);
+}
   const mentionMatch = message.content.match(/<@!?(\d+)>/); // Extract user ID from mention
 if (!mentionMatch) return;
 
