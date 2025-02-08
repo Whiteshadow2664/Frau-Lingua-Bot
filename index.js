@@ -21,7 +21,6 @@ const ticket = require('./commands/ticket');
 const leaderboard = require('./leaderboard.js');
 const linkFilter = require('./linkFilter');
 const { handleSpamDetection } = require('./spamHandler');
-const modRank = require('./modrank'); // Adjust the path if necessary
 const updates = require('./commands/updates');
 const { handleBanCommand } = require('./banHandler');
 const { updateBotStatus } = require('./statusUpdater');
@@ -29,6 +28,15 @@ const dddGame = require('./dddGame');
 const handleWorksheet = require('./worksheet');
 const afkHandler = require('./afk.js');
 const purgeCommand = require('./purge.js');
+
+
+
+
+
+const modRank = require('./modrank'); // Adjust the path if necessary
+
+
+
 
 // Environment Variables
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
