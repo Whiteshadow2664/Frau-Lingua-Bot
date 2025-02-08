@@ -29,15 +29,6 @@ const handleWorksheet = require('./worksheet');
 const afkHandler = require('./afk.js');
 const purgeCommand = require('./purge.js');
 
-
-
-
-
-const modRank = require('./modrank'); // Adjust the path if necessary
-
-
-
-
 // Environment Variables
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
 
@@ -56,6 +47,18 @@ GatewayIntentBits.GuildMembers,
     ],
     partials: [Partials.Message, Partials.Channel, Partials.Reaction],
 });
+
+
+
+
+
+const modRank = require('./modrank')(client);
+
+
+
+
+
+
 
 
 // Express Server to Keep Bot Alive
