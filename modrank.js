@@ -153,10 +153,10 @@ async function executeModRank(message) {
         return message.channel.send('No moderator activity recorded yet.');
       }
 
-      let leaderboard = '**Moderator Leaderboard**\n';
+      let leaderboard = ''; // No need to repeat the title here
       result.rows.forEach((row, index) => {
         const avgPoints = (row.points / row.days_as_mod).toFixed(2);
-        leaderboard += `**#${index + 1}** | **${row.username}** - **P:** ${row.points} | **AVG:** ${avgPoints}\n`;
+        leaderboard += `**#${index + 1}** | **${row.days_as_mod} Days** | **${row.username}** - **P:** ${row.points} | **AVG:** ${avgPoints}\n`;
       });
 
       // Add cheering for the top moderator
@@ -164,10 +164,18 @@ async function executeModRank(message) {
 
       const embed = new EmbedBuilder()
         .setColor('#acf508')
-        .setTitle('Moderator Leaderboard')
-        .setDescription(leaderboard)
+        .setTitle('Moderator Leaderboard')  // Title is already here
+        .setDescription(leaderboard)  // No title needed in the description
         .setTimestamp();
       message.channel.send({ embeds: [embed] });
+    } finally {
+      client.release();
+    }
+  } catch (error) {
+    console.error('Error executing mod rank:', error);
+    message.channel.send('An error occurred while fetching the leaderboard.');
+  }
+}
     } finally {
       client.release(); // Release connection back to the pool
     }
