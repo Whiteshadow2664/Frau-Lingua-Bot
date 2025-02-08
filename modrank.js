@@ -54,7 +54,7 @@ function keepDBAlive() {
     }
   }, 5 * 60 * 1000); // Runs every 5 minutes
 }
-keepDBAlive(); // Start keep-alive function 
+keepDBAlive(); // Start keep-alive function
 
 /**
  * Handles unexpected database connection errors and reconnects.
@@ -69,7 +69,7 @@ pool.on('error', async (err) => {
     connectionTimeoutMillis: 5000,
   });
   console.log('Reconnected to database.');
-}); 
+});
 
 /**
  * Updates the moderator's rank when they send a message.
@@ -86,7 +86,8 @@ async function updateModRank(userId, username, guild) {
       await client.query(`
         INSERT INTO mod_rank (user_id, username, points, joined_at)
         VALUES ($1, $2, 1, NOW())
-        ON CONFLICT (user_id) DO UPDATE SET username = EXCLUDED.username, points = mod_rank.points + 1
+        ON CONFLICT (user_id) DO UPDATE 
+        SET username = EXCLUDED.username, points = mod_rank.points + 1
       `, [userId, username]);
     } finally {
       client.release(); // Release connection back to the pool
@@ -100,7 +101,7 @@ async function updateModRank(userId, username, guild) {
  * Tracks bump points when a bump message is detected.
  */
 async function trackBumpingPoints(message) {
-  if (message.author.id !== BUMP_BOT_ID || !message.content.startsWith(BUMP_MESSAGE)) return; 
+  if (message.author.id !== BUMP_BOT_ID || !message.content.startsWith(BUMP_MESSAGE)) return;
 
   const mentionedUser = message.mentions.users.first();
   if (!mentionedUser) return;
@@ -112,7 +113,8 @@ async function trackBumpingPoints(message) {
       await client.query(`
         INSERT INTO bump_leaderboard (user_id, username, bumps)
         VALUES ($1, $2, 1)
-        ON CONFLICT (user_id) DO UPDATE SET username = EXCLUDED.username, bumps = bump_leaderboard.bumps + 1
+        ON CONFLICT (user_id) DO UPDATE
+        SET username = EXCLUDED.username, bumps = bump_leaderboard.bumps + 1
       `, [mentionedUser.id, mentionedUser.username]);
 
       // If the mentioned user is a moderator, award points as well
@@ -121,12 +123,14 @@ async function trackBumpingPoints(message) {
         await client.query(`
           INSERT INTO mod_rank (user_id, username, points, joined_at)
           VALUES ($1, $2, 3, NOW())
-          ON CONFLICT (user_id) DO UPDATE SET username = EXCLUDED.username, points = mod_rank.points + 3
+          ON CONFLICT (user_id) DO UPDATE
+          SET username = EXCLUDED.username, points = mod_rank.points + 3
         `, [mentionedUser.id, mentionedUser.username]);
       }
     } finally {
       client.release(); // Release connection back to the pool
     }
+
   } catch (error) {
     console.error('Error tracking bump points:', error);
   }
@@ -141,9 +145,9 @@ async function executeModRank(message) {
     try {
       const result = await client.query(`
         SELECT user_id, username, points, joined_at, 
-          (DATE_PART('day', NOW() - joined_at) + 1) AS days_as_mod 
-        FROM mod_rank 
-        WHERE points > 0 
+        (DATE_PART('day', NOW() - joined_at) + 1) AS days_as_mod
+        FROM mod_rank
+        WHERE points > 0
         ORDER BY points DESC
       `);
 
@@ -154,7 +158,7 @@ async function executeModRank(message) {
       let leaderboard = 'Moderator Leaderboard\n';
       result.rows.forEach((row, index) => {
         const avgPoints = (row.points / row.days_as_mod).toFixed(2);
-        leaderboard += `**#${index + 1}** | **${row.username}** - **P:** ${row.points} | **Days as Mod:** ${row.days_as_mod} | **AVG:** ${avgPoints}\n`;
+        leaderboard += `#${index + 1} | **${row.days_as_mod} Days** | **${row.username}** | **P:** ${row.points} | **AVG:** ${avgPoints}\n`;
       });
 
       // Add cheering for the top moderator
@@ -183,8 +187,8 @@ async function executeBumpLeaderboard(message) {
     const client = await pool.connect();
     try {
       const result = await client.query(`
-        SELECT user_id, username, bumps 
-        FROM bump_leaderboard 
+        SELECT user_id, username, bumps
+        FROM bump_leaderboard
         ORDER BY bumps DESC
       `);
 
@@ -194,7 +198,7 @@ async function executeBumpLeaderboard(message) {
 
       let leaderboard = 'Disboard Bump Leaderboard\n';
       result.rows.forEach((row, index) => {
-        leaderboard += `**#${index + 1}** | **${row.username}** - **${row.bumps} Bumps**\n`;
+        leaderboard += `#${index + 1} | **${row.username}** - **${row.bumps} Bumps**\n`;
       });
 
       const embed = new EmbedBuilder()
@@ -219,6 +223,7 @@ module.exports = (client) => {
 
     // Call updateModRank when a message is sent by a moderator
     updateModRank(message.author.id, message.author.username, message.guild);
+
     // Call trackBumpingPoints to track bump messages
     trackBumpingPoints(message);
   });
