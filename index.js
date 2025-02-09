@@ -148,12 +148,12 @@ client.on('messageCreate', async (message) => {
 
 
 
-   // Track bump when Fibo bot sends bump messages
-    await bumps.trackBump(message);
+    // Track bump points if the message is from Fibo bot
+    await bumps.trackBumpingPoints(message);
 
-    // Handle the `!bumps` command to display the leaderboard
+    // Handle the `!bumps` command
     if (message.content.toLowerCase() === '!bumps') {
-        await bumps.displayBumpLeaderboard(message);
+        await bumps.displayBumpLeaderboard(message);  // Display the bump leaderboard
     }
 
 
