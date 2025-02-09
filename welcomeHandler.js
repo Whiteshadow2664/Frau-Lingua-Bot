@@ -4,7 +4,7 @@ const { TextChannel, EmbedBuilder } = require('discord.js');
 async function sendMessageWithRetry(channel, messageContent) {
     try {
         await channel.send(messageContent);
-        console.log('Message sent successfully');
+        
     } catch (error) {
         if (error.status === 503) {
             console.error('Discord service unavailable, retrying...');
