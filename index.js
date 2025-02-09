@@ -53,7 +53,7 @@ GatewayIntentBits.GuildMembers,
 
 
 const modRank = require('./modrank')(client);
-
+const bumps = require('./bumps');  // Import the bumps feature
 
 
 
