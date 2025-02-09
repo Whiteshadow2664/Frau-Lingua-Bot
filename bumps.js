@@ -30,13 +30,17 @@ createBumpTable();  // Ensure table exists on startup
 
 // Step 3: Function to track bumps when Fibo bot sends a bump message
 async function trackBump(message) {
+    console.log('Received message:', message.content);
+
     // Check if the message is from Fibo bot and matches the bump format
     if (message.author.id === '735147814878969968' && message.content.includes('Thx for bumping our Server!')) {
         const mentionedUser = message.mentions.users.first();
+        console.log('Mentioned User:', mentionedUser ? mentionedUser.username : 'No user mentioned');
         if (!mentionedUser) return;
 
         try {
             const client = await pool.connect();
+            console.log('Connected to database');
             try {
                 await client.query(`
                     INSERT INTO bumps (user_id, username, bump_count)
@@ -45,7 +49,7 @@ async function trackBump(message) {
                     DO UPDATE SET 
                         bump_count = bumps.bump_count + 1
                 `, [mentionedUser.id, mentionedUser.username]);
-                
+                console.log(`Bump tracked for ${mentionedUser.username}`);
             } finally {
                 client.release();
             }
@@ -105,7 +109,6 @@ setInterval(async () => {
 // Solution 2: Auto-reconnect on connection loss
 pool.on('error', (err) => {
     console.error('Database connection lost. Reconnecting...', err);
-    // You could reinitialize the pool here if necessary
 });
 
 module.exports = { trackBump, displayBumpLeaderboard };
