@@ -21,6 +21,7 @@ const ticket = require('./commands/ticket');
 const leaderboard = require('./leaderboard.js');
 const linkFilter = require('./linkFilter');
 const { handleSpamDetection } = require('./spamHandler');
+const modRank = require('./modrank');
 const updates = require('./commands/updates');
 const { handleBanCommand } = require('./banHandler');
 const { updateBotStatus } = require('./statusUpdater');
@@ -47,20 +48,6 @@ GatewayIntentBits.GuildMembers,
     ],
     partials: [Partials.Message, Partials.Channel, Partials.Reaction],
 });
-
-
-
-
-
-
-
-const modRank = require('./modrank');
-const bumps = require('./bumps.js');
-
-
-
-
-
 
 // Express Server to Keep Bot Alive
 const app = express();
@@ -146,47 +133,19 @@ Object.keys(wordOfTheDayTimes).forEach((language) => {
 client.on('messageCreate', async (message) => {
     if (message.author.bot) return;
 
+// Track bumping points for the bump bot
+    await modRank.trackBumpingPoints(message); 
 
+    // Handle !modrank command
+    if (message.content.toLowerCase() === '!modrank') {
+        await modRank.execute(message); // Display the leaderboard
+    } 
 
-
-
-
-    // Track bump messages
-    await bumps.trackBump(message);
-
-    // Handle !bumps command
-    if (message.content.toLowerCase() === '!bumps') {
-        await bumps.execute(message);
-    }
-
-
-
-
-
-
-
-
-    // Handle !modrank command
-    if (message.content.toLowerCase() === '!modrank') {
-        await modRank.execute(message); // Display the leaderboard
-    } 
-
-    // Optional: Update mod rank when a moderator sends a message
-    const moderatorRole = message.guild.roles.cache.find(role => role.name.toLowerCase() === 'moderator');
-    if (moderatorRole && message.member.roles.cache.has(moderatorRole.id)) {
-        await modRank.updateModRank(message.author.id, message.author.username, message.guild); // Update points for moderators
-    }
-
-
-
-
-
-
-
-
-
-
-
+    // Optional: Update mod rank when a moderator sends a message
+    const moderatorRole = message.guild.roles.cache.find(role => role.name.toLowerCase() === 'moderator');
+    if (moderatorRole && message.member.roles.cache.has(moderatorRole.id)) {
+        await modRank.updateModRank(message.author.id, message.author.username, message.guild); // Update points for moderators
+    }
         await handleSpamDetection(message);
 await handleBanCommand(message);
 if (message.content.toLowerCase() === '!leaderboard') {
