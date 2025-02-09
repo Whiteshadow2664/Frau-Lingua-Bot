@@ -54,7 +54,7 @@ GatewayIntentBits.GuildMembers,
 
 
 const bumps = require('./bumps');  // Import the bumps feature
-
+const modRank = require('./modrank'); // Adjust the path if necessary
 
 
 
