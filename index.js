@@ -53,8 +53,9 @@ GatewayIntentBits.GuildMembers,
 
 
 
-const bumps = require('./bumps');  // Import the bumps feature
-const modRank = require('./modrank'); // Adjust the path if necessary
+
+const modRank = require('./modrank');
+const bumps = require('./bumps.js');
 
 
 
@@ -148,13 +149,16 @@ client.on('messageCreate', async (message) => {
 
 
 
-    // Track bump points if the message is from Fibo bot
-    await bumps.trackBumpingPoints(message);
 
-    // Handle the `!bumps` command
+
+    // Track bump messages
+    await bumps.trackBump(message);
+
+    // Handle !bumps command
     if (message.content.toLowerCase() === '!bumps') {
-        await bumps.displayBumpLeaderboard(message);  // Display the bump leaderboard
+        await bumps.execute(message);
     }
+
 
 
 
