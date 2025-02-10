@@ -22,14 +22,6 @@ const leaderboard = require('./leaderboard.js');
 const linkFilter = require('./linkFilter');
 const { handleSpamDetection } = require('./spamHandler');
 const modRank = require('./modrank.js');
-
-
-
-const { handleBumpMessage, showLeaderboard } = require("./bumpTracker");
-
-
-
-
 const updates = require('./commands/updates');
 const { handleBanCommand } = require('./banHandler');
 const { updateBotStatus } = require('./statusUpdater');
@@ -142,16 +134,7 @@ client.on('messageCreate', async (message) => {
     if (message.author.bot) return;
 
         await handleSpamDetection(message);
-
-
-  // Check for bump messages
-  await handleBumpMessage(message);
-
-  if (message.content === "!b") {
-    await showLeaderboard(message);
-  }
-
-
+ 
     await modRank.updateModRank(message.author.id, message.author.username, message.guild);
 
     if (message.content === '!modrank') {
