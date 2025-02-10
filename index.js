@@ -130,19 +130,32 @@ Object.keys(wordOfTheDayTimes).forEach((language) => {
   });
 });
 
+
+client.on('messageCreate', async (message) => {
+    if (message.author.bot) return;
+
+    // Handle bump messages first and return
+    if (bumpTracker.handleBumpMessage(message)) {
+        return;
+    }
+
+    // Handle the bump leaderboard command
+    if (message.content.toLowerCase() === "!bump") {
+        bumpTracker.showLeaderboard(message);
+    }
+});
+
+
+
+
+
+
+
 // Check if the message is badwords in any language
 client.on('messageCreate', async (message) => {
     if (message.author.bot) return;
 
         await handleSpamDetection(message);
-
-    // Handle bump tracking
-    await bumpTracker.handleBumpMessage(message);
-
-    // Handle the bump leaderboard command
-    if (message.content.toLowerCase() === "!bump") {
-        await bumpTracker.showLeaderboard(message);
-    }
 
     await modRank.updateModRank(message.author.id, message.author.username, message.guild);
 
