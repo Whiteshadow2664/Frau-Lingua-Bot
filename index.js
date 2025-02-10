@@ -136,9 +136,7 @@ client.on('messageCreate', async (message) => {
 
         await handleSpamDetection(message);
 
-
-bumpTracker.handleBumpMessage(message);
-        
+await bumpTracker.handleBumpMessage(message);    
     
         
     // Handle the bump leaderboard command
