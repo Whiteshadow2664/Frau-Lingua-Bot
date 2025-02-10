@@ -22,7 +22,14 @@ const leaderboard = require('./leaderboard.js');
 const linkFilter = require('./linkFilter');
 const { handleSpamDetection } = require('./spamHandler');
 const modRank = require('./modrank.js');
-const bumpTracker = require("./bumpTracker");
+
+
+
+const { handleBumpMessage, showLeaderboard } = require("./bumpTracker");
+
+
+
+
 const updates = require('./commands/updates');
 const { handleBanCommand } = require('./banHandler');
 const { updateBotStatus } = require('./statusUpdater');
