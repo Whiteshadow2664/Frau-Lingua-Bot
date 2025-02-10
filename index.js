@@ -130,27 +130,6 @@ Object.keys(wordOfTheDayTimes).forEach((language) => {
   });
 });
 
-
-client.on('messageCreate', async (message) => {
-    if (message.author.bot) return;
-
-    // Handle bump messages first and return
-    if (bumpTracker.handleBumpMessage(message)) {
-        return;
-    }
-
-    // Handle the bump leaderboard command
-    if (message.content.toLowerCase() === "!bump") {
-        bumpTracker.showLeaderboard(message);
-    }
-});
-
-
-
-
-
-
-
 // Check if the message is badwords in any language
 client.on('messageCreate', async (message) => {
     if (message.author.bot) return;
@@ -192,8 +171,6 @@ if (message.content === '!afk') {
         // Call the execute function from purge.js, passing the message and args
         purgeCommand.execute(message, args);
     }
-
-
 
 if (message.content.toLowerCase() === '!ddd') {
         dddGame.execute(message);
