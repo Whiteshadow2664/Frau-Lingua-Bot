@@ -22,6 +22,7 @@ const leaderboard = require('./leaderboard.js');
 const linkFilter = require('./linkFilter');
 const { handleSpamDetection } = require('./spamHandler');
 const modRank = require('./modrank.js');
+const bumpTracker = require("./bumpTracker");
 const updates = require('./commands/updates');
 const { handleBanCommand } = require('./banHandler');
 const { updateBotStatus } = require('./statusUpdater');
@@ -133,13 +134,22 @@ Object.keys(wordOfTheDayTimes).forEach((language) => {
 client.on('messageCreate', async (message) => {
     if (message.author.bot) return;
 
-        await handleSpamDetection(message);
+bumpTracker.handleBumpMessage(message);
+        return;
+    } 
+
+    // Handle the bump leaderboard command
+    if (message.content.toLowerCase() === "!bump") {
+        bumpTracker.showLeaderboard(message);
+    }  
 
     await modRank.updateModRank(message.author.id, message.author.username, message.guild);
 
     if (message.content === '!modrank') {
         await modRank.execute(message);
     }
+        await handleSpamDetection(message);
+
         await handleBanCommand(message);
 if (message.content.toLowerCase() === '!leaderboard') {
    leaderboard.execute(message);
