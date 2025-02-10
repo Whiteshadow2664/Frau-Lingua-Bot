@@ -136,6 +136,15 @@ client.on('messageCreate', async (message) => {
 
         await handleSpamDetection(message);
 
+
+  // Check for bump messages
+  await handleBumpMessage(message);
+
+  if (message.content === "!bumpleaderboard") {
+    await showLeaderboard(message);
+  }
+
+
     await modRank.updateModRank(message.author.id, message.author.username, message.guild);
 
     if (message.content === '!modrank') {
