@@ -133,9 +133,14 @@ Object.keys(wordOfTheDayTimes).forEach((language) => {
 client.on('messageCreate', async (message) => {
     if (message.author.bot) return;
 
-
         await handleSpamDetection(message);
-await handleBanCommand(message);
+
+    await modRank.updateModRank(message.author.id, message.author.username, message.guild);
+
+    if (message.content === '!modrank') {
+        await modRank.execute(message);
+    }
+        await handleBanCommand(message);
 if (message.content.toLowerCase() === '!leaderboard') {
    leaderboard.execute(message);
 }
