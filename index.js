@@ -140,7 +140,7 @@ client.on('messageCreate', async (message) => {
   // Check for bump messages
   await handleBumpMessage(message);
 
-  if (message.content === "!bumpleaderboard") {
+  if (message.content === "!b") {
     await showLeaderboard(message);
   }
 
