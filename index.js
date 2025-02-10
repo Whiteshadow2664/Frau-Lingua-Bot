@@ -136,7 +136,11 @@ client.on('messageCreate', async (message) => {
 
         await handleSpamDetection(message);
 
+{
+
 bumpTracker.handleBumpMessage(message);
+        return;
+    }
         
     
 
