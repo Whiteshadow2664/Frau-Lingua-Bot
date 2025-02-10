@@ -23,6 +23,7 @@ pool.on("error", async (err) => {
 setInterval(async () => {
   try {
     await pool.query("SELECT now()"); // Lightweight keep-alive query
+    console.log("Database keep-alive ping successful.");
   } catch (err) {
     console.error("Database keep-alive failed:", err);
   }
@@ -44,14 +45,33 @@ setInterval(async () => {
   }
 })();
 
+// Debugging: Check database connection on startup
+(async () => {
+  try {
+    await pool.query("SELECT 1");
+    console.log("Database connection verified.");
+  } catch (err) {
+    console.error("Database connection failed on startup:", err.message);
+  }
+})();
+
 const BUMP_BOT_ID = "1338037787924107365";
 const BUMP_MESSAGE = "Thx for bumping our Server! We will remind you in 2 hours!";
 
 module.exports = {
   handleBumpMessage: async (message) => {
+    console.log(`Received message: "${message.content}" from ${message.author.id}`);
+
     if (message.author.id === BUMP_BOT_ID && message.content.startsWith(BUMP_MESSAGE)) {
+      console.log("Bump message detected!");
+
       const mentionedUser = message.mentions.users.first();
-      if (!mentionedUser) return;
+      if (!mentionedUser) {
+        console.log("No user mentioned in bump message.");
+        return;
+      }
+
+      console.log(`User bumped: ${mentionedUser.username} (${mentionedUser.id})`);
 
       const userId = mentionedUser.id;
       const username = mentionedUser.username;
@@ -60,21 +80,25 @@ module.exports = {
         const res = await pool.query(`SELECT count FROM bumps WHERE userId = $1`, [userId]);
 
         if (res.rows.length > 0) {
-          // Update bump count
           await pool.query(`UPDATE bumps SET count = count + 1 WHERE userId = $1`, [userId]);
+          console.log(`Updated bump count for ${username}`);
         } else {
-          // Insert new user
           await pool.query(`INSERT INTO bumps (userId, username, count) VALUES ($1, $2, 1)`, [userId, username]);
+          console.log(`Inserted new user: ${username}`);
         }
       } catch (err) {
-        console.error("Database error:", err.message);
+        console.error("Database error while updating bumps:", err.message);
       }
     }
   },
 
   showLeaderboard: async (message) => {
     try {
+      console.log("Fetching leaderboard data...");
+
       const res = await pool.query(`SELECT username, count FROM bumps ORDER BY count DESC LIMIT 10`);
+
+      console.log("Leaderboard Query Result:", res.rows);
 
       if (res.rows.length === 0) {
         return message.channel.send("No bumps recorded yet.");
@@ -92,7 +116,7 @@ module.exports = {
 
       message.channel.send({ embeds: [embed] });
     } catch (err) {
-      console.error("Database error:", err.message);
+      console.error("Database error while fetching leaderboard:", err.message);
       message.channel.send("Error retrieving leaderboard.");
     }
   },
