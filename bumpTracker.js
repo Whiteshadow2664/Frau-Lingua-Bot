@@ -50,27 +50,35 @@ const BUMP_MESSAGE = "Thx for bumping our Server! We will remind you in 2 hours!
 module.exports = {
   handleBumpMessage: async (message) => {
     if (message.author.id === BUMP_BOT_ID && message.content.startsWith(BUMP_MESSAGE)) {
-      const mentionedUser = message.mentions.users.first();
-      if (!mentionedUser) return;
+        console.log("✅ handleBumpMessage is triggered!");
 
-      const userId = mentionedUser.id;
-      const username = mentionedUser.username;
-
-      try {
-        const res = await pool.query(`SELECT count FROM bumps WHERE userId = $1`, [userId]);
-
-        if (res.rows.length > 0) {
-          // Update bump count
-          await pool.query(`UPDATE bumps SET count = count + 1 WHERE userId = $1`, [userId]);
-        } else {
-          // Insert new user
-          await pool.query(`INSERT INTO bumps (userId, username, count) VALUES ($1, $2, 1)`, [userId, username]);
+        const mentionedUser = message.mentions.users.first();
+        if (!mentionedUser) {
+            console.log("❌ No user mentioned in bump message.");
+            return;
         }
-      } catch (err) {
-        console.error("Database error:", err.message);
-      }
+
+        const userId = mentionedUser.id;
+        const username = mentionedUser.username;
+
+        try {
+            console.log(`🔍 Checking if user ${username} (${userId}) exists in the database...`);
+            const res = await pool.query(`SELECT count FROM bumps WHERE userId = $1`, [userId]);
+
+            if (res.rows.length > 0) {
+                // Update existing count
+                console.log(`🔄 Updating bump count for ${username} (${userId})`);
+                await pool.query(`UPDATE bumps SET count = count + 1 WHERE userId = $1`, [userId]);
+            } else {
+                // Insert new user
+                console.log(`🆕 Inserting new bump record for ${username} (${userId})`);
+                await pool.query(`INSERT INTO bumps (userId, username, count) VALUES ($1, $2, 1)`, [userId, username]);
+            }
+        } catch (err) {
+            console.error("❌ Database error while updating bumps:", err.message);
+        }
     }
-  },
+},
 
   showLeaderboard: async (message) => {
     try {
