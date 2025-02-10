@@ -22,10 +22,6 @@ const leaderboard = require('./leaderboard.js');
 const linkFilter = require('./linkFilter');
 const { handleSpamDetection } = require('./spamHandler');
 const modRank = require('./modrank.js');
-
-
-const bumpTracker = require('./bumpTracker'); // Ensure this file exists
-
 const updates = require('./commands/updates');
 const { handleBanCommand } = require('./banHandler');
 const { updateBotStatus } = require('./statusUpdater');
@@ -146,15 +142,6 @@ client.on('messageCreate', async (message) => {
     }
 
         await handleBanCommand(message);
-
-    // === Add Bump Tracker Here ===
-    bumpTracker.handleBumpMessage(message);
-    return;
-
-    // Handle the bump leaderboard command
-    if (message.content.toLowerCase() === "!bump") {
-        bumpTracker.showLeaderboard(message);
-    }
    
 if (message.content.toLowerCase() === '!leaderboard') {
    leaderboard.execute(message);
