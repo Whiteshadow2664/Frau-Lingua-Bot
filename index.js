@@ -136,14 +136,6 @@ client.on('messageCreate', async (message) => {
 
         await handleSpamDetection(message);
 
-await bumpTracker.handleBumpMessage(message);    
-    
-        
-    // Handle the bump leaderboard command
-    if (message.content.toLowerCase() === "!bump") {
-        bumpTracker.showLeaderboard(message);
-    }  
-
     await modRank.updateModRank(message.author.id, message.author.username, message.guild);
 
     if (message.content === '!modrank') {
