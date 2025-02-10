@@ -138,7 +138,7 @@ client.on('messageCreate', async (message) => {
 
 
 bumpTracker.handleBumpMessage(message);
-        return;
+        
     
         
     // Handle the bump leaderboard command
