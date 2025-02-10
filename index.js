@@ -134,9 +134,11 @@ Object.keys(wordOfTheDayTimes).forEach((language) => {
 client.on('messageCreate', async (message) => {
     if (message.author.bot) return;
 
+        await handleSpamDetection(message);
+
 bumpTracker.handleBumpMessage(message);
-        return;
-    } 
+        
+    
 
     // Handle the bump leaderboard command
     if (message.content.toLowerCase() === "!bump") {
@@ -148,7 +150,6 @@ bumpTracker.handleBumpMessage(message);
     if (message.content === '!modrank') {
         await modRank.execute(message);
     }
-        await handleSpamDetection(message);
 
         await handleBanCommand(message);
 if (message.content.toLowerCase() === '!leaderboard') {
