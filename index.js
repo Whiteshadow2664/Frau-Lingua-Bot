@@ -136,14 +136,11 @@ client.on('messageCreate', async (message) => {
 
         await handleSpamDetection(message);
 
-{
 
 bumpTracker.handleBumpMessage(message);
         return;
-    }
-        
     
-
+        
     // Handle the bump leaderboard command
     if (message.content.toLowerCase() === "!bump") {
         bumpTracker.showLeaderboard(message);
