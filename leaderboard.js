@@ -9,21 +9,7 @@ const pool = new Pool({
     idleTimeoutMillis: 30000, // Close idle clients after 30 seconds
 });
 
-// Keep the connection alive by running a query every 5 minutes
-setInterval(async () => {
-    try {
-        const client = await pool.connect();
-        await client.query('SELECT 1'); // Keeps the connection active
-        client.release();
-    } catch (err) {
-        console.error('Error keeping database connection alive:', err);
-    }
-}, 300000); // 300000ms = 5 minutes
 
-// Auto-reconnect on connection loss
-pool.on('error', async (err) => {
-    console.error('Database connection lost. Reconnecting...', err);
-});
 
 (async () => {
     try {
@@ -45,7 +31,7 @@ pool.on('error', async (err) => {
 // Function to update the leaderboard
 module.exports.updateLeaderboard = async (username, language, level, points) => {
     try {
-        const client = await pool.connect();
+        
 
         const result = await client.query(
             `SELECT * FROM leaderboard WHERE username = $1 AND language = $2 AND level = $3`,
@@ -64,7 +50,7 @@ module.exports.updateLeaderboard = async (username, language, level, points) => 
             );
         }
 
-        client.release(); // Release connection properly
+        
     } catch (err) {
         console.error('Error updating leaderboard:', err);
     }
@@ -73,7 +59,7 @@ module.exports.updateLeaderboard = async (username, language, level, points) => 
 // Function to fetch and display the leaderboard
 module.exports.execute = async (message) => {
     try {
-        const client = await pool.connect();
+        
 
         const languageEmbed = new EmbedBuilder()
             .setTitle('Choose a Language for the Leaderboard')
@@ -137,8 +123,7 @@ module.exports.execute = async (message) => {
             LIMIT 10`,
             [selectedLanguage, selectedLevel]
         );
-
-        client.release(); // Release connection properly
+   
 
         if (leaderboardData.rows.length === 0) {
             return message.channel.send(`No leaderboard data found for ${selectedLanguage.toUpperCase()} ${selectedLevel}.`);
