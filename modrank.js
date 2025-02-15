@@ -9,44 +9,20 @@ const pool = new Pool({
     idleTimeoutMillis: 30000, // ✅ Auto-close idle connections after 30 seconds
 });
 
-// Keep the connection alive and auto-reconnect if needed
-async function keepDatabaseAlive() {
+// ✅ Keep-Alive Query to prevent disconnection
+setInterval(async () => {
     try {
         const client = await pool.connect();
         await client.query('SELECT 1');
         client.release();
-        console.log("Database connection is active.");
     } catch (err) {
-        console.error("Error keeping database connection alive:", err);
-        console.log("Recreating database connection pool...");
-        
-        // Recreate pool on failure
-        await pool.end();
-        pool = new Pool({
-            connectionString: process.env.DATABASE_URL,
-            ssl: { rejectUnauthorized: false },
-            max: 10,
-            idleTimeoutMillis: 30000,
-            connectionTimeoutMillis: 5000,
-        });
+        console.error('Error keeping database connection alive:', err);
     }
-}
+}, 300000); // Every 5 minutes
 
-// Run keep-alive every 5 minutes
-setInterval(keepDatabaseAlive, 300000);
-
-// Auto-reconnect on connection loss
+// ✅ Auto-reconnect on connection loss
 pool.on('error', async (err) => {
-    console.error("Database connection lost. Attempting reconnection...", err);
-    await pool.end();
-    pool = new Pool({
-        connectionString: process.env.DATABASE_URL,
-        ssl: { rejectUnauthorized: false },
-        max: 10,
-        idleTimeoutMillis: 30000,
-        connectionTimeoutMillis: 5000,
-    });
-    console.log("Database reconnected.");
+    console.error('Database connection lost. Reconnecting...', err);
 });
 
 // Ensure mod_rank table exists
