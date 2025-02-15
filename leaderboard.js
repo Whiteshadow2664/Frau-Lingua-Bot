@@ -9,20 +9,44 @@ const pool = new Pool({
     idleTimeoutMillis: 30000, // Close idle clients after 30 seconds
 });
 
-// Keep the connection alive by running a query every 5 minutes
-setInterval(async () => {
+// Keep the connection alive and auto-reconnect if needed
+async function keepDatabaseAlive() {
     try {
         const client = await pool.connect();
-        await client.query('SELECT 1'); // Keeps the connection active
+        await client.query('SELECT 1');
         client.release();
+        console.log("Database connection is active.");
     } catch (err) {
-        console.error('Error keeping database connection alive:', err);
+        console.error("Error keeping database connection alive:", err);
+        console.log("Recreating database connection pool...");
+        
+        // Recreate pool on failure
+        await pool.end();
+        pool = new Pool({
+            connectionString: process.env.DATABASE_URL,
+            ssl: { rejectUnauthorized: false },
+            max: 10,
+            idleTimeoutMillis: 30000,
+            connectionTimeoutMillis: 5000,
+        });
     }
-}, 300000); // 300000ms = 5 minutes
+}
+
+// Run keep-alive every 5 minutes
+setInterval(keepDatabaseAlive, 300000);
 
 // Auto-reconnect on connection loss
 pool.on('error', async (err) => {
-    console.error('Database connection lost. Reconnecting...', err);
+    console.error("Database connection lost. Attempting reconnection...", err);
+    await pool.end();
+    pool = new Pool({
+        connectionString: process.env.DATABASE_URL,
+        ssl: { rejectUnauthorized: false },
+        max: 10,
+        idleTimeoutMillis: 30000,
+        connectionTimeoutMillis: 5000,
+    });
+    console.log("Database reconnected.");
 });
 
 (async () => {
