@@ -31,26 +31,22 @@ const pool = new Pool({
 // Function to update the leaderboard
 module.exports.updateLeaderboard = async (username, language, level, points) => {
     try {
-        
-
-        const result = await client.query(
+        const result = await pool.query(
             `SELECT * FROM leaderboard WHERE username = $1 AND language = $2 AND level = $3`,
             [username, language, level]
         );
 
         if (result.rows.length > 0) {
-            await client.query(
+            await pool.query(
                 `UPDATE leaderboard SET quizzes = quizzes + 1, points = points + $1 WHERE username = $2 AND language = $3 AND level = $4`,
                 [points, username, language, level]
             );
         } else {
-            await client.query(
+            await pool.query(
                 `INSERT INTO leaderboard (username, language, level, quizzes, points) VALUES ($1, $2, $3, 1, $4)`,
                 [username, language, level, points]
             );
         }
-
-        
     } catch (err) {
         console.error('Error updating leaderboard:', err);
     }
@@ -115,7 +111,7 @@ module.exports.execute = async (message) => {
         const selectedLevel = levels[levelEmojis.indexOf(levelReaction.first().emoji.name)];
         await levelMessage.delete();
 
-        const leaderboardData = await client.query(
+        const leaderboardData = await pool.query(
             `SELECT username, quizzes, points, (points::FLOAT / quizzes) AS avg_points
             FROM leaderboard
             WHERE language = $1 AND level = $2
