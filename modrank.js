@@ -9,22 +9,6 @@ const pool = new Pool({
     idleTimeoutMillis: 30000, // ✅ Auto-close idle connections after 30 seconds
 });
 
-// ✅ Keep-Alive Query to prevent disconnection
-setInterval(async () => {
-    try {
-        const client = await pool.connect();
-        await client.query('SELECT 1');
-        client.release();
-    } catch (err) {
-        console.error('Error keeping database connection alive:', err);
-    }
-}, 300000); // Every 5 minutes
-
-// ✅ Auto-reconnect on connection loss
-pool.on('error', async (err) => {
-    console.error('Database connection lost. Reconnecting...', err);
-});
-
 // Ensure mod_rank table exists
 (async () => {
     try {
@@ -44,7 +28,7 @@ pool.on('error', async (err) => {
 // Function to update moderator XP (1 message = 1 XP)
 module.exports.updateModRank = async (userId, username, guild) => {
     try {
-        const client = await pool.connect();
+        
 
         // Check if user is a moderator
         const moderatorRole = guild.roles.cache.find(role => role.name.toLowerCase() === 'moderator');
@@ -70,7 +54,7 @@ module.exports.updateModRank = async (userId, username, guild) => {
             );
         }
 
-        client.release();
+        
     } catch (err) {
         console.error('Error updating moderator XP:', err);
     }
@@ -80,7 +64,7 @@ module.exports.updateModRank = async (userId, username, guild) => {
 // Function to fetch and display moderator leaderboard
 module.exports.execute = async (message) => {
     try {
-        const client = await pool.connect();
+        
 
         const leaderboardData = await client.query(`
             SELECT username, xp, 
@@ -91,7 +75,7 @@ module.exports.execute = async (message) => {
             LIMIT 10
         `);
 
-        client.release();
+        
 
         if (leaderboardData.rows.length === 0) {
             return message.channel.send('No moderator activity recorded yet.');
