@@ -2,75 +2,17 @@ const { EmbedBuilder } = require('discord.js');
 const { Pool } = require('pg');
 
 const pool = new Pool({
-    connectionString: process.env.DATABASE_URL, // Uses Neon DB URL
-    ssl: {
-        rejectUnauthorized: false, // Required for Neon
-    },
-    idleTimeoutMillis: 30000, // Close idle clients after 30 seconds
+    connectionString: process.env.DATABASE_URL,
+    ssl: { rejectUnauthorized: false },
+    max: 2, // Limit to 2 connections to reduce compute time usage
+    idleTimeoutMillis: 10000, // Close idle clients quickly (10 seconds)
+    connectionTimeoutMillis: 5000,
 });
-
-// Keep the connection alive and auto-reconnect if needed
-async function keepDatabaseAlive() {
-    try {
-        const client = await pool.connect();
-        await client.query('SELECT 1');
-        client.release();
-        console.log("Database connection is active.");
-    } catch (err) {
-        console.error("Error keeping database connection alive:", err);
-        console.log("Recreating database connection pool...");
-        
-        // Recreate pool on failure
-        await pool.end();
-        pool = new Pool({
-            connectionString: process.env.DATABASE_URL,
-            ssl: { rejectUnauthorized: false },
-            max: 10,
-            idleTimeoutMillis: 30000,
-            connectionTimeoutMillis: 5000,
-        });
-    }
-}
-
-// Run keep-alive every 5 minutes
-setInterval(keepDatabaseAlive, 300000);
-
-// Auto-reconnect on connection loss
-pool.on('error', async (err) => {
-    console.error("Database connection lost. Attempting reconnection...", err);
-    await pool.end();
-    pool = new Pool({
-        connectionString: process.env.DATABASE_URL,
-        ssl: { rejectUnauthorized: false },
-        max: 10,
-        idleTimeoutMillis: 30000,
-        connectionTimeoutMillis: 5000,
-    });
-    console.log("Database reconnected.");
-});
-
-(async () => {
-    try {
-        await pool.query(`
-            CREATE TABLE IF NOT EXISTS leaderboard (
-                id SERIAL PRIMARY KEY,
-                username TEXT NOT NULL,
-                language TEXT NOT NULL,
-                level TEXT NOT NULL,
-                quizzes INTEGER NOT NULL,
-                points INTEGER NOT NULL
-            )
-        `);
-    } catch (err) {
-        console.error('Error initializing database:', err);
-    }
-})();
 
 // Function to update the leaderboard
 module.exports.updateLeaderboard = async (username, language, level, points) => {
+    const client = await pool.connect();
     try {
-        const client = await pool.connect();
-
         const result = await client.query(
             `SELECT * FROM leaderboard WHERE username = $1 AND language = $2 AND level = $3`,
             [username, language, level]
@@ -87,10 +29,10 @@ module.exports.updateLeaderboard = async (username, language, level, points) => 
                 [username, language, level, points]
             );
         }
-
-        client.release(); // Release connection properly
     } catch (err) {
         console.error('Error updating leaderboard:', err);
+    } finally {
+        client.release();
     }
 };
 
