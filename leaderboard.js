@@ -1,6 +1,14 @@
 const { EmbedBuilder } = require('discord.js');
 const { Pool } = require('pg');
 
+// Embed Colors
+const embedColors = {
+    russian: '#7907ff',
+    german: '#f4ed09',
+    french: '#09ebf6',
+    default: '#acf508',
+};
+
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL, // Uses Neon DB URL
     ssl: {
