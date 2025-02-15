@@ -110,7 +110,7 @@ module.exports.execute = async (message) => {
         const languageEmbed = new EmbedBuilder()
             .setTitle('Choose a Language for the Leaderboard')
             .setDescription('React to select the language:\n\n🇩🇪: German\n🇫🇷: French\n🇷🇺: Russian')
-            .setColor('#acf508');
+             .setColor(embedColors.default);
 
         const languageMessage = await message.channel.send({ embeds: [languageEmbed] });
         const languageEmojis = ['🇩🇪', '🇫🇷', '🇷🇺'];
