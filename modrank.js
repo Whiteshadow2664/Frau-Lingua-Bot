@@ -64,9 +64,7 @@ module.exports.updateModRank = async (userId, username, guild) => {
 // Function to fetch and display moderator leaderboard
 module.exports.execute = async (message) => {
     try {
-        
-
-        const leaderboardData = await client.query(`
+        const leaderboardData = await pool.query(`
             SELECT username, xp, 
                 EXTRACT(DAY FROM NOW() - joined_at) AS days,
                 (xp::FLOAT / NULLIF(EXTRACT(DAY FROM NOW() - joined_at), 0)) AS avg_xp
@@ -75,13 +73,11 @@ module.exports.execute = async (message) => {
             LIMIT 10
         `);
 
-        
-
         if (leaderboardData.rows.length === 0) {
             return message.channel.send('No moderator activity recorded yet.');
         }
 
-        const topUser = leaderboardData.rows[0]; // Get the top-ranked user
+        const topUser = leaderboardData.rows[0];
         const cheerMessage = `🎉 **${topUser.username} is leading the charge! Keep up the great work!** 🚀`;
 
         const leaderboardEmbed = new EmbedBuilder()
