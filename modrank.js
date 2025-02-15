@@ -3,10 +3,13 @@ const { Pool } = require('pg');
 const { createClient } = require('@supabase/supabase-js');
 
 // PostgreSQL setup
+const { Pool } = require('pg');
+
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
-    ssl: { rejectUnauthorized: false },
-    idleTimeoutMillis: 30000,
+    ssl: { rejectUnauthorized: false }, // Required for Supabase
+    statement_timeout: 10000, // Set a timeout to prevent long queries
+    query_timeout: 10000
 });
 
 // Supabase setup
