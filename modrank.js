@@ -43,7 +43,7 @@ module.exports.updateModRank = async (userId, username, guild) => {
         // Get role assignment timestamp
         const roleAssignedAt = member.roles.cache.get(moderatorRole.id).createdAt;
 
-        const result = await client.query(`SELECT * FROM mod_rank WHERE user_id = $1`, [userId]);
+        const result = await pool.query(`SELECT * FROM mod_rank WHERE user_id = $1`, [userId]);
 
         if (result.rows.length > 0) {
             await client.query(`UPDATE mod_rank SET xp = xp + 1 WHERE user_id = $1`, [userId]);
