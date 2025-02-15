@@ -1,14 +1,6 @@
 const { EmbedBuilder } = require('discord.js');
 const { Pool } = require('pg');
 
-// Embed Colors
-const embedColors = {
-    russian: '#7907ff',
-    german: '#f4ed09',
-    french: '#09ebf6',
-    default: '#acf508',
-};
-
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL, // Uses Neon DB URL
     ssl: {
@@ -110,7 +102,7 @@ module.exports.execute = async (message) => {
         const languageEmbed = new EmbedBuilder()
             .setTitle('Choose a Language for the Leaderboard')
             .setDescription('React to select the language:\n\n🇩🇪: German\n🇫🇷: French\n🇷🇺: Russian')
-             .setColor(embedColors.default);
+            .setColor('#acf508');
 
         const languageMessage = await message.channel.send({ embeds: [languageEmbed] });
         const languageEmojis = ['🇩🇪', '🇫🇷', '🇷🇺'];
@@ -137,7 +129,7 @@ module.exports.execute = async (message) => {
         const levelEmbed = new EmbedBuilder()
             .setTitle(`Choose a Level for the ${selectedLanguage.charAt(0).toUpperCase() + selectedLanguage.slice(1)} Leaderboard`)
             .setDescription('React to select the level:\n\n🇦: A1\n🇧: A2\n🇨: B1\n🇩: B2\n🇪: C1\n🇫: C2')
-                  .setColor(embedColors[selectedLanguage]);
+            .setColor('#acf508');
 
         const levelMessage = await message.channel.send({ embeds: [levelEmbed] });
         const levelEmojis = ['🇦', '🇧', '🇨', '🇩', '🇪', '🇫'];
@@ -178,7 +170,7 @@ module.exports.execute = async (message) => {
 
         const leaderboardEmbed = new EmbedBuilder()
             .setTitle(`${selectedLanguage.charAt(0).toUpperCase() + selectedLanguage.slice(1)} Level ${selectedLevel} Leaderboard`)
-               .setColor(embedColors[selectedLanguage]);
+            .setColor('#FFD700')
             .setDescription(
     leaderboardData.rows
         .map(
