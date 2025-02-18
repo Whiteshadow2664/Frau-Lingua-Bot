@@ -450,7 +450,7 @@ client.on('guildMemberRemove', (member) => {
 
 
 setInterval(() => {
-    require('http').get(`https://lingul.onrender.com`);
+    require('https').get(`https://lingul.onrender.com`);
 }, 5 * 60 * 1000); // Ping every 5 minutes
 
 
