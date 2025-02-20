@@ -30,19 +30,6 @@ const handleWorksheet = require('./worksheet');
 const afkHandler = require('./afk.js');
 const purgeCommand = require('./purge.js');
 
-
-
-process.on('unhandledRejection', (reason, promise) => {
-    console.error('Unhandled Rejection at:', promise, 'reason:', reason);
-});
-
-process.on('uncaughtException', (error) => {
-    console.error('Uncaught Exception:', error);
-    process.exit(1); // Optional: Restart bot on fatal errors
-});
-
-
-
 // Environment Variables
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
 
@@ -145,12 +132,6 @@ Object.keys(wordOfTheDayTimes).forEach((language) => {
 // Check if the message is badwords in any language
 client.on('messageCreate', async (message) => {
     if (message.author.bot) return;
-
-
-
-console.log(`Received message: ${message.content} from ${message.author.tag}`);
-
-
 
         await handleSpamDetection(message);
  
@@ -447,15 +428,4 @@ client.on('guildMemberRemove', (member) => {
     handleMemberLeave(member); // Call the handle leave function
 });
 
-
-
-setInterval(() => {
-    require('https').get(`https://lingul.onrender.com`);
-}, 5 * 60 * 1000); // Ping every 5 minutes
-
-
 client.login(DISCORD_TOKEN);
-
-client.on('debug', console.log);
-client.on('warn', console.warn);
-client.on('error', console.error);
