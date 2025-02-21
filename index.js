@@ -29,6 +29,7 @@ const dddGame = require('./dddGame');
 const handleWorksheet = require('./worksheet');
 const afkHandler = require('./afk.js');
 const purgeCommand = require('./purge.js');
+const antiInvite = require("./antiInvite");
 
 // Environment Variables
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
@@ -414,6 +415,7 @@ delete activeQuizzes[message.author.id];
 client.once('ready', () => {
     console.log(`${client.user.tag} is online!`);
     linkFilter(client);
+    antiInvite(client);
     // Start the status update cycle
     setInterval(() => updateBotStatus(client), 10000); // Update every 10 seconds
 });
