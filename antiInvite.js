@@ -1,7 +1,7 @@
 const { Events } = require("discord.js");
 
 const warnedUsers = new Map(); // Track warnings
-const allowedChannelId = "1342413437837377626"; // Allowed channel for invites
+const allowedChannelId = "1326458294994210877"; // Allowed channel for invites
 
 module.exports = (client) => {
     client.on(Events.MessageCreate, async (message) => {
