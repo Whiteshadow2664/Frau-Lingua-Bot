@@ -8,7 +8,8 @@ module.exports = (client) => {
     client.on(Events.MessageCreate, async (message) => {
         if (message.author.bot || !message.guild) return;
 
-        const inviteRegex = /discord\.gg\/(\w+)/i; // Regex to detect invite links
+        // Updated regex to detect both discord.gg and discord.com/invite/
+        const inviteRegex = /(?:discord\.gg\/|discord\.com\/invite\/)(\w+)/i;
         const match = message.content.match(inviteRegex);
 
         if (match) {
