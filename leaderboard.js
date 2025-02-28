@@ -1,33 +1,17 @@
-const { EmbedBuilder } = require('discord.js');
+const { Client, EmbedBuilder } = require('discord.js');
 const { Pool } = require('pg');
+const cron = require('node-cron');
 
 const pool = new Pool({
-    connectionString: process.env.DATABASE_URL, // Uses Neon DB URL
-    ssl: {
-        rejectUnauthorized: false, // Required for Neon
-    },
-    idleTimeoutMillis: 30000, // Close idle clients after 30 seconds
+    connectionString: process.env.DATABASE_URL,
+    ssl: { rejectUnauthorized: false },
 });
 
-// Keep the connection alive by running a query every 5 minutes
-setInterval(async () => {
+// Ensure leaderboard table exists
+async function ensureTableExists() {
+    const client = await pool.connect();
     try {
-        const client = await pool.connect();
-        await client.query('SELECT 1'); // Keeps the connection active
-        client.release();
-    } catch (err) {
-        console.error('Error keeping database connection alive:', err);
-    }
-}, 300000); // 300000ms = 5 minutes
-
-// Auto-reconnect on connection loss
-pool.on('error', async (err) => {
-    console.error('Database connection lost. Reconnecting...', err);
-});
-
-(async () => {
-    try {
-        await pool.query(`
+        await client.query(`
             CREATE TABLE IF NOT EXISTS leaderboard (
                 id SERIAL PRIMARY KEY,
                 username TEXT NOT NULL,
@@ -37,40 +21,80 @@ pool.on('error', async (err) => {
                 points INTEGER NOT NULL
             )
         `);
+        console.log("✅ Leaderboard table verified/created.");
     } catch (err) {
-        console.error('Error initializing database:', err);
+        console.error("❌ Error ensuring leaderboard table exists:", err);
+    } finally {
+        client.release();
     }
-})();
+}
 
-// Function to update the leaderboard
-module.exports.updateLeaderboard = async (username, language, level, points) => {
-    try {
-        const client = await pool.connect();
+// Call table creation on startup
+ensureTableExists();
 
-        const result = await client.query(
-            `SELECT * FROM leaderboard WHERE username = $1 AND language = $2 AND level = $3`,
-            [username, language, level]
-        );
+// In-memory cache for quiz scores
+const quizCache = new Map();
 
-        if (result.rows.length > 0) {
-            await client.query(
-                `UPDATE leaderboard SET quizzes = quizzes + 1, points = points + $1 WHERE username = $2 AND language = $3 AND level = $4`,
-                [points, username, language, level]
-            );
-        } else {
-            await client.query(
-                `INSERT INTO leaderboard (username, language, level, quizzes, points) VALUES ($1, $2, $3, 1, $4)`,
-                [username, language, level, points]
-            );
-        }
+// Store quiz results in memory instead of writing to DB immediately
+module.exports.updateLeaderboard = (username, language, level, points) => {
+    const key = `${username}-${language}-${level}`;
 
-        client.release(); // Release connection properly
-    } catch (err) {
-        console.error('Error updating leaderboard:', err);
+    if (!quizCache.has(key)) {
+        quizCache.set(key, { username, language, level, quizzes: 0, points: 0 });
     }
+
+    const userData = quizCache.get(key);
+    userData.quizzes += 1;
+    userData.points += points;
 };
 
-// Function to fetch and display the leaderboard
+// Scheduled task: Writes cached data to the database daily at 15:28 IST (09:58 UTC)
+cron.schedule('43 12 * * *', async () => {  // 09:58 UTC = 15:28 IST
+    console.log(`📝 Writing cached quiz data to the database at ${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}...`);
+
+    if (quizCache.size === 0) {
+        console.log('✅ No data to update.');
+        return;
+    }
+
+    console.log(`🔄 Found ${quizCache.size} entries in cache. Processing...`);
+
+    const client = await pool.connect();
+    try {
+        for (const [key, data] of quizCache) {
+            console.log(`🔄 Updating DB for ${data.username} | Language: ${data.language} | Level: ${data.level} | Quizzes: ${data.quizzes} | Points: ${data.points}`);
+
+            // Check if the user already exists
+            const result = await client.query(
+                `SELECT * FROM leaderboard WHERE username = $1 AND language = $2 AND level = $3`,
+                [data.username, data.language, data.level]
+            );
+
+            if (result.rows.length > 0) {
+                // If user exists, update the record
+                await client.query(
+                    `UPDATE leaderboard SET quizzes = quizzes + $1, points = points + $2 
+                    WHERE username = $3 AND language = $4 AND level = $5`,
+                    [data.quizzes, data.points, data.username, data.language, data.level]
+                );
+            } else {
+                // If user does not exist, insert new record
+                await client.query(
+                    `INSERT INTO leaderboard (username, language, level, quizzes, points) 
+                    VALUES ($1, $2, $3, $4, $5)`,
+                    [data.username, data.language, data.level, data.quizzes, data.points]
+                );
+            }
+        }
+        quizCache.clear(); // Clear the cache after writing
+        console.log('✅ Database updated successfully.');
+    } catch (err) {
+        console.error(`❌ Error writing cached data to the database: ${err.message}\nStack: ${err.stack}`);
+    } finally {
+        client.release();
+    }
+}, { timezone: "Asia/Kolkata" });
+
 module.exports.execute = async (message) => {
     try {
         const client = await pool.connect();
@@ -84,9 +108,7 @@ module.exports.execute = async (message) => {
         const languageEmojis = ['🇩🇪', '🇫🇷', '🇷🇺'];
         const languages = ['german', 'french', 'russian'];
 
-        for (const emoji of languageEmojis) {
-            await languageMessage.react(emoji);
-        }
+        for (const emoji of languageEmojis) await languageMessage.react(emoji);
 
         const languageReaction = await languageMessage.awaitReactions({
             filter: (reaction, user) => languageEmojis.includes(reaction.emoji.name) && user.id === message.author.id,
@@ -103,7 +125,7 @@ module.exports.execute = async (message) => {
         await languageMessage.delete();
 
         const levelEmbed = new EmbedBuilder()
-            .setTitle(`Choose a Level for the ${selectedLanguage.charAt(0).toUpperCase() + selectedLanguage.slice(1)} Leaderboard`)
+            .setTitle(`Choose a Level for ${selectedLanguage.charAt(0).toUpperCase() + selectedLanguage.slice(1)} Leaderboard`)
             .setDescription('React to select the level:\n\n🇦: A1\n🇧: A2\n🇨: B1\n🇩: B2\n🇪: C1\n🇫: C2')
             .setColor('#acf508');
 
@@ -111,9 +133,7 @@ module.exports.execute = async (message) => {
         const levelEmojis = ['🇦', '🇧', '🇨', '🇩', '🇪', '🇫'];
         const levels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
 
-        for (const emoji of levelEmojis) {
-            await levelMessage.react(emoji);
-        }
+        for (const emoji of levelEmojis) await levelMessage.react(emoji);
 
         const levelReaction = await levelMessage.awaitReactions({
             filter: (reaction, user) => levelEmojis.includes(reaction.emoji.name) && user.id === message.author.id,
@@ -138,7 +158,7 @@ module.exports.execute = async (message) => {
             [selectedLanguage, selectedLevel]
         );
 
-        client.release(); // Release connection properly
+        client.release();
 
         if (leaderboardData.rows.length === 0) {
             return message.channel.send(`No leaderboard data found for ${selectedLanguage.toUpperCase()} ${selectedLevel}.`);
@@ -148,18 +168,17 @@ module.exports.execute = async (message) => {
             .setTitle(`${selectedLanguage.charAt(0).toUpperCase() + selectedLanguage.slice(1)} Level ${selectedLevel} Leaderboard`)
             .setColor('#FFD700')
             .setDescription(
-    leaderboardData.rows
-        .map(
-            (row, index) =>
-                `**#${index + 1}** ${row.username} - **Q:** ${row.quizzes} | **P:** ${row.points} | **AVG:** ${row.avg_points.toFixed(2)}`
-        )
-        .join('\n') + 
-    `\n\n**Q** - No. of quizzes\n**P** - Points\n**AVG** - Average points per quiz`
-);
+                leaderboardData.rows
+                    .map(
+                        (row, index) => `**#${index + 1}** ${row.username} - **Q:** ${row.quizzes} | **P:** ${row.points} | **AVG:** ${row.avg_points.toFixed(2)}`
+                    )
+                    .join('\n') +
+                `\n\n**Q** - No. of quizzes\n**P** - Points\n**AVG** - Average points per quiz`
+            );
 
         message.channel.send({ embeds: [leaderboardEmbed] });
     } catch (error) {
-        console.error('Error fetching leaderboard:', error);
+        console.error('❌ Error fetching leaderboard:', error);
         message.channel.send('An error occurred. Please try again.');
     }
 };
