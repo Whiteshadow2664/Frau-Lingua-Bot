@@ -48,8 +48,8 @@ module.exports.updateLeaderboard = (username, language, level, points) => {
     userData.points += points;
 };
 
-// Scheduled task: Writes cached data to the database daily at 15:28 IST (09:58 UTC)
-cron.schedule('44 12 * * *', async () => {  // 09:58 UTC = 15:28 IST
+// Scheduled task: Writes cached data to the database daily at 05:20 IST (09:58 UTC)
+cron.schedule('20 05 * * *', async () => {  // 09:58 UTC = 05:20 IST
     console.log(`📝 Writing cached quiz data to the database at ${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}...`);
 
     if (quizCache.size === 0) {
