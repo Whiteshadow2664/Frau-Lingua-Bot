@@ -49,8 +49,8 @@ module.exports.updateModRank = async (userId, username, guild) => {
     }
 };
 
-// ✅ Function to save cached XP to DB at 15:15 IST daily
-cron.schedule('44 12 * * *', async () => {
+// ✅ Function to save cached XP to DB at 05:20 IST daily
+cron.schedule('20 05 * * *', async () => {
     console.log('⏳ Writing XP data to database...');
 
     if (xpCache.size === 0) {
