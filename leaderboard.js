@@ -12,15 +12,15 @@ async function ensureTableExists() {
     const client = await pool.connect();
     try {
         await client.query(`
-    CREATE TABLE IF NOT EXISTS leaderboard (
-        id SERIAL PRIMARY KEY,
-        username TEXT NOT NULL,
-        language TEXT NOT NULL,
-        level TEXT NOT NULL,
-        quizzes INTEGER NOT NULL,
-        points INTEGER NOT NULL
-    )
-`);
+            CREATE TABLE IF NOT EXISTS leaderboard (
+                id SERIAL PRIMARY KEY,
+                username TEXT NOT NULL,
+                language TEXT NOT NULL,
+                level TEXT NOT NULL,
+                quizzes INTEGER NOT NULL,
+                points INTEGER NOT NULL
+            )
+        `);
         console.log("✅ Leaderboard table verified/created.");
     } catch (err) {
         console.error("❌ Error ensuring leaderboard table exists:", err);
@@ -49,7 +49,7 @@ module.exports.updateLeaderboard = (username, language, level, points) => {
 };
 
 // Scheduled task: Writes cached data to the database daily at 05:20 IST (09:58 UTC)
-cron.schedule('08 11 * * *', async () => {  // 09:58 UTC = 05:20 IST
+cron.schedule('16 11 * * *', async () => {  // 09:58 UTC = 05:20 IST
     console.log(`📝 Writing cached quiz data to the database at ${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}...`);
 
     if (quizCache.size === 0) {
@@ -64,15 +64,27 @@ cron.schedule('08 11 * * *', async () => {  // 09:58 UTC = 05:20 IST
         for (const [key, data] of quizCache) {
             console.log(`🔄 Updating DB for ${data.username} | Language: ${data.language} | Level: ${data.level} | Quizzes: ${data.quizzes} | Points: ${data.points}`);
 
-           await client.query(
-    `INSERT INTO leaderboard (username, language, level, quizzes, points)
-     VALUES ($1, $2, $3, $4, $5)
-     ON CONFLICT (username, language, level)
-     DO UPDATE SET 
-        quizzes = leaderboard.quizzes + EXCLUDED.quizzes, 
-        points = leaderboard.points + EXCLUDED.points`,
-    [data.username, data.language, data.level, data.quizzes, data.points]
-); 
+            // Check if the user already exists
+            const result = await client.query(
+                `SELECT * FROM leaderboard WHERE username = $1 AND language = $2 AND level = $3`,
+                [data.username, data.language, data.level]
+            );
+
+            if (result.rows.length > 0) {
+                // If user exists, update the record
+                await client.query(
+                    `UPDATE leaderboard SET quizzes = quizzes + $1, points = points + $2 
+                    WHERE username = $3 AND language = $4 AND level = $5`,
+                    [data.quizzes, data.points, data.username, data.language, data.level]
+                );
+            } else {
+                // If user does not exist, insert new record
+                await client.query(
+                    `INSERT INTO leaderboard (username, language, level, quizzes, points) 
+                    VALUES ($1, $2, $3, $4, $5)`,
+                    [data.username, data.language, data.level, data.quizzes, data.points]
+                );
+            }
         }
         quizCache.clear(); // Clear the cache after writing
         console.log('✅ Database updated successfully.');
