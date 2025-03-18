@@ -12,15 +12,16 @@ async function ensureTableExists() {
     const client = await pool.connect();
     try {
         await client.query(`
-            CREATE TABLE IF NOT EXISTS leaderboard (
-                id SERIAL PRIMARY KEY,
-                username TEXT NOT NULL,
-                language TEXT NOT NULL,
-                level TEXT NOT NULL,
-                quizzes INTEGER NOT NULL,
-                points INTEGER NOT NULL
-            )
-        `);
+    CREATE TABLE IF NOT EXISTS leaderboard (
+        id SERIAL PRIMARY KEY,
+        username TEXT NOT NULL,
+        language TEXT NOT NULL,
+        level TEXT NOT NULL,
+        quizzes INTEGER NOT NULL,
+        points INTEGER NOT NULL,
+        UNIQUE (username, language, level)  -- ✅ Add unique constraint
+    )
+`);
         console.log("✅ Leaderboard table verified/created.");
     } catch (err) {
         console.error("❌ Error ensuring leaderboard table exists:", err);
