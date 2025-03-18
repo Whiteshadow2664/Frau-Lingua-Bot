@@ -18,8 +18,7 @@ async function ensureTableExists() {
         language TEXT NOT NULL,
         level TEXT NOT NULL,
         quizzes INTEGER NOT NULL,
-        points INTEGER NOT NULL,
-        UNIQUE (username, language, level)  -- ✅ Add unique constraint
+        points INTEGER NOT NULL
     )
 `);
         console.log("✅ Leaderboard table verified/created.");
@@ -50,7 +49,7 @@ module.exports.updateLeaderboard = (username, language, level, points) => {
 };
 
 // Scheduled task: Writes cached data to the database daily at 05:20 IST (09:58 UTC)
-cron.schedule('33 10 * * *', async () => {  // 09:58 UTC = 05:20 IST
+cron.schedule('43 10 * * *', async () => {  // 09:58 UTC = 05:20 IST
     console.log(`📝 Writing cached quiz data to the database at ${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}...`);
 
     if (quizCache.size === 0) {
@@ -74,14 +73,11 @@ cron.schedule('33 10 * * *', async () => {  // 09:58 UTC = 05:20 IST
             if (result.rows.length > 0) {
                 // If user exists, update the record
                 await client.query(
-    `INSERT INTO leaderboard (username, language, level, quizzes, points)
-     VALUES ($1, $2, $3, $4, $5)
-     ON CONFLICT (username, language, level)
-     DO UPDATE SET 
-        quizzes = leaderboard.quizzes + EXCLUDED.quizzes, 
-        points = leaderboard.points + EXCLUDED.points`,
-    [data.username, data.language, data.level, data.quizzes, data.points]
-                );
+    `UPDATE leaderboard 
+     SET quizzes = quizzes + $4, points = points + $5
+     WHERE username = $1 AND language = $2 AND level = $3`
+,   [data.username, data.language, data.level, data.quizzes, data.points]
+);
             } else {
                 // If user does not exist, insert new record
                 await client.query(
