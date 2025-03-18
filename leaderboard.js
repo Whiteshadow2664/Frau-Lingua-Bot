@@ -73,9 +73,13 @@ cron.schedule('20 05 * * *', async () => {  // 09:58 UTC = 05:20 IST
             if (result.rows.length > 0) {
                 // If user exists, update the record
                 await client.query(
-                    `UPDATE leaderboard SET quizzes = quizzes + $1, points = points + $2 
-                    WHERE username = $3 AND language = $4 AND level = $5`,
-                    [data.quizzes, data.points, data.username, data.language, data.level]
+    `INSERT INTO leaderboard (username, language, level, quizzes, points)
+     VALUES ($1, $2, $3, $4, $5)
+     ON CONFLICT (username, language, level)
+     DO UPDATE SET 
+        quizzes = leaderboard.quizzes + EXCLUDED.quizzes, 
+        points = leaderboard.points + EXCLUDED.points`,
+    [data.username, data.language, data.level, data.quizzes, data.points]
                 );
             } else {
                 // If user does not exist, insert new record
