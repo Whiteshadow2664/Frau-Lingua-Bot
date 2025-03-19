@@ -102,8 +102,11 @@ module.exports = {
 
       // Set up the reaction collector for ticket closure
       const filter = (reaction, user) => {
-        return reaction.emoji.name === '🛑' && user.id === message.author.id;
-      };
+  return (
+    reaction.emoji.name === '🛑' &&
+    (user.id === message.author.id || message.guild.members.cache.get(user.id).roles.cache.has(modRole.id))
+  );
+};
 
       const collector = ticketMessage.createReactionCollector({
         filter,
