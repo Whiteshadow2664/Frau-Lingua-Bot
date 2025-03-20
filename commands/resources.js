@@ -33,7 +33,8 @@ module.exports = {
                 '3. **Vocabulary PDF**: [Download](https://drive.google.com/file/d/1I4p26ddR2Wy_XsB2dtX_5uwvsjYq69So/view?usp=drivesdk)\n\n' +
                 '**Other Helpful Videos**:\n' +
                 '1. [Nico Weg A1](https://youtu.be/4-eDoThe6qo?si=IdydKencCJuDj9aY)\n' +
-                '2. [What Do The French Want for Christmas?](https://youtu.be/j9n3Bc7Nkqs?si=pWKbaKJclcB9G2Xd)'
+                '2. [What Do The French Want for Christmas?](https://youtu.be/j9n3Bc7Nkqs?si=pWKbaKJclcB9G2Xd)\n\n' +
+                '**More Resources**: [Click Here](https://bit.ly/Iingualounge)'
             )
             .setColor(embedColors.default)
             .setFooter({ text: 'Explore these resources to enhance your learning!' });
