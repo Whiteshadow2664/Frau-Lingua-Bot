@@ -24,7 +24,6 @@ We’ve added several new commands and features to make your experience more int
 3. **!ticket** - Open a support ticket to report issues or request assistance from the moderators.
 4. **!suggestion** - Submit your suggestions for new features, improvements, or events.
 5. **!ddd** - Play the Die Das Der game and challenge yourself on German articles!
-6. **New Dare Announcement** - Mark your calendars! The next dare will take place on **28 February 2025**.
                     `,
                     inline: false
                 },
