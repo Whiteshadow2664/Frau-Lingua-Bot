@@ -58,7 +58,7 @@ We're committed to keeping Frau Lingua a safe and welcoming space. Recent enhanc
                     inline: false
                 }
             )
-            .setFooter({ text: 'Thank you for being part of the Frau Lingua community! We’re committed to providing the best experience possible.' });
+            .setFooter({ text: 'Thank you for being part of the LinguaLounge community! We’re committed to providing the best experience possible.' });
 
         // Send the embed in the channel
         await message.channel.send({ embeds: [embed] });
