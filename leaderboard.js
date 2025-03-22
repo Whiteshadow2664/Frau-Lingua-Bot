@@ -7,6 +7,13 @@ const pool = new Pool({
     ssl: { rejectUnauthorized: false },
 });
 
+const languageColors = {
+    russian: '#7907ff',
+    german: '#f4ed09',
+    french: '#09ebf6',
+    default: '#acf508'
+};
+
 // Ensure leaderboard table exists
 async function ensureTableExists() {
     const client = await pool.connect();
