@@ -30,7 +30,7 @@ const handleWorksheet = require('./worksheet');
 const afkHandler = require('./afk.js');
 const purgeCommand = require('./purge.js');
 const antiInvite = require("./antiInvite");
-const cefr = require('./cefr');
+const cefr = require('./commands/cefr');
 const classCommand = require('./commands/class');
 
 // Environment Variables
