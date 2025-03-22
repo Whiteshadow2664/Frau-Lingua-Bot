@@ -150,6 +150,13 @@ if (message.content.toLowerCase() === '!leaderboard') {
    leaderboard.execute(message);
 }
 
+if (message.content.toLowerCase() === '!class') {
+    classCommand.execute(message);
+}
+if (message.content.toLowerCase() === '!cefr') {
+    cefr.execute(message);
+}
+
 if (message.content.toLowerCase() === "!ws") {
     handleWorksheet(message, client);
 }
