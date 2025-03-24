@@ -152,6 +152,14 @@ if (message.content.toLowerCase() === '!leaderboard') {
    leaderboard.execute(message);
 }
 
+if (message.content.toLowerCase() === '!exam') {
+    examCommand.execute(message);
+}
+
+if (message.content.toLowerCase() === '!tips') {
+    studyTips.execute(message);
+}
+
 if (message.content.toLowerCase() === '!class') {
     classCommand.execute(message);
 }
