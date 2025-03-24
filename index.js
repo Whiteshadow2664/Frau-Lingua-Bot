@@ -32,6 +32,8 @@ const purgeCommand = require('./purge.js');
 const antiInvite = require("./antiInvite");
 const cefr = require('./commands/cefr');
 const classCommand = require('./commands/class');
+const studyTips = require('./commands/studytips');
+const examCommand = require('./commands/exam.js');
 
 // Environment Variables
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
