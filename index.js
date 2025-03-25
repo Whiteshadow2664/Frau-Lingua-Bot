@@ -34,6 +34,7 @@ const cefr = require('./commands/cefr');
 const classCommand = require('./commands/class');
 const studyTips = require('./commands/studytips');
 const examCommand = require('./commands/exam.js');
+const bump = require("./commands/bumps.js");
 
 // Environment Variables
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
@@ -165,6 +166,12 @@ if (message.content.toLowerCase() === '!class') {
 }
 if (message.content.toLowerCase() === '!cefr') {
     cefr.execute(message);
+}
+
+    await bump.trackBump(message); // Track bumps in cache
+
+if (message.content === "!brank") {
+        await bump.showLeaderboard(message);
 }
 
 if (message.content.toLowerCase() === "!ws") {
