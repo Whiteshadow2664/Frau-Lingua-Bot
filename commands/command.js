@@ -7,7 +7,7 @@ module.exports = {
     const embed = new EmbedBuilder()
       .setTitle("📜 Frau Lingua Command Guide")
       .setDescription(
-        "Below is a list of available commands categorized for easy navigation.\n" +
+        "Here is a list of available commands categorized for easy navigation.\n" +
         "Use the appropriate commands in the designated channels."
       )
       .setColor("#acf508") // Light green
@@ -25,7 +25,8 @@ module.exports = {
             "`!modrank` — View moderator rankings\n" +
             "`!tips` — Receive study tips\n" +
             "`!class` — Check upcoming events and classes\n" +
-            "`!exam` — Get information on German proficiency exams",
+            "`!exam` — Get information on German proficiency exams\n" +
+            "`!joke` — Get a random joke",
           inline: false 
         },
         { 
