@@ -172,7 +172,23 @@ if (message.content.toLowerCase() === '!class') {
 }
 if (message.content.toLowerCase() === '!cefr') {
     cefr.execute(message);
-}  
+}
+
+if (message.content.toLowerCase().startsWith("!ban")) {
+    banCommand.execute(message);
+}
+
+if (message.content.toLowerCase().startsWith("!kick")) {
+    kickCommand.execute(message);
+}
+
+if (message.content.toLowerCase().startsWith("!mute")) {
+    muteCommand.execute(message);
+}
+
+if (message.content.toLowerCase() === '!commands') {
+    commands.execute(message);
+}
 
 if (message.content.toLowerCase() === "!ws") {
     handleWorksheet(message, client);
