@@ -34,6 +34,13 @@ const cefr = require('./commands/cefr');
 const classCommand = require('./commands/class');
 const studyTips = require('./commands/studytips');
 const examCommand = require('./commands/exam.js');
+const kickCommand = require("./commands/kick");
+const muteCommand = require("./commands/mute");
+const banCommand = require("./commands/ban");
+const commands = require("./commands/command.js");
+const ticket = require("./support/ticket.js");
+const setupEvents = require("./support/events.js");
+
 
 // Environment Variables
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
