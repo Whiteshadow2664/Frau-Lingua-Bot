@@ -37,14 +37,9 @@ const kickCommand = require("./commands/kick");
 const muteCommand = require("./commands/mute");
 const banCommand = require("./commands/ban");
 const commands = require("./commands/command.js");
-
-
-
+const jokeCommand = require('./commands/joke.js');
 const ticket = require("./ticket.js");
-const setupEvents = require("./events.js"); // Import the new event handler module
-
-
-
+const setupEvents = require("./events.js");
 
 // Environment Variables
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
@@ -192,6 +187,10 @@ if (message.content.toLowerCase().startsWith("!mute")) {
 
 if (message.content.toLowerCase() === '!commands') {
     commands.execute(message);
+}
+
+if (message.content.toLowerCase() === '!joke') {  
+    jokeCommand.execute(message);
 }
 
 if (message.content.toLowerCase() === "!ws") {
