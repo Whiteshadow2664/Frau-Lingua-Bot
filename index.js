@@ -17,7 +17,6 @@ const { handleMemberJoin, handleMemberLeave } = require('./welcomeHandler');
 const announcement = require('./commands/announcement');
 const { handleBadWords } = require('./badWords');
 const suggestion = require('./commands/suggestion');
-const ticket = require('./commands/ticket');
 const leaderboard = require('./leaderboard.js');
 const linkFilter = require('./linkFilter');
 const { handleSpamDetection } = require('./spamHandler');
