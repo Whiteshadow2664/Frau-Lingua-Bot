@@ -54,11 +54,11 @@ module.exports = {
       
 
       const category = guild.channels.cache.find(
-        (c) => c.name === "CHANNELS" && c.type === ChannelType.GuildCategory
+        (c) => c.name === "Channels" && c.type === ChannelType.GuildCategory
       );
 
       if (!category) {
-        return interaction.editReply({ content: '❌ Error: Category "CHANNELS" not found.' })
+        return interaction.editReply({ content: '❌ Error: Category "Channels" not found.' })
           .then(msg => setTimeout(() => msg.delete(), 5000));
       }
 
