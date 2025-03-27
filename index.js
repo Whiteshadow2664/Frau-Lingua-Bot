@@ -40,6 +40,12 @@ const commands = require("./commands/command.js");
 
 
 
+const ticket = require("./ticket.js");
+const setupEvents = require("./events.js"); // Import the new event handler module
+
+
+
+
 // Environment Variables
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
 
