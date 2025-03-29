@@ -3,14 +3,17 @@ const { EmbedBuilder } = require('discord.js');
 module.exports = (client) => {
     // List of suspicious patterns (you can add more as needed)
     const suspiciousLinks = [
-        /steamgift\.com/i,        // Matches Steam Gift links
-        /freegiftcards/i,         // Matches suspicious free gift card links
-        /getfreegame/i,           // Matches free game links
-        /discounts/i,             // Matches discount or offer links
-        /.*\.ru$/,                // Matches Russian domain links (you can add more such patterns if needed)
-        /.*\.xyz$/,               // Matches .xyz domain links (often used by suspicious websites)
-        /steamcommunity\.com/i,   // Matches SteamCommunity.com
-        /steamcomunity\.com/i     // Matches steamcomunity.com (added new pattern)
+        /steamgift\.com/i,         // Matches Steam Gift links
+        /freegiftcards/i,          // Matches suspicious free gift card links
+        /getfreegame/i,            // Matches free game links
+        /discounts/i,              // Matches discount or offer links
+        /.*\.ru$/,                 // Matches Russian domain links (you can add more such patterns if needed)
+        /.*\.xyz$/,                // Matches .xyz domain links (often used by suspicious websites)
+        /steamcommunity\.com/i,    // Matches SteamCommunity.com
+        /steamcomunity\.com/i,     // Matches steamcomunity.com (common typo)
+        /steamticket-50\.com\/105391405/i,  // Specific malicious link
+        /steam/i,                  // Matches any link containing "steam"
+        /steamticket/i             // Matches any link containing "steamticket"
     ];
 
     // Listener for new messages
