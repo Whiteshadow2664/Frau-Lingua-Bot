@@ -96,7 +96,7 @@ const handleBadWords = async (message) => {
         // Send a general warning message
         try {
             await message.channel.send({
-                content: `${member}, your message was deleted because it contained inappropriate language. Continued use of bad words may result in a timeout.`,
+                content: `${member}, your message was deleted because it contained inappropriate language. Continued use of bad words/emojis may result in a timeout.`,
             });
         } catch (error) {
             return;
