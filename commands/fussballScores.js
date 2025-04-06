@@ -1,32 +1,107 @@
-const { EmbedBuilder } = require('discord.js'); const axios = require('axios'); const API_KEY = 'YOUR_API_KEY'; // Replace with your real API key
+const { EmbedBuilder } = require('discord.js');
+const axios = require('axios');
 
-const TARGET_LEAGUES = [ 'UEFA Champions League', 'Premier League', 'Bundesliga', 'La Liga', 'Serie A', 'Ligue 1', 'FIFA World Cup', 'UEFA Euro', "Women's World Cup" ];
+const API_KEY = 'YOUR_API_KEY'; // Replace this with your actual API key
 
-const getLiveScores = async () => { try { const response = await axios.get('https://v3.football.api-sports.io/fixtures?live=all', { headers: { 'x-apisports-key': API_KEY } });
+// League/Tournament IDs to include (from API-Football)
+const allowedLeagueIds = [
+  2,    // UEFA Champions League
+  39,   // Premier League
+  78,   // Bundesliga
+  140,  // La Liga
+  135,  // Serie A
+  61,   // Ligue 1
+  1,    // International (World Cup, Euros etc.)
+];
 
-const matches = response.data.response; if (!matches.length) return null; const leagueMap = {}; matches.forEach(match => { const leagueName = match.league.name; if (!TARGET_LEAGUES.includes(leagueName)) return; if (!leagueMap[leagueName]) leagueMap[leagueName] = []; const home = match.teams.home.name; const away = match.teams.away.name; const score = `${match.goals.home} - ${match.goals.away}`; const status = match.fixture.status.elapsed; const time = status !== null ? `${status} min` : 'HT'; leagueMap[leagueName].push(`${home} ${score} ${away} (${time})`); }); return leagueMap; 
+const fetchLiveMatches = async () => {
+  try {
+    const response = await axios.get('https://v3.football.api-sports.io/fixtures?live=all', {
+      headers: {
+        'x-apisports-key': API_KEY
+      }
+    });
 
-} catch (error) { console.error(error); return 'Error fetching live scores.'; } };
+    const allMatches = response.data.response;
 
-const showLiveScores = async (message) => { const data = await getLiveScores();
+    // Filter only selected leagues/tournaments
+    const filtered = allMatches.filter(match => allowedLeagueIds.includes(match.league.id));
+    return filtered;
+  } catch (err) {
+    console.error(err);
+    return null;
+  }
+};
 
-if (!data || typeof data === 'string') { return message.channel.send(data || 'No live matches currently.'); }
+const groupByLeague = (matches) => {
+  const grouped = {};
+  matches.forEach(match => {
+    const leagueName = match.league.name;
+    if (!grouped[leagueName]) grouped[leagueName] = [];
+    grouped[leagueName].push(match);
+  });
+  return grouped;
+};
 
-const leagueNames = Object.keys(data); if (!leagueNames.length) return message.channel.send('No live matches for selected leagues.');
+const buildEmbeds = (groupedMatches) => {
+  const embeds = [];
 
-let currentIndex = 0;
+  for (const league in groupedMatches) {
+    const matches = groupedMatches[league];
+    const description = matches.map(m => {
+      const home = m.teams.home.name;
+      const away = m.teams.away.name;
+      const score = `${m.goals.home} - ${m.goals.away}`;
+      const status = m.fixture.status.elapsed || m.fixture.status.short;
+      return `**${home}** ${score} **${away}** (${status} min)`;
+    }).join('\n');
 
-const createEmbed = (index) => { const league = leagueNames[index]; const embed = new EmbedBuilder() .setTitle(${league} - Live Scores) .setDescription(data[league].join('\n')) .setColor('#acf508') .setFooter({ text: Page ${index + 1} of ${leagueNames.length} }) .setTimestamp(); return embed; };
+    const embed = new EmbedBuilder()
+      .setTitle(`${league} - Live Matches`)
+      .setDescription(description)
+      .setColor('#acf508')
+      .setTimestamp();
 
-const embedMessage = await message.channel.send({ embeds: [createEmbed(currentIndex)] }); await embedMessage.react('◀️'); await embedMessage.react('▶️');
+    embeds.push(embed);
+  }
 
-const collector = embedMessage.createReactionCollector({ filter: (reaction, user) => ['◀️', '▶️'].includes(reaction.emoji.name) && !user.bot, time: 60000 });
+  return embeds;
+};
 
-collector.on('collect', async (reaction, user) => { await reaction.users.remove(user.id);
+const showLiveScores = async (message) => {
+  const matches = await fetchLiveMatches();
+  if (!matches || matches.length === 0) {
+    return message.channel.send('No live matches currently from selected leagues.');
+  }
 
-if (reaction.emoji.name === '▶️') { currentIndex = (currentIndex + 1) % leagueNames.length; } else if (reaction.emoji.name === '◀️') { currentIndex = (currentIndex - 1 + leagueNames.length) % leagueNames.length; } await embedMessage.edit({ embeds: [createEmbed(currentIndex)] }); 
+  const grouped = groupByLeague(matches);
+  const embeds = buildEmbeds(grouped);
 
-}); };
+  let page = 0;
+  const msg = await message.channel.send({ embeds: [embeds[page]] });
 
-module.exports = { showLiveScores };
+  if (embeds.length <= 1) return;
 
+  await msg.react('◀️');
+  await msg.react('▶️');
+
+  const filter = (reaction, user) => {
+    return ['◀️', '▶️'].includes(reaction.emoji.name) && !user.bot;
+  };
+
+  const collector = msg.createReactionCollector({ filter, time: 60000 });
+
+  collector.on('collect', (reaction, user) => {
+    reaction.users.remove(user.id).catch(() => {});
+    if (reaction.emoji.name === '▶️') {
+      page = (page + 1) % embeds.length;
+    } else if (reaction.emoji.name === '◀️') {
+      page = (page - 1 + embeds.length) % embeds.length;
+    }
+    msg.edit({ embeds: [embeds[page]] });
+  });
+};
+
+module.exports = {
+  showLiveScores
+};
