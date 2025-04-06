@@ -1,48 +1,54 @@
 const { EmbedBuilder } = require('discord.js');
 const axios = require('axios');
-const API_KEY = 'YOUR_API_KEY'; // Replace with your real API key
 
-const getLiveScores = async () => {
+const API_KEY = 'YOUR_API_KEY'; // Replace with your actual API key
+
+const getLiveF1Data = async () => {
   try {
-    const response = await axios.get('https://v3.football.api-sports.io/fixtures?live=all', {
+    const response = await axios.get('https://v1.formula-1.api-sports.io/races?live=true', {
       headers: {
-        'x-apisports-key': API_KEY
+        'x-rapidapi-host': 'v1.formula-1.api-sports.io',
+        'x-rapidapi-key': API_KEY
       }
     });
 
-    const matches = response.data.response;
+    const races = response.data.response;
 
-    if (!matches.length) return 'No live matches currently.';
+    if (!races || races.length === 0) return 'No live Formula 1 races right now.';
 
-    const matchList = matches.map(match => {
-      const home = match.teams.home.name;
-      const away = match.teams.away.name;
-      const score = `${match.goals.home} - ${match.goals.away}`;
-      const league = match.league.name;
-      const status = match.fixture.status.elapsed;
+    const race = races[0];
+    const raceName = race.competition.name;
+    const circuit = race.circuit.name;
+    const laps = race.laps.total;
+    const currentLap = race.laps.current;
 
-      return `**${league}**\n${home} ${score} ${away} (${status} min)`;
-    }).join('\n\n');
+    const resultList = race.results.map(result => {
+      const driver = `${result.driver.name}`;
+      const team = result.team.name;
+      const position = result.position;
+      const time = result.time || 'N/A';
+      return `**${position}. ${driver}** (${team}) – ${time}`;
+    }).join('\n');
 
-    return matchList;
+    return `**${raceName}** at ${circuit}\nLap: ${currentLap}/${laps}\n\n${resultList}`;
   } catch (error) {
     console.error(error);
-    return 'Error fetching live scores.';
+    return 'Error fetching Formula 1 live data.';
   }
 };
 
-const showLiveScores = async (message) => {
-  const liveScores = await getLiveScores();
+const showLiveF1 = async (message) => {
+  const f1Info = await getLiveF1Data();
 
   const embed = new EmbedBuilder()
-    .setTitle('Live Football Scores')
-    .setDescription(liveScores)
-    .setColor('#1e90ff')
+    .setTitle('Formula 1 - Live Race')
+    .setDescription(f1Info)
+    .setColor('#e10600')
     .setTimestamp();
 
   message.channel.send({ embeds: [embed] });
 };
 
 module.exports = {
-  showLiveScores
+  showLiveF1
 };
