@@ -167,7 +167,6 @@ const { showLiveScores } = require('./fussballScores');
   if (message.content.toLowerCase() === '!fuß') {
    showLiveScores(message);
   }
-});
 
 
 
