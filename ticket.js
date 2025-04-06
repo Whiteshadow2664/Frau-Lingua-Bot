@@ -10,7 +10,7 @@ const {
 
 module.exports = {
   setup: async (client) => {
-    const channel = await client.channels.fetch("1358288498985009307").catch(() => null);
+    const channel = await client.channels.fetch("1354835716647026748").catch(() => null);
     if (!channel) {
       return console.error("❌ Ticket setup channel not found! Check the channel ID.");
     }
