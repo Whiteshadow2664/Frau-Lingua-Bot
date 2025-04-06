@@ -159,20 +159,6 @@ if (message.content.toLowerCase() === '!leaderboard') {
    leaderboard.execute(message);
 }
 
-
-
-const { showNews } = require('./commands/news');
-
-if (message.content.toLowerCase() === '!news') {
-  showNews(message);
-}
-
-
-
-
-
-
-
 if (message.content.toLowerCase() === '!exam') {
     examCommand.execute(message);
 }
