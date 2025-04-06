@@ -161,10 +161,10 @@ if (message.content.toLowerCase() === '!leaderboard') {
 
 
 
-const { showLiveFootballScores } = require('./commands/fussballScores');
+const { showNews } = require('./commands/news');
 
-if (message.content.toLowerCase() === '!fuß') {
-  showLiveFootballScores(message);
+if (message.content.toLowerCase() === '!news') {
+  showNews(message);
 }
 
 
