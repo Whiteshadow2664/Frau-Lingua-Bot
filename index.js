@@ -159,6 +159,22 @@ if (message.content.toLowerCase() === '!leaderboard') {
    leaderboard.execute(message);
 }
 
+
+
+const { showLiveScores } = require('./fussballScores');
+
+
+  if (message.content.toLowerCase() === '!fuß') {
+    await showLiveScores(message);
+  }
+});
+
+
+
+
+
+
+
 if (message.content.toLowerCase() === '!exam') {
     examCommand.execute(message);
 }
