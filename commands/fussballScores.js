@@ -1,54 +1,32 @@
-const { EmbedBuilder } = require('discord.js');
-const axios = require('axios');
+const { EmbedBuilder } = require('discord.js'); const axios = require('axios'); const API_KEY = 'YOUR_API_KEY'; // Replace with your real API key
 
-const API_KEY = 'YOUR_API_KEY'; // Replace with your actual API key
+const TARGET_LEAGUES = [ 'UEFA Champions League', 'Premier League', 'Bundesliga', 'La Liga', 'Serie A', 'Ligue 1', 'FIFA World Cup', 'UEFA Euro', "Women's World Cup" ];
 
-const getLiveF1Data = async () => {
-  try {
-    const response = await axios.get('https://v1.formula-1.api-sports.io/races?live=true', {
-      headers: {
-        'x-rapidapi-host': 'v1.formula-1.api-sports.io',
-        'x-rapidapi-key': API_KEY
-      }
-    });
+const getLiveScores = async () => { try { const response = await axios.get('https://v3.football.api-sports.io/fixtures?live=all', { headers: { 'x-apisports-key': API_KEY } });
 
-    const races = response.data.response;
+const matches = response.data.response; if (!matches.length) return null; const leagueMap = {}; matches.forEach(match => { const leagueName = match.league.name; if (!TARGET_LEAGUES.includes(leagueName)) return; if (!leagueMap[leagueName]) leagueMap[leagueName] = []; const home = match.teams.home.name; const away = match.teams.away.name; const score = `${match.goals.home} - ${match.goals.away}`; const status = match.fixture.status.elapsed; const time = status !== null ? `${status} min` : 'HT'; leagueMap[leagueName].push(`${home} ${score} ${away} (${time})`); }); return leagueMap; 
 
-    if (!races || races.length === 0) return 'No live Formula 1 races right now.';
+} catch (error) { console.error(error); return 'Error fetching live scores.'; } };
 
-    const race = races[0];
-    const raceName = race.competition.name;
-    const circuit = race.circuit.name;
-    const laps = race.laps.total;
-    const currentLap = race.laps.current;
+const showLiveScores = async (message) => { const data = await getLiveScores();
 
-    const resultList = race.results.map(result => {
-      const driver = `${result.driver.name}`;
-      const team = result.team.name;
-      const position = result.position;
-      const time = result.time || 'N/A';
-      return `**${position}. ${driver}** (${team}) – ${time}`;
-    }).join('\n');
+if (!data || typeof data === 'string') { return message.channel.send(data || 'No live matches currently.'); }
 
-    return `**${raceName}** at ${circuit}\nLap: ${currentLap}/${laps}\n\n${resultList}`;
-  } catch (error) {
-    console.error(error);
-    return 'Error fetching Formula 1 live data.';
-  }
-};
+const leagueNames = Object.keys(data); if (!leagueNames.length) return message.channel.send('No live matches for selected leagues.');
 
-const showLiveF1 = async (message) => {
-  const f1Info = await getLiveF1Data();
+let currentIndex = 0;
 
-  const embed = new EmbedBuilder()
-    .setTitle('Formula 1 - Live Race')
-    .setDescription(f1Info)
-    .setColor('#e10600')
-    .setTimestamp();
+const createEmbed = (index) => { const league = leagueNames[index]; const embed = new EmbedBuilder() .setTitle(${league} - Live Scores) .setDescription(data[league].join('\n')) .setColor('#acf508') .setFooter({ text: Page ${index + 1} of ${leagueNames.length} }) .setTimestamp(); return embed; };
 
-  message.channel.send({ embeds: [embed] });
-};
+const embedMessage = await message.channel.send({ embeds: [createEmbed(currentIndex)] }); await embedMessage.react('◀️'); await embedMessage.react('▶️');
 
-module.exports = {
-  showLiveF1
-};
+const collector = embedMessage.createReactionCollector({ filter: (reaction, user) => ['◀️', '▶️'].includes(reaction.emoji.name) && !user.bot, time: 60000 });
+
+collector.on('collect', async (reaction, user) => { await reaction.users.remove(user.id);
+
+if (reaction.emoji.name === '▶️') { currentIndex = (currentIndex + 1) % leagueNames.length; } else if (reaction.emoji.name === '◀️') { currentIndex = (currentIndex - 1 + leagueNames.length) % leagueNames.length; } await embedMessage.edit({ embeds: [createEmbed(currentIndex)] }); 
+
+}); };
+
+module.exports = { showLiveScores };
+
