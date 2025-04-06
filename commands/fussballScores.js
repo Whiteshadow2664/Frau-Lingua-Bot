@@ -14,7 +14,7 @@ const TARGET_LEAGUES = {
   'FIFA World Cup': 1,
   'UEFA Euro Championship': 4,
   'Women World Cup': 1321,
-  'A-League': 188
+  'A-League': 130
 };
 
 const getLiveScoresByLeague = async () => {
