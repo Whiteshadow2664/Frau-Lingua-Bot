@@ -1,4 +1,34 @@
-const badWords = ['cunt', 'dick', 'nigga', 'horny', 'motherfucker', 'mf', 'cum', 'SMD', 'suck my dick', 'your mom', 'Mutterfucker', 'cock', 'pussy', '6000', 'fuck you', 'Bitch', 'hitler', 'Nazi'];
+const badWords = [
+  // English
+  'cunt', 'dick', 'nigga', 'horny', 'motherfucker', 'mf', 'cum', 'smd', 'suck my dick',
+  'your mom', 'mutterfucker', 'cock', 'pussy', '6000', 'fuck you', 'bitch', 'hitler', 'nazi',
+  'asshole', 'twat', 'shithead', 'douche', 'retard', 'slut', 'whore', 'fucker', 'dumbass',
+  'ballsack', 'screw you', 'suck it', 'fml', 'rape', 'pedophile', 'kill yourself', 'kys',
+  'dumbfuck', 'booty', 'buttfuck', 'fuckface', 'shitface', 'bastard', 'tits', 'porn',
+  'hentai', 'jerk off', 'wank', 'dickhead', 'fuckhead', 'sucka', 'sucker', 'piss off',
+  'stfu', 'gtfo', 'hoe', 'eat shit', 'ass', 'fag', 'faggot',
+  'n1gga', 'fak u', 'fak off', 'sex', 'ejaculate', 'blowjob',
+  '69', '420', 'lick me', 'spank me', 'anal', 'twerk', 'splooge', 'nut', 'boobs',
+  'camel toe', 'balls', 'thot', 'milf', 'stepmom', 'bang', 'orgasm', 'moan',
+
+  // French
+  'pute', 'salope', 'enculé', 'bite', 'connard', 'connasse', 'nique ta mère', 'ta mère',
+  'bordel', 'pd', 'sucer', 'fils de pute', 'branler', 'branlette', 'chatte', 'merde',
+  'sodomie', 'cul', 'enculer', 'baise', 'pornographie', 'milf', 'sperme', 'éjaculer',
+
+  // German
+  'fotze', 'arschloch', 'wichser', 'hurensohn', 'schlampe', 'ficken', 'verpiss dich',
+  'scheiße', 'kacke', 'bumsen', 'blasen', 'titten', 'schwanz', 'arsch', 'porno',
+  'hure', 'mutterficker', 'milf', 'sperma', 'ejakulieren', 'wichsen',
+
+  // Russian
+  'сука', 'блядь', 'пизда', 'хуй', 'ебать', 'гандон', 'мудила', 'ублюдок', 'пошел нахуй',
+  'соси хуй', 'трахни меня', 'член', 'манда', 'сучка', 'порно', 'минет', 'анальный',
+  'дрочить', 'сперма', 'эякуляция',
+
+  // Emoji-based inappropriate symbols
+  '🖕', '🍆', '🍑', '💦', '👅', '🫦', '💋', '🔞', '🩸'
+];
 const userOffenses = new Map(); // To track user offenses
 
 /**
