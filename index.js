@@ -161,7 +161,7 @@ if (message.content.toLowerCase() === '!leaderboard') {
 
 
 
-const { showLiveScores } = require('./fussballScores');
+const { showLiveScores } = require('./commands/fussballScores');
 
 
   if (message.content.toLowerCase() === '!fuß') {
