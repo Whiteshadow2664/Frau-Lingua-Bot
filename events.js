@@ -2,6 +2,7 @@ const { MessageFlags } = require("discord.js");
 const ticket = require("./ticket.js");
 
 module.exports = (client) => {
+  // Button interaction for creating a ticket
   client.on("interactionCreate", async (interaction) => {
     if (!interaction.isButton()) return;
 
@@ -25,15 +26,26 @@ module.exports = (client) => {
     }
   });
 
+  // Reaction added (for ticket close)
   client.on("messageReactionAdd", async (reaction, user) => {
-    if (!user.bot) {
-      try {
-        await reaction.fetch();
-        await reaction.message.fetch();
-        await ticket.handleReactions(reaction, user);
-      } catch (error) {
-        console.error("❌ Error handling reaction:", error);
+    if (user.bot) return;
+
+    try {
+      // Fetch partials safely
+      if (reaction.partial) {
+        await reaction.fetch().catch(() => null);
       }
+
+      if (reaction.message.partial) {
+        await reaction.message.fetch().catch(() => null);
+      }
+
+      // If message doesn't exist (deleted), exit
+      if (!reaction.message || !reaction.message.id) return;
+
+      await ticket.handleReactions(reaction, user);
+    } catch (error) {
+      console.error("❌ Error handling reaction:", error);
     }
   });
 };
