@@ -80,7 +80,7 @@ module.exports = {
                     inline: false 
                 }
             )
-            .setFooter({ text: 'Type !quiz to start, or use !resources, !suggestion, or !ticket for other features. Good luck!' });
+            .setFooter({ text: 'Please feel free to contact a Moderator if you have any issues. Good luck!' });
 
         await message.channel.send({ embeds: [embed] });
     },
