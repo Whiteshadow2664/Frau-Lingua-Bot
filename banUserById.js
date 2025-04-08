@@ -24,7 +24,7 @@ module.exports = {
           const embed = new EmbedBuilder()
             .setTitle("User Banned")
             .setDescription("Spreading hate towards Russians will result in a ban.")
-            .setColor("#ff0000");
+            .setColor("#acf508");
 
           await logChannel.send({ embeds: [embed] });
         }
