@@ -39,15 +39,29 @@ const userOffenses = new Map();
  * @returns {boolean} True if bad words are found, false otherwise.
  */
 const containsBadWords = (content) => {
-    const lowerCaseContent = content.toLowerCase();
-    return badWords.some((word) => {
-        // Escape regex special characters
-        const escaped = word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-        // Match exact words using \b (word boundaries) or match emojis exactly
-        const regex = /^[\p{Emoji}\s]+$/u.test(word)
-            ? new RegExp(`${escaped}`, 'gi') // Emojis or symbol-only patterns
-            : new RegExp(`\\b${escaped}\\b`, 'gi');
-        return regex.test(lowerCaseContent);
+    const lower = content.toLowerCase();
+
+    // Skip URLs
+    if (/https?:\/\/\S+/.test(lower)) return false;
+
+    // Split content into words
+    const words = lower.split(/\s+/).filter(Boolean);
+
+    return words.some(word => {
+        // Ignore mentions
+        if (/^<@!?[0-9]+>$/.test(word) || word.startsWith('@')) return false;
+
+        return badWords.some(bad => {
+            const badEscaped = bad.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+            if (/^[\p{Emoji}]+$/u.test(bad)) {
+                // Emoji match
+                return word === bad;
+            } else {
+                // Exact word match only
+                return new RegExp(`\\b${badEscaped}\\b`, 'i').test(word);
+            }
+        });
     });
 };
 
