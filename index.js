@@ -465,7 +465,8 @@ client.once('ready', () => {
     setupEvents(client);
     antiInvite(client);
     levelSystem(client);
-    banUser.execute(client);
+    
+    deleteOnStart(client);
     // Start the status update cycle
     setInterval(() => updateBotStatus(client), 10000); // Update every 10 seconds
 });
