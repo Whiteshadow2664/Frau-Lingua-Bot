@@ -45,9 +45,41 @@ module.exports = {
                 '• Use **!leaderboard** to view the leaderboard for a specific language and level.\n' +
                 '• The leaderboard ranks users based on their quiz scores, with bonus point for scoring 5 out of 5.\n' +
                 '• In case of a tie in scores, users are ranked by their **average quiz score**.\n\n' +
-                '**Good luck and keep learning!**'
+
+                '**7. Full Command Guide**\n' +
+                'Here is a categorized list of available commands. Use them in the appropriate channels as needed.'
             )
             .setColor(embedColors.default)
+            .setThumbnail(message.client.user.displayAvatarURL())
+            .addFields(
+                { 
+                    name: '🔹 General Commands', 
+                    value: 
+                        '`!help` — Get assistance with the bot\n' +
+                        '`!resources` — Access learning materials\n' +
+                        '`!ddd` — Play the Die Der Das game *(use in <#quiz-bot>)*\n' +
+                        '`!quiz` — Start a vocabulary quiz *(use in <#quiz-bot>)*\n' +
+                        '`!updates` — View recent bot updates\n' +
+                        '`!leaderboard` — Display the quiz leaderboard\n' +
+                        '`!modrank` — View moderator rankings\n' +
+                        '`!tips` — Receive study tips\n' +
+                        '`!class` — Check upcoming events and classes\n' +
+                        '`!exam` — Get information on German proficiency exams\n' +
+                        '`!joke` — Get a random joke',
+                    inline: false 
+                },
+                { 
+                    name: '🛠️ Moderator Commands', 
+                    value: 
+                        '`!purge` — Clear a specified number of messages\n' +
+                        '`!announcement` — Send a server-wide announcement\n' +
+                        '`!ws` — Provide a worksheet for users to complete\n' +
+                        '`!ban @username` — Ban a user from the server\n' +
+                        '`!kick @username` — Remove a user from the server\n' +
+                        '`!mute @username` — Temporarily mute a user',
+                    inline: false 
+                }
+            )
             .setFooter({ text: 'Type !quiz to start, or use !resources, !suggestion, or !ticket for other features. Good luck!' });
 
         await message.channel.send({ embeds: [embed] });
