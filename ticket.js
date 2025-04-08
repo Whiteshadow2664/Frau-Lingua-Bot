@@ -36,7 +36,7 @@ module.exports = {
       new ButtonBuilder()
         .setCustomId("create_ticket")
         .setLabel("Create Ticket")
-        .setStyle(ButtonStyle.Primary)
+        .setStyle(ButtonStyle.Danger)
     );
 
     await channel.send({ embeds: [embed], components: [row] });
