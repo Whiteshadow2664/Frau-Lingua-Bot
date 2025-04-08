@@ -36,7 +36,6 @@ const examCommand = require('./commands/exam.js');
 const kickCommand = require("./commands/kick");
 const muteCommand = require("./commands/mute");
 const banCommand = require("./commands/ban");
-const commands = require("./commands/command.js");
 const jokeCommand = require('./commands/joke.js');
 const ticket = require("./ticket.js");
 const setupEvents = require("./events.js");
@@ -184,10 +183,6 @@ if (message.content.toLowerCase().startsWith("!kick")) {
 
 if (message.content.toLowerCase().startsWith("!mute")) {
     muteCommand.execute(message);
-}
-
-if (message.content.toLowerCase() === '!commands') {
-    commands.execute(message);
 }
 
 if (message.content.toLowerCase() === '!joke') {  
