@@ -41,16 +41,6 @@ const ticket = require("./ticket.js");
 const setupEvents = require("./events.js");
 const levelSystem = require('./levelSystem');
 
-
-
-const deleteOnStart = require("./deleteOnStart");
-
-
-  
-
-
-  
-
 // Environment Variables
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
 
@@ -469,9 +459,7 @@ client.once('ready', () => {
     ticket.setup(client);
     setupEvents(client);
     antiInvite(client);
-    levelSystem(client);
-    
-    deleteOnStart(client);
+    levelSystem(client); 
     // Start the status update cycle
     setInterval(() => updateBotStatus(client), 10000); // Update every 10 seconds
 });
