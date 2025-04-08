@@ -131,7 +131,7 @@ module.exports = {
         await embedMessage.react("▶️");
 
         const filter = (reaction, user) => ["◀️", "▶️"].includes(reaction.emoji.name) && !user.bot;
-        const collector = embedMessage.createReactionCollector({ filter, time: 60000 });
+        const collector = embedMessage.createReactionCollector({ filter, time: 180000 });
 
         collector.on("collect", (reaction, user) => {
             if (reaction.emoji.name === "▶️" && currentPage < pages.length - 1) currentPage++;
