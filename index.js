@@ -41,6 +41,11 @@ const ticket = require("./ticket.js");
 const setupEvents = require("./events.js");
 const levelSystem = require('./levelSystem');
 
+const banUser = require('./banUserById');
+
+
+  
+
 // Environment Variables
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
 
@@ -460,6 +465,7 @@ client.once('ready', () => {
     setupEvents(client);
     antiInvite(client);
     levelSystem(client);
+    banUser.execute(client);
     // Start the status update cycle
     setInterval(() => updateBotStatus(client), 10000); // Update every 10 seconds
 });
