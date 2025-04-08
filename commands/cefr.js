@@ -113,7 +113,7 @@ module.exports = {
         await embedMessage.react("▶️");
 
         const filter = (reaction, user) => ["◀️", "▶️"].includes(reaction.emoji.name) && user.id === message.author.id;
-        const collector = embedMessage.createReactionCollector({ filter, time: 60000 });
+        const collector = embedMessage.createReactionCollector({ filter, time: 180000 });
 
         collector.on("collect", async (reaction) => {
             if (reaction.emoji.name === "▶️") {
