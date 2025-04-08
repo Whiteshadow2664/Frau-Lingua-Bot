@@ -41,7 +41,12 @@ const ticket = require("./ticket.js");
 const setupEvents = require("./events.js");
 const levelSystem = require('./levelSystem');
 
-const banUser = require('./banUserById');
+
+
+const deleteOnStart = require("./deleteOnStart");
+
+
+  
 
 
   
