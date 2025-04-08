@@ -38,7 +38,7 @@ module.exports = {
                 '• The moderators will review your suggestion and take appropriate action.\n\n' +
 
                 '**5. Reporting Issues**\n' +
-                '• Use **!ticket** to report an issue or someone on the server.\n' +
+                '• Open a **ticket** to report an issue in #report.\n' +
                 '• Provide a brief description, and the moderators will handle your report promptly.\n\n' +
 
                 '**6. Leaderboard**\n' +
