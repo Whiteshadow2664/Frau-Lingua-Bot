@@ -1,38 +1,14 @@
-const { EmbedBuilder, PermissionFlagsBits } = require("discord.js");
-
-module.exports = {
-  name: 'banUserById',
-  async execute(client) {
-    const targetUserId = '474435857030316042';
-
-    client.guilds.cache.forEach(async (guild) => {
-      try {
-        if (!guild.members.me.permissions.has(PermissionFlagsBits.BanMembers)) {
-          console.log(`❌ Missing Ban Members permission in ${guild.name}`);
-          return;
-        }
-
-        const member = await guild.members.fetch(targetUserId).catch(() => null);
-
-        await guild.members.ban(targetUserId, {
-          reason: "Spreading hate towards Russians",
-          deleteMessageSeconds: 60 * 60 * 24 * 7, // Delete messages from last 7 days
-        });
-
-        const logChannel = guild.systemChannel || guild.channels.cache.find(c => c.isTextBased() && c.viewable);
-        if (logChannel) {
-          const embed = new EmbedBuilder()
-            .setTitle("User Banned")
-            .setDescription("Spreading hate towards Russians will result in a ban.")
-            .setColor("#acf508");
-
-          await logChannel.send({ embeds: [embed] });
-        }
-
-        console.log(`✅ Banned ${targetUserId} from ${guild.name}`);
-      } catch (err) {
-        console.error(`❌ Failed to ban user from ${guild.name}:`, err);
-      }
-    });
-  },
+module.exports = async (client) => {
+  try {
+    const channel = await client.channels.fetch("818023867372011551");
+    if (channel && channel.isTextBased()) {
+      const messages = await channel.messages.fetch({ limit: 13 });
+      await channel.bulkDelete(messages, true);
+      console.log("✅ Deleted 13 messages from the channel on startup.");
+    } else {
+      console.error("❌ Channel not found or is not a text-based channel.");
+    }
+  } catch (err) {
+    console.error("❌ Error deleting messages on startup:", err);
+  }
 };
