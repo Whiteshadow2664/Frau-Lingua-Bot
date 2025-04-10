@@ -26,7 +26,7 @@ const pool = new Pool({
     }
 })();
 
-// ✅ Track boost messages
+// ✅ Track boost messages + send thank you embed
 module.exports.trackBoost = async (message) => {
     if (
         !message.system &&
@@ -48,6 +48,15 @@ module.exports.trackBoost = async (message) => {
         } else {
             boostCache.set(userId, { username, boosts: 1, first_boost_at: now });
         }
+
+        // ✅ Send thank-you embed
+        const thankYouEmbed = new EmbedBuilder()
+            .setColor('#acf508')
+            .setTitle('Server Boost Appreciated!')
+            .setDescription(`Thank you <@${userId}> for boosting the server!\nYour support helps our community grow stronger!`)
+            .setTimestamp();
+
+        message.channel.send({ embeds: [thankYouEmbed] });
     }
 };
 
