@@ -6,7 +6,7 @@ const app = express();
 app.use(express.json());
 
 const client = new Client({
-    intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages]
+    intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent]
 });
 
 const AUTH_TOKEN = process.env.SECRET_TOKEN;
@@ -20,7 +20,7 @@ app.post('/send-message', async (req, res) => {
 
     try {
         const targetChannel = await client.channels.fetch(channel);
-        if (!targetChannel || !targetChannel.send) {
+        if (!targetChannel || typeof targetChannel.send !== 'function') {
             return res.status(400).send('Invalid channel');
         }
 
@@ -32,12 +32,15 @@ app.post('/send-message', async (req, res) => {
         await targetChannel.send(content);
         res.send('Message sent successfully!');
     } catch (err) {
-        console.error(err);
+        console.error('Error sending message:', err);
         res.status(500).send('Failed to send message');
     }
 });
 
-client.login(process.env.DISCORD_TOKEN);
+client.once('ready', () => {
+    console.log(`Discord bot logged in as ${client.user.tag}`);
+    const PORT = process.env.API_PORT || 3000;
+    app.listen(PORT, () => console.log(`Bot API server running on port ${PORT}`));
+});
 
-const PORT = process.env.API_PORT || 3000;
-app.listen(PORT, () => console.log(`Bot API server running on port ${PORT}`));
+client.login(process.env.DISCORD_TOKEN);
