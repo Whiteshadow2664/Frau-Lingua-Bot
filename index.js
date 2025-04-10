@@ -40,6 +40,7 @@ const jokeCommand = require('./commands/joke.js');
 const ticket = require("./ticket.js");
 const setupEvents = require("./events.js");
 const levelSystem = require('./levelSystem');
+const boostRank = require('./commands/boostrank');
 
 // Environment Variables
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
@@ -156,6 +157,12 @@ client.on('messageCreate', async (message) => {
    
 if (message.content.toLowerCase() === '!leaderboard') {
    leaderboard.execute(message);
+}
+
+        boostRank.trackBoost(message);
+
+if (message.content === '!boost') {
+    boostRank.execute(message);
 }
 
 if (message.content.toLowerCase() === '!exam') {
