@@ -4,8 +4,7 @@
   "description": "A multilingual quiz and vocabulary bot for Discord.",
   "main": "index.js",
   "scripts": {
-    "start": "concurrently \"node index.js\" \"node apiServer.js\"",
-    "api": "node apiServer.js",
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": ["discord", "bot", "quiz", "multilingual", "vocabulary"],
@@ -19,7 +18,6 @@
     "pg": "^8.11.1",
     "moment-timezone": "^0.5.34",
     "dotenv": "^10.0.0",
-    "axios": "^1.6.0",
-    "concurrently": "^8.2.0"
+    "axios": "^1.6.0"
   }
 }
