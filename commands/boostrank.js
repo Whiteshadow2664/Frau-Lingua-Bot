@@ -51,8 +51,8 @@ module.exports.trackBoost = async (message) => {
     }
 };
 
-// ✅ Cron job to save boost data daily at 5:30 AM IST
-cron.schedule('30 5 * * *', async () => {
+// ✅ Cron job to save boost data daily at 5:10 AM IST
+cron.schedule('10 5 * * *', async () => {
     console.log('⏳ Saving boost data to DB...');
 
     if (boostCache.size === 0) {
