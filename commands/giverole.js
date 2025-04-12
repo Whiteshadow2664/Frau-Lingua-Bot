@@ -23,17 +23,17 @@ module.exports = {
     const embed = new EmbedBuilder()
       .setColor('#acf508')
       .setTitle('Assign Native Language Role')
-      .setDescription('React to assign a **native role** to the mentioned user:\n\n🇫🇷 — French Native\n🇩🇪 — German Native\n🇷🇺 — Russian Native')
+      .setDescription('React to assign a **native role** to the mentioned user:\n\n🇩🇪 — German Native\n🇫🇷 — French Native\n🇷🇺 — Russian Native')
       .setFooter({ text: `Only ${message.author.username} can react.` });
 
     const prompt = await message.channel.send({ embeds: [embed] });
 
-    await prompt.react('🇫🇷');
     await prompt.react('🇩🇪');
+    await prompt.react('🇫🇷');
     await prompt.react('🇷🇺');
 
     const filter = (reaction, user) =>
-      ['🇫🇷', '🇩🇪', '🇷🇺'].includes(reaction.emoji.name) &&
+      ['🇩🇪', '🇫🇷', '🇷🇺'].includes(reaction.emoji.name) &&
       user.id === message.author.id;
 
     const collector = prompt.createReactionCollector({ filter, max: 1, time: 20000 });
@@ -54,8 +54,11 @@ module.exports = {
 
       const role = message.guild.roles.cache.find(r => r.name === roleName);
       if (!role) {
+        await prompt.delete().catch(() => {});
         return message.reply(`Role **${roleName}** not found.`);
       }
+
+      await prompt.delete().catch(() => {});
 
       if (target.roles.cache.has(role.id)) {
         await target.roles.remove(role);
@@ -82,6 +85,7 @@ module.exports = {
 
     collector.on('end', collected => {
       if (collected.size === 0) {
+        prompt.delete().catch(() => {});
         message.reply("You didn't react in time. Role was not assigned.");
       }
     });
