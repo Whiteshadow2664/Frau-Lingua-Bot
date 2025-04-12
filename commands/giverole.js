@@ -50,21 +50,31 @@ module.exports = {
       }
 
       const role = message.guild.roles.cache.find(r => r.name === roleName);
-      if (!role) return message.reply(`Role **${roleName}** not found.`);
-
-      if (target.roles.cache.has(role.id)) {
-        return message.reply(`${target} already has the **${roleName}** role.`);
+      if (!role) {
+        return message.reply(`Role **${roleName}** not found.`);
       }
 
-      await target.roles.add(role);
-      message.channel.send({
-        embeds: [
-          new EmbedBuilder()
-            .setColor('#acf508')
-            .setTitle('Role Assigned Successfully')
-            .setDescription(`${target} has been given the **${roleName}** role.`)
-        ]
-      });
+      if (target.roles.cache.has(role.id)) {
+        await target.roles.remove(role);
+        return message.channel.send({
+          embeds: [
+            new EmbedBuilder()
+              .setColor('#acf508')
+              .setTitle('Role Removed')
+              .setDescription(`${target} already had the **${roleName}** role. It has been removed.`)
+          ]
+        });
+      } else {
+        await target.roles.add(role);
+        return message.channel.send({
+          embeds: [
+            new EmbedBuilder()
+              .setColor('#acf508')
+              .setTitle('Role Assigned Successfully')
+              .setDescription(`${target} has been given the **${roleName}** role.`)
+          ]
+        });
+      }
     });
 
     collector.on('end', collected => {
