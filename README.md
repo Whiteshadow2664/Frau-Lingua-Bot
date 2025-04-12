@@ -12,7 +12,7 @@ Word of the Day – Daily vocabulary drops in all 3 languages
 
 !leaderboard – Track and compare your progress
 
-!suggestion / !ticket – Send feedback or report issues
+!suggestion /– Send feedback
 
 
 Stay consistent, motivated, and improve your skills with Frau Lingua by your side.
