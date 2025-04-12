@@ -1,4 +1,4 @@
-const { EmbedBuilder, PermissionsBitField } = require('discord.js');
+const { EmbedBuilder } = require('discord.js');
 
 module.exports = {
   name: 'giverole',
@@ -8,9 +8,12 @@ module.exports = {
 
     const modRoles = ['Moderator', 'Admin'];
     const authorRoles = message.member.roles.cache.map(r => r.name);
+    const authorId = message.author.id;
 
-    const hasPermission = authorRoles.some(role => modRoles.includes(role));
-    if (!hasPermission) {
+    const isModOrAdmin = authorRoles.some(role => modRoles.includes(role));
+    const isWhitelistedUser = authorId === '540129267728515072';
+
+    if (!isModOrAdmin && !isWhitelistedUser) {
       return message.reply("You don't have permission to use this command.");
     }
 
