@@ -41,6 +41,7 @@ const ticket = require("./ticket.js");
 const setupEvents = require("./events.js");
 const levelSystem = require('./levelSystem');
 const boostRank = require('./commands/boostrank');
+const giverole = require('./commands/giverole.js');
 
 // Environment Variables
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
@@ -171,6 +172,10 @@ if (message.content.toLowerCase() === '!exam') {
 
 if (message.content.toLowerCase() === '!tips') {
     studyTips.execute(message);
+}
+
+if (message.content.startsWith('!giverole')) {
+    giverole.execute(message);
 }
 
 if (message.content.toLowerCase() === '!class') {
