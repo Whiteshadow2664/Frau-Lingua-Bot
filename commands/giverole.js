@@ -1,0 +1,76 @@
+const { EmbedBuilder, PermissionsBitField } = require('discord.js');
+
+module.exports = {
+  name: 'giverole',
+  async execute(message) {
+    if (!message.content.startsWith('!giverole')) return;
+    if (!message.guild) return;
+
+    const modRoles = ['Moderator', 'Admin'];
+    const authorRoles = message.member.roles.cache.map(r => r.name);
+
+    const hasPermission = authorRoles.some(role => modRoles.includes(role));
+    if (!hasPermission) {
+      return message.reply("You don't have permission to use this command.");
+    }
+
+    const target = message.mentions.members.first();
+    if (!target) return message.reply("Please mention a user. Usage: `!giverole @user`");
+
+    const embed = new EmbedBuilder()
+      .setColor('#acf508')
+      .setTitle('Assign Native Language Role')
+      .setDescription('React to assign a **native role** to the mentioned user:\n\n🇫🇷 — French Native\n🇩🇪 — German Native\n🇷🇺 — Russian Native')
+      .setFooter({ text: `Only ${message.author.username} can react.` });
+
+    const prompt = await message.channel.send({ embeds: [embed] });
+
+    await prompt.react('🇫🇷');
+    await prompt.react('🇩🇪');
+    await prompt.react('🇷🇺');
+
+    const filter = (reaction, user) =>
+      ['🇫🇷', '🇩🇪', '🇷🇺'].includes(reaction.emoji.name) &&
+      user.id === message.author.id;
+
+    const collector = prompt.createReactionCollector({ filter, max: 1, time: 20000 });
+
+    collector.on('collect', async (reaction) => {
+      let roleName;
+      switch (reaction.emoji.name) {
+        case '🇫🇷':
+          roleName = 'French Native';
+          break;
+        case '🇩🇪':
+          roleName = 'German Native';
+          break;
+        case '🇷🇺':
+          roleName = 'Russian Native';
+          break;
+      }
+
+      const role = message.guild.roles.cache.find(r => r.name === roleName);
+      if (!role) return message.reply(`Role **${roleName}** not found.`);
+
+      if (target.roles.cache.has(role.id)) {
+        return message.reply(`${target} already has the **${roleName}** role.`);
+      }
+
+      await target.roles.add(role);
+      message.channel.send({
+        embeds: [
+          new EmbedBuilder()
+            .setColor('#acf508')
+            .setTitle('Role Assigned Successfully')
+            .setDescription(`${target} has been given the **${roleName}** role.`)
+        ]
+      });
+    });
+
+    collector.on('end', collected => {
+      if (collected.size === 0) {
+        message.reply("You didn't react in time. Role was not assigned.");
+      }
+    });
+  }
+};
