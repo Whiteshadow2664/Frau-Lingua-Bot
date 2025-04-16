@@ -36,13 +36,12 @@ module.exports.updateModRank = async (userId, username, guild) => {
         const member = guild.members.cache.get(userId);
         if (!member || !member.roles.cache.has(moderatorRole.id)) return;
 
-        const roleAssignedAt = member.roles.cache.get(moderatorRole.id).createdAt;
-
         // Update in-memory cache
         if (xpCache.has(userId)) {
             xpCache.get(userId).xp += 1;
         } else {
-            xpCache.set(userId, { username, xp: 1, joined_at: roleAssignedAt });
+            // Use current time as joined_at
+            xpCache.set(userId, { username, xp: 1, joined_at: new Date() });
         }
     } catch (err) {
         console.error('Error updating moderator XP:', err);
