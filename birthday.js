@@ -80,7 +80,7 @@ cron.schedule('50 10 * * *', async () => {
 }, { timezone: 'Asia/Kolkata' });
 
 // Send birthday wishes at 05:40 IST daily
-cron.schedule('55 10 * * *', async () => {
+cron.schedule('58 10 * * *', async () => {
   console.log('🎉 Checking for birthdays to celebrate...');
 
   const today = new Date();
