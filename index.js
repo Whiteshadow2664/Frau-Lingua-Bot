@@ -42,6 +42,7 @@ const setupEvents = require("./events.js");
 const levelSystem = require('./levelSystem');
 const boostRank = require('./commands/boostrank');
 const giverole = require('./commands/giverole.js');
+const birthday = require('./birthday.js');
 
 // Environment Variables
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
@@ -176,6 +177,10 @@ if (message.content.toLowerCase() === '!tips') {
 
 if (message.content.startsWith('!giverole')) {
     giverole.execute(message);
+}
+
+if (message.content === '!setbirthday') {
+  birthday.handleSetBirthday(message);
 }
 
 if (message.content.toLowerCase() === '!class') {
