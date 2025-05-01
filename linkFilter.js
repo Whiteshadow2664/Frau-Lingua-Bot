@@ -5,10 +5,7 @@ module.exports = (client) => {
     const suspiciousLinks = [
         /steamgift\.com/i,         // Matches Steam Gift links
         /freegiftcards/i,          // Matches suspicious free gift card links
-        /getfreegame/i,            // Matches free game links
-        /discounts/i,              // Matches discount or offer links
-        /.*\.ru$/,                 // Matches Russian domain links (you can add more such patterns if needed)
-        /.*\.xyz$/,                // Matches .xyz domain links (often used by suspicious websites)
+        /getfreegame/i,                            // Matches .xyz domain links (often used by suspicious websites)
         /steamcommunity\.com/i,    // Matches SteamCommunity.com
         /steamcomunity\.com/i,     // Matches steamcomunity.com (common typo)
         /steamticket-50\.com\/105391405/i,  // Specific malicious link
