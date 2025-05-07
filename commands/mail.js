@@ -1,76 +1,79 @@
-const nodemailer = require('nodemailer'); 
+require('dotenv').config();
+const nodemailer = require('nodemailer');
 
-const OWNER_EMAIL = 'chrisimakisasha01@gmail.com'; // Replace with your email
-const MOD_ROLE_NAME = 'Moderator'; // Role name (case-insensitive)
-const GMAIL_USER = 'sjemma819@gmail.com'; // Same as OWNER_EMAIL
-const GMAIL_PASS = 'ucbuawatwscrmqrx'; // Use Gmail App Password (not regular password) 
+const OWNER_EMAIL = process.env.OWNER_EMAIL;
+const MOD_ROLE_NAME = 'Moderator';
+const GMAIL_USER = process.env.GMAIL_USER;
+const GMAIL_PASS = process.env.GMAIL_PASS;
 
 const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-        user: GMAIL_USER,
-        pass: GMAIL_PASS,
-    },
-}); 
+    service: 'gmail',
+    auth: {
+        user: GMAIL_USER,
+        pass: GMAIL_PASS,
+    },
+});
 
 module.exports = {
-    name: 'mail',
-    description: 'Send an emergency message to the Owner\'s Gmail.',
-    async execute(message) {
-        // Check if sender has Moderator role
-const isMod = message.member.roles.cache.some(
-    role => role.name.toLowerCase() === MOD_ROLE_NAME.toLowerCase()
-);
-if (!isMod) return message.reply('Only Moderators can use this command.');
+    name: 'mail',
+    description: 'Send an emergency message to the Owner\'s Gmail.',
+    async execute(message) {
+        const isMod = message.member.roles.cache.some(
+            role => role.name.toLowerCase() === MOD_ROLE_NAME.toLowerCase()
+        );
+        if (!isMod) return message.reply('Only Moderators can use this command.');
 
-        // Ask the moderator for the message
-        const askMessage = await message.reply('Please send your emergency message.'); 
+        const askMessage = await message.reply('Please type your emergency message. You have 60 seconds.');
 
-        // Create a message collector to collect the moderator's response
-        const filter = m => m.author.id === message.author.id && !m.author.bot;
-        const collector = message.channel.createMessageCollector({ filter, time: 60000 }); 
+        const filter = m => m.author.id === message.author.id && !m.author.bot;
+        const collector = message.channel.createMessageCollector({ filter, time: 60000 });
 
-        collector.on('collect', async (msg) => {
-            const content = msg.content.trim(); 
+        collector.on('collect', async (msg) => {
+            const content = msg.content.trim();
+            if (!content) return msg.reply('Please provide a valid message to send.');
 
-            if (!content) {
-                return msg.reply('Please provide a valid message to send.');
-            } 
+            const mailOptions = {
+                from: `"Discord Mod Alert" <${GMAIL_USER}>`,
+                to: OWNER_EMAIL,
+                subject: `Emergency Message from Moderator ${msg.author.tag}`,
+                text: `
+Dear Admin,
 
-            // Create mail options
-            const mailOptions = {
-                from: `"Discord Mod Alert" <${GMAIL_USER}>`,
-                to: OWNER_EMAIL,
-                subject: `Emergency Mail from ${msg.author.tag}`,
-                text: content,
-            }; 
+You have received a new emergency message from a Discord Moderator.
 
-            try {
-                // Send the email
-                await transporter.sendMail(mailOptions); 
+Moderator: ${msg.author.tag} (ID: ${msg.author.id})
+Server: ${msg.guild.name}
+Channel: #${msg.channel.name}
 
-                // Delete the Moderator's message after sending the email
-                await msg.delete(); 
+Message:
+----------
+${content}
+----------
 
-                // Notify the moderator that the email was sent
-                await message.reply('Your emergency message has been sent to the Owner’s Gmail.'); 
+Please take the necessary actions promptly.
 
-            } catch (err) {
-                console.error('Mail error:', err);
-                await message.reply('Failed to send mail. Please contact the Owner directly.');
-            } 
+Best regards,  
+Discord Mod Alert Bot
+                `.trim()
+            };
 
-            // Stop the collector after sending the email
-            collector.stop();
-        }); 
+            try {
+                await transporter.sendMail(mailOptions);
+                await msg.delete();
+                await message.reply('Your emergency message has been sent successfully.');
+            } catch (err) {
+                console.error('Mail error:', err);
+                await message.reply('Failed to send mail. Please contact the Owner directly.');
+            }
 
-        collector.on('end', (collected, reason) => {
-            if (reason === 'time') {
-                message.reply('You took too long to respond. Please try again.');
-            } 
+            collector.stop();
+        });
 
-            // Delete the initial ask message after the collection ends
-            askMessage.delete();
-        });
-    },
-}
+        collector.on('end', (collected, reason) => {
+            if (reason === 'time') {
+                message.reply('You took too long to respond. Please try again.');
+            }
+            askMessage.delete();
+        });
+    },
+};
