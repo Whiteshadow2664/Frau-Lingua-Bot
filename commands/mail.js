@@ -25,14 +25,14 @@ module.exports = {
 
         let askMessage;
         try {
-            askMessage = await message.reply('Please type your emergency message. You have 60 seconds.');
+            askMessage = await message.reply('Please type your emergency message. You have 5 minutes.');
         } catch (e) {
             console.error('Failed to send askMessage:', e);
             return;
         }
 
         const filter = m => m.author.id === message.author.id && !m.author.bot;
-        const collector = message.channel.createMessageCollector({ filter, time: 60000 });
+        const collector = message.channel.createMessageCollector({ filter, time: 300000 });
 
         collector.on('collect', async (msg) => {
             const content = msg.content.trim();
