@@ -14,6 +14,15 @@ const transporter = nodemailer.createTransport({
     },
 });
 
+// Track mail count per user
+const userMailCounts = new Map();
+
+// Reset counts every 24 hours
+setInterval(() => {
+    userMailCounts.clear();
+    console.log('Daily mail limits reset.');
+}, 24 * 60 * 60 * 1000); // 24 hours
+
 module.exports = {
     name: 'mail',
     description: 'Send an emergency message to the Owner\'s Gmail.',
@@ -22,6 +31,12 @@ module.exports = {
             role => role.name.toLowerCase() === MOD_ROLE_NAME.toLowerCase()
         );
         if (!isMod) return message.reply('Only Moderators can use this command.');
+
+        const userId = message.author.id;
+        const currentCount = userMailCounts.get(userId) || 0;
+        if (currentCount >= 8) {
+            return message.reply('You have reached your daily limit of 8 emergency emails. Please try again tomorrow.');
+        }
 
         let askMessage;
         try {
@@ -65,6 +80,9 @@ Discord Mod Alert Bot
 
             try {
                 await transporter.sendMail(mailOptions);
+
+                // Increment daily mail count
+                userMailCounts.set(userId, currentCount + 1);
 
                 try {
                     if (msg.deletable) await msg.delete();
