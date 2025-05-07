@@ -23,7 +23,13 @@ module.exports = {
         );
         if (!isMod) return message.reply('Only Moderators can use this command.');
 
-        const askMessage = await message.reply('Please type your emergency message. You have 60 seconds.');
+        let askMessage;
+        try {
+            askMessage = await message.reply('Please type your emergency message. You have 60 seconds.');
+        } catch (e) {
+            console.error('Failed to send askMessage:', e);
+            return;
+        }
 
         const filter = m => m.author.id === message.author.id && !m.author.bot;
         const collector = message.channel.createMessageCollector({ filter, time: 60000 });
@@ -39,7 +45,7 @@ module.exports = {
                 text: `
 Dear Admin,
 
-You have received a new emergency message from a Discord Moderator.
+You have received an emergency message from a Discord Moderator.
 
 Moderator: ${msg.author.tag} (ID: ${msg.author.id})
 Server: ${msg.guild.name}
@@ -59,7 +65,13 @@ Discord Mod Alert Bot
 
             try {
                 await transporter.sendMail(mailOptions);
-                await msg.delete();
+
+                try {
+                    await msg.delete();
+                } catch (e) {
+                    console.warn('Could not delete moderator message:', e.message);
+                }
+
                 await message.reply('Your emergency message has been sent successfully.');
             } catch (err) {
                 console.error('Mail error:', err);
@@ -69,11 +81,16 @@ Discord Mod Alert Bot
             collector.stop();
         });
 
-        collector.on('end', (collected, reason) => {
+        collector.on('end', async (collected, reason) => {
             if (reason === 'time') {
-                message.reply('You took too long to respond. Please try again.');
+                await message.reply('You took too long to respond. Please try again.');
             }
-            askMessage.delete();
+
+            try {
+                await askMessage.delete();
+            } catch (e) {
+                console.warn('Could not delete askMessage:', e.message);
+            }
         });
     },
 };
