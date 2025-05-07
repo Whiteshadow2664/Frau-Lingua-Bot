@@ -67,7 +67,7 @@ Discord Mod Alert Bot
                 await transporter.sendMail(mailOptions);
 
                 try {
-                    await msg.delete();
+                    if (msg.deletable) await msg.delete();
                 } catch (e) {
                     console.warn('Could not delete moderator message:', e.message);
                 }
@@ -87,7 +87,7 @@ Discord Mod Alert Bot
             }
 
             try {
-                await askMessage.delete();
+                if (askMessage?.deletable) await askMessage.delete();
             } catch (e) {
                 console.warn('Could not delete askMessage:', e.message);
             }
