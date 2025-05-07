@@ -206,18 +206,9 @@ if (message.content.toLowerCase() === "!ws") {
     handleWorksheet(message, client);
 }
 
-
-
-
 if (message.content.toLowerCase() === '!mail') {
     mailCommand.execute(message);
 }
-
-
-
-
-
-
 
 if (message.content === '!afk') {
         afkHandler.handleAFKCommand(message);
