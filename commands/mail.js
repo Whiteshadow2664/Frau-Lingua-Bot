@@ -18,10 +18,10 @@ module.exports = {
     description: 'Send an emergency message to the Owner\'s Gmail.',
     async execute(message) {
         // Check if sender has Moderator role
-        const isMod = message.member.roles.cache.some(
-            role => role.name.toLowerCase() === MOD_ROLE_NAME
-        );
-        if (!isMod) return message.reply('Only Moderators can use this command.'); 
+const isMod = message.member.roles.cache.some(
+    role => role.name.toLowerCase() === MOD_ROLE_NAME.toLowerCase()
+);
+if (!isMod) return message.reply('Only Moderators can use this command.');
 
         // Ask the moderator for the message
         const askMessage = await message.reply('Please send your emergency message.'); 
