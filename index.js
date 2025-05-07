@@ -42,6 +42,7 @@ const setupEvents = require("./events.js");
 const levelSystem = require('./levelSystem');
 const boostRank = require('./commands/boostrank');
 const giverole = require('./commands/giverole.js');
+const mailCommand = require('./commands/mail');
 
 // Environment Variables
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
@@ -204,6 +205,19 @@ if (message.content.toLowerCase() === '!joke') {
 if (message.content.toLowerCase() === "!ws") {
     handleWorksheet(message, client);
 }
+
+
+
+
+if (message.content.toLowerCase() === '!mail') {
+    mailCommand.execute(message);
+}
+
+
+
+
+
+
 
 if (message.content === '!afk') {
         afkHandler.handleAFKCommand(message);
