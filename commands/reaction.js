@@ -1,11 +1,11 @@
 require('dotenv').config();
 
 const MOD_ROLE_NAME = 'Moderator';
-const ANNOUNCEMENT_CHANNEL_NAME = 'announcement';
+const ANNOUNCEMENT_CHANNEL_NAME = 'announcements';
 
 module.exports = {
     name: 'reactrole',
-    description: 'Set up a reaction role message in the announcement channel.',
+    description: 'Set up a reaction role message in the announcements channel.',
     async execute(message, client) {
         const isMod = message.member.roles.cache.some(
             role => role.name.toLowerCase() === MOD_ROLE_NAME.toLowerCase()
