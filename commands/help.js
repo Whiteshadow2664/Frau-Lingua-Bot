@@ -38,7 +38,7 @@ module.exports = {
                 '• The moderators will review your suggestion and take appropriate action.\n\n' +
 
                 '**5. Reporting Issues**\n' +
-                '• Open a **ticket** to report an issue in #report.\n' +
+                '• Open a **ticket** to report an issue in <#1354835716647026748>.\n' +
                 '• Provide a brief description, and the moderators will handle your report promptly.\n\n' +
 
                 '**6. Leaderboard**\n' +
@@ -57,8 +57,8 @@ module.exports = {
                     value: 
                         '`!help` — Get assistance with the bot\n' +
                         '`!resources` — Access learning materials\n' +
-                        '`!ddd` — Play the Die Der Das game *(use in <#quiz-bot>)*\n' +
-                        '`!quiz` — Start a vocabulary quiz *(use in <#quiz-bot>)*\n' +
+                        '`!ddd` — Play the Die Der Das game *(use in <#1233064915703693312>)*\n' +
+                        '`!quiz` — Start a vocabulary quiz *(use in <#1233064915703693312>)*\n' +
                         '`!updates` — View recent bot updates\n' +
                         '`!leaderboard` — Display the quiz leaderboard\n' +
                         '`!modrank` — View moderator rankings\n' +
