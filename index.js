@@ -43,6 +43,7 @@ const levelSystem = require('./levelSystem');
 const boostRank = require('./commands/boostrank');
 const giverole = require('./commands/giverole.js');
 const mailCommand = require('./commands/mail');
+const reactionCommand = require('./commands/reaction');
 
 // Environment Variables
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
@@ -208,6 +209,10 @@ if (message.content.toLowerCase() === "!ws") {
 
 if (message.content.toLowerCase() === '!mail') {
     mailCommand.execute(message);
+}
+
+if (message.content.toLowerCase() === '!reactrole') {
+    await reactionCommand.execute(message, client);
 }
 
 if (message.content === '!afk') {
