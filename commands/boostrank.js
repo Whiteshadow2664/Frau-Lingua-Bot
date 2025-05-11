@@ -1,4 +1,4 @@
-const { EmbedBuilder } = require('discord.js');
+const { EmbedBuilder, MessageType } = require('discord.js');
 const { Pool } = require('pg');
 const cron = require('node-cron');
 
@@ -26,20 +26,13 @@ const pool = new Pool({
     }
 })();
 
-// ✅ Track boost messages + send thank you embed
+// ✅ Track boost messages + send thank-you embed
 module.exports.trackBoost = async (message) => {
-    if (
-        !message.system &&
-        message.author.bot &&
-        message.content.includes('just Boosted the server!')
-    ) {
-        const match = message.content.match(/<@!?(\d+)>/);
-        if (!match) return;
-
-        const userId = match[1];
-        const user = await message.guild.members.fetch(userId).catch(() => null);
+    if (message.type === MessageType.UserPremiumGuildSubscription) {
+        const user = message.member;
         if (!user) return;
 
+        const userId = user.id;
         const username = user.user.username;
         const now = new Date();
 
@@ -49,7 +42,6 @@ module.exports.trackBoost = async (message) => {
             boostCache.set(userId, { username, boosts: 1, first_boost_at: now });
         }
 
-        // ✅ Send thank-you embed
         const thankYouEmbed = new EmbedBuilder()
             .setColor('#acf508')
             .setTitle('Server Boost Appreciated!')
