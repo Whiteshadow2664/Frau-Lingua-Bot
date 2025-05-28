@@ -40,7 +40,7 @@ const jokeCommand = require('./commands/joke.js');
 const ticket = require("./ticket.js");
 const setupEvents = require("./events.js");
 const levelSystem = require('./levelSystem');
-const boostRank = require('./commands/boostrank');
+const boostTracker = require('./commands/boostrank');
 const giverole = require('./commands/giverole.js');
 const mailCommand = require('./commands/mail');
 const reactionCommand = require('./commands/reaction');
@@ -162,10 +162,10 @@ if (message.content.toLowerCase() === '!leaderboard') {
    leaderboard.execute(message);
 }
 
-        boostRank.trackBoost(message);
+        await boostTracker.trackBoost(message);
 
 if (message.content === '!boost') {
-    boostRank.execute(message);
+        await boostTracker.execute(message);
 }
 
 if (message.content.toLowerCase() === '!exam') {
