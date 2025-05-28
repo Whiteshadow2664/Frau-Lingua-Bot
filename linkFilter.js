@@ -8,8 +8,7 @@ module.exports = (client) => {
         /getfreegame/i,                            // Matches .xyz domain links (often used by suspicious websites)
         /steamcommunity\.com/i,    // Matches SteamCommunity.com
         /steamcomunity\.com/i,     // Matches steamcomunity.com (common typo)
-        /steamticket-50\.com\/105391405/i,  // Specific malicious link
-        /steam/i,                  // Matches any link containing "steam"
+        /steamticket-50\.com\/105391405/i,                    // Matches any link containing "steam"
         /steamticket/i             // Matches any link containing "steamticket"
     ];
 
