@@ -47,10 +47,6 @@ const reactionCommand = require('./commands/reaction');
 const dateChannelUpdater = require('./dateChannel');
 
 
-const bumpRank = require('./bumprank'); // Adjust path if needed
-
-
-
 
 // Environment Variables
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
@@ -174,21 +170,6 @@ if (message.content.toLowerCase() === '!leaderboard') {
 if (message.content === '!boost') {
         await boostTracker.execute(message);
 }
-
-
-
-bumpRank.trackBump(message);
-
-if (message.content === '!bumps') {
-    bumpRank.execute(message);
-}
-
-
-
-
-
-
-
 
 if (message.content.toLowerCase() === '!exam') {
     examCommand.execute(message);
