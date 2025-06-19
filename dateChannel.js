@@ -4,7 +4,7 @@ const cron = require('node-cron');
 module.exports = (client) => {
     const CHANNEL_NAME_PREFIX = '📅 Date:'; // You can customize this
 
-    cron.schedule('04 6 * * *', async () => {
+    cron.schedule('09 11 * * *', async () => {
         const guilds = client.guilds.cache;
 
         for (const [guildId, guild] of guilds) {
