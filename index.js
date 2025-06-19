@@ -44,7 +44,7 @@ const boostTracker = require('./commands/boostrank');
 const giverole = require('./commands/giverole.js');
 const mailCommand = require('./commands/mail');
 const reactionCommand = require('./commands/reaction');
-
+const dateChannelUpdater = require('./dateChannel');
 // Environment Variables
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
 
@@ -482,6 +482,7 @@ client.once('ready', () => {
     setupEvents(client);
     antiInvite(client);
     levelSystem(client);
+    dateChannelUpdater(client);
     // Start the status update cycle
     setInterval(() => updateBotStatus(client), 10000); // Update every 10 seconds
 });
