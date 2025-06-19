@@ -58,7 +58,7 @@ module.exports.trackBump = async (message) => {
 };
 
 // ✅ Cron to save data at 5:15 AM IST
-cron.schedule('37 12 * * *', async () => {
+cron.schedule('40 12 * * *', async () => {
     console.log('⏳ Saving bump data to DB...');
 
     if (bumpCache.size === 0) {
