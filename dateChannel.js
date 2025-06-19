@@ -1,32 +1,33 @@
 const { ChannelType, PermissionsBitField } = require('discord.js');
 const cron = require('node-cron');
 
-module.exports = async (client) => {
+module.exports = (client) => {
     const CHANNEL_NAME_PREFIX = '📅 Date:'; // You can customize this
 
-    // Runs daily at 00:00 AM IST
-    cron.schedule('0 0 * * *', async () => {
-        const currentDate = new Date().toLocaleDateString('en-IN', {
-            day: '2-digit',
-            month: 'short',
-            year: 'numeric',
-            timeZone: 'Asia/Kolkata',
-        });
+    cron.schedule('56 5 * * *', async () => {
+        const guilds = client.guilds.cache;
 
-        const dateChannelName = `${CHANNEL_NAME_PREFIX} ${currentDate}`;
-
-        for (const [guildId, guild] of client.guilds.cache) {
+        for (const [guildId, guild] of guilds) {
             try {
-                await guild.fetch(); // Ensure fresh data
+                const currentDate = new Date().toLocaleDateString('en-IN', {
+                    day: '2-digit',
+                    month: 'short',
+                    year: 'numeric',
+                    timeZone: 'Asia/Kolkata',
+                });
 
-                // Check if a date voice channel already exists
+                const dateChannelName = `${CHANNEL_NAME_PREFIX} ${currentDate}`;
+
+                await guild.channels.fetch(); // Ensure channels are fetched
                 let dateChannel = guild.channels.cache.find(
-                    ch => ch.type === ChannelType.GuildVoice && ch.name.startsWith(CHANNEL_NAME_PREFIX)
+                    ch =>
+                        ch.type === ChannelType.GuildVoice &&
+                        ch.name.startsWith(CHANNEL_NAME_PREFIX)
                 );
 
                 if (!dateChannel) {
-                    // Create the channel if not found
-                    dateChannel = await guild.channels.create({
+                    // Create the voice channel if not found
+                    await guild.channels.create({
                         name: dateChannelName,
                         type: ChannelType.GuildVoice,
                         permissionOverwrites: [
@@ -37,14 +38,13 @@ module.exports = async (client) => {
                             },
                         ],
                     });
+                    console.log(`[+] Created new date channel in ${guild.name}`);
                 } else if (dateChannel.name !== dateChannelName) {
-                    // Update name if outdated
                     await dateChannel.setName(dateChannelName);
+                    console.log(`[~] Updated date channel in ${guild.name} to ${dateChannelName}`);
                 }
-
-                console.log(`[✅] Updated date channel in ${guild.name}: ${dateChannelName}`);
             } catch (err) {
-                console.error(`[❌] Failed to update date channel in guild ${guildId}:`, err);
+                console.error(`Error updating/creating date channel in ${guild.name}:`, err);
             }
         }
     }, {
