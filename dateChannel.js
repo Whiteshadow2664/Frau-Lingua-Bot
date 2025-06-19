@@ -1,51 +1,42 @@
-const { ChannelType, PermissionsBitField } = require('discord.js');
+const { ChannelType } = require('discord.js');
 const cron = require('node-cron');
 
-module.exports = (client) => {
-    const CHANNEL_NAME_PREFIX = '📅 Date:'; // You can customize this
+module.exports = async (client) => {
+    const CHANNEL_NAME_PREFIX = '📅 Date:'; // Prefix used to identify the channel
 
-    cron.schedule('09 11 * * *', async () => {
-        const guilds = client.guilds.cache;
+    // Runs daily at 11:21 AM IST
+    cron.schedule('21 5 * * *', async () => {
+        try {
+            const currentDate = new Date().toLocaleDateString('en-IN', {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric',
+                timeZone: 'Asia/Kolkata',
+            });
 
-        for (const [guildId, guild] of guilds) {
-            try {
-                const currentDate = new Date().toLocaleDateString('en-IN', {
-                    day: '2-digit',
-                    month: 'short',
-                    year: 'numeric',
-                    timeZone: 'Asia/Kolkata',
-                });
+            const dateChannelName = `${CHANNEL_NAME_PREFIX} ${currentDate}`;
 
-                const dateChannelName = `${CHANNEL_NAME_PREFIX} ${currentDate}`;
+            client.guilds.cache.forEach(async (guild) => {
+                // Fetch updated channel cache
+                await guild.channels.fetch();
 
-                await guild.channels.fetch(); // Ensure channels are fetched
-                let dateChannel = guild.channels.cache.find(
+                const existingChannel = guild.channels.cache.find(
                     ch =>
                         ch.type === ChannelType.GuildVoice &&
                         ch.name.startsWith(CHANNEL_NAME_PREFIX)
                 );
 
-                if (!dateChannel) {
-                    // Create the voice channel if not found
-                    await guild.channels.create({
-                        name: dateChannelName,
-                        type: ChannelType.GuildVoice,
-                        permissionOverwrites: [
-                            {
-                                id: guild.roles.everyone.id,
-                                deny: [PermissionsBitField.Flags.Connect],
-                                allow: [PermissionsBitField.Flags.ViewChannel],
-                            },
-                        ],
-                    });
-                    console.log(`[+] Created new date channel in ${guild.name}`);
-                } else if (dateChannel.name !== dateChannelName) {
-                    await dateChannel.setName(dateChannelName);
-                    console.log(`[~] Updated date channel in ${guild.name} to ${dateChannelName}`);
+                if (existingChannel) {
+                    if (existingChannel.name !== dateChannelName) {
+                        await existingChannel.setName(dateChannelName);
+                        console.log(`[✅] Updated channel name in ${guild.name} to "${dateChannelName}"`);
+                    }
+                } else {
+                    console.warn(`[⚠️] No date channel found in ${guild.name}. Please create one starting with "${CHANNEL_NAME_PREFIX}".`);
                 }
-            } catch (err) {
-                console.error(`Error updating/creating date channel in ${guild.name}:`, err);
-            }
+            });
+        } catch (err) {
+            console.error('[❌] Failed to update date channel:', err);
         }
     }, {
         timezone: 'Asia/Kolkata',
