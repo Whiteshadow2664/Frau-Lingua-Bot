@@ -1,11 +1,13 @@
-const { ChannelType } = require('discord.js');
+const { ChannelType, PermissionsBitField } = require('discord.js');
 const cron = require('node-cron');
 
-module.exports = async (client) => {
-    const CHANNEL_NAME_PREFIX = '📅 Date:'; // Prefix used to identify the channel
+// Replace with your actual voice channel ID
+const DATE_CHANNEL_ID = '1385132860972728320';
 
-    // Runs daily at 11:21 AM IST
-    cron.schedule('21 5 * * *', async () => {
+module.exports = (client) => {
+    cron.schedule('29 11 * * *', async () => {
+        console.log('🕒 Running date updater at 11:21 AM IST...');
+
         try {
             const currentDate = new Date().toLocaleDateString('en-IN', {
                 day: '2-digit',
@@ -14,29 +16,22 @@ module.exports = async (client) => {
                 timeZone: 'Asia/Kolkata',
             });
 
-            const dateChannelName = `${CHANNEL_NAME_PREFIX} ${currentDate}`;
+            const newName = `📅 ${currentDate}`;
+            const channel = await client.channels.fetch(DATE_CHANNEL_ID);
 
-            client.guilds.cache.forEach(async (guild) => {
-                // Fetch updated channel cache
-                await guild.channels.fetch();
+            if (!channel || channel.type !== ChannelType.GuildVoice) {
+                console.error('❌ Channel not found or not a voice channel.');
+                return;
+            }
 
-                const existingChannel = guild.channels.cache.find(
-                    ch =>
-                        ch.type === ChannelType.GuildVoice &&
-                        ch.name.startsWith(CHANNEL_NAME_PREFIX)
-                );
-
-                if (existingChannel) {
-                    if (existingChannel.name !== dateChannelName) {
-                        await existingChannel.setName(dateChannelName);
-                        console.log(`[✅] Updated channel name in ${guild.name} to "${dateChannelName}"`);
-                    }
-                } else {
-                    console.warn(`[⚠️] No date channel found in ${guild.name}. Please create one starting with "${CHANNEL_NAME_PREFIX}".`);
-                }
-            });
+            if (channel.name !== newName) {
+                await channel.setName(newName);
+                console.log(`✅ Updated voice channel name to: ${newName}`);
+            } else {
+                console.log(`ℹ️ Channel already has the correct name: ${newName}`);
+            }
         } catch (err) {
-            console.error('[❌] Failed to update date channel:', err);
+            console.error('❌ Error updating date channel:', err);
         }
     }, {
         timezone: 'Asia/Kolkata',
