@@ -32,7 +32,7 @@ module.exports = {
 
                     '**3. Study Resources**\n' +
                     '• Use the command **!resources** to get helpful study resources for Russian, German, and French.\n' +
-                    '• The bot will provide links to websites, books, and other learning materials in <#818026077116825620>.'
+                    '• The bot will provide links to websites, books, and other learning materials.'
                 )
                 .setColor(embedColors.default)
                 .setThumbnail(message.client.user.displayAvatarURL())
