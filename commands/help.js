@@ -27,7 +27,7 @@ module.exports = {
                     '   - 🇫🇷 <t:1737673200:t>\n' +
                     '   - 🇷🇺 <t:1737669600:t>\n\n' +
                     '**3. Study Resources**\n' +
-                    '• Use **!resources** to get useful books, sites, and materials.'
+                    '• Use **!resources** to get useful books, sites, and materials in <#818026077116825620>.'
                 )
                 .setColor(embedColors.default)
                 .setThumbnail(message.client.user.displayAvatarURL())
