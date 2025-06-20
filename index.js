@@ -46,9 +46,6 @@ const mailCommand = require('./commands/mail');
 const reactionCommand = require('./commands/reaction');
 const dateChannelUpdater = require('./dateChannel');
 
-const brankNoDB = require('./brankNoDB');
-
-
 // Environment Variables
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
 
@@ -175,15 +172,6 @@ if (message.content === '!boost') {
 if (message.content.toLowerCase() === '!exam') {
     examCommand.execute(message);
 }
-
-
-    
-if (message.content === '!brank') {
-        await brankNoDB.execute(message);
-}
-    
-
-
     
 if (message.content.toLowerCase() === '!tips') {
     studyTips.execute(message);
