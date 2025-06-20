@@ -34,7 +34,7 @@ module.exports = {
                 '**Other Helpful Videos**:\n' +
                 '1. [Nico Weg A1](https://youtu.be/4-eDoThe6qo?si=IdydKencCJuDj9aY)\n' +
                 '2. [What Do The French Want for Christmas?](https://youtu.be/j9n3Bc7Nkqs?si=pWKbaKJclcB9G2Xd)\n\n' +
-                '**More Resources**: [Click Here](https://bit.ly/Iingualounge) also checkout <#818026077116825620>'
+                '**More Resources**: [Click Here](https://bit.ly/Iingualounge) and also checkout <#818026077116825620>'
             )
             .setColor(embedColors.default)
             .setFooter({ text: 'Explore these resources to enhance your learning!' });
