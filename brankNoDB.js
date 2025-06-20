@@ -1,6 +1,6 @@
 const { EmbedBuilder, ChannelType } = require('discord.js');
 
-const DISBOARD_BOT_ID = '540129267728515072';
+const DISBOARD_BOT_ID = '735147814878969968';
 const BUMP_MESSAGE_TEXT = 'Thx for bumping our Server!';
 
 module.exports = {
