@@ -44,7 +44,7 @@ const giverole = require('./commands/giverole.js');
 const mailCommand = require('./commands/mail');
 const reactionCommand = require('./commands/reaction');
 const dateChannelUpdater = require('./dateChannel');
-const boostTracker = require('./boostTracker');
+const boostTracker = require('./commands/boostTracker');
 
 // Environment Variables
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
