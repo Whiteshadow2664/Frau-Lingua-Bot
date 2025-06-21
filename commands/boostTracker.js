@@ -50,7 +50,7 @@ function registerBoostListener(client) {
 
         const thankYouEmbed = new EmbedBuilder()
             .setColor('#acf508')
-            .setTitle('💖 Thanks for Boosting the Server!')
+            .setTitle('Thanks for Boosting the Server!')
             .setDescription(`Thank you <@${userId}> for boosting the server!\nYour support helps our community grow stronger!`)
             .setTimestamp();
 
@@ -84,7 +84,7 @@ function registerBoostListener(client) {
 
 // ✅ Backup: Save boostCache daily
 cron.schedule(
-    '23 5 * * *',
+    '17 12 * * *',
     async () => {
         console.log('⏳ Saving boost data to DB...');
         if (boostCache.size === 0) {
