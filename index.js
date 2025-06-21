@@ -45,6 +45,7 @@ const mailCommand = require('./commands/mail');
 const reactionCommand = require('./commands/reaction');
 const dateChannelUpdater = require('./dateChannel');
 const boostTracker = require('./commands/boostTracker');
+const levelCongrats = require('./levelCongrats');
 
 // Environment Variables
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
@@ -482,6 +483,7 @@ client.once('ready', () => {
     antiInvite(client);
     levelSystem(client);
     dateChannelUpdater(client);
+    levelCongrats.monitorLevelUps(client);
     boostTracker.registerBoostListener(client);
     // Start the status update cycle
     setInterval(() => updateBotStatus(client), 10000); // Update every 10 seconds
