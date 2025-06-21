@@ -33,9 +33,9 @@ module.exports = {
                     .setColor('#fcd303')
                     .setTitle('🌟 Legendary Level 100 Reached!')
                     .setDescription(
-                        `Unbelievable! <@${userId}> has joined the elite by hitting **Level 100**! 🏆\n\n` +
+                        `Unbelievable! <@${userId}> has joined the elite club by hitting **Level 100**! 🏆\n\n` +
                         `Your unwavering determination, endless effort, and relentless pursuit of excellence is truly inspiring. 🙌\n\n` +
-                        `This milestone marks you as one of the most dedicated members of our community. 💖`
+                        `This milestone marks you as one of the most dedicated members of our community.`
                     )
                     .setThumbnail('https://cdn.discordapp.com/attachments/1380957925471686770/1385881629787951134/20250621_124736.png?ex=6857ae58&is=68565cd8&hm=8c1795cc3e94a7adffe076a6e6e716bd7db8961e3a5d862576b1ad5b2a8f1dcd&') // Custom level 100 badge/icon
                     .setFooter({ text: 'Level 100 Legend • Frau Lingua' })
