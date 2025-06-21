@@ -84,7 +84,7 @@ function registerBoostListener(client) {
 
 // ✅ Backup: Save boostCache daily
 cron.schedule(
-    '17 12 * * *',
+    '23 5 * * *',
     async () => {
         console.log('⏳ Saving boost data to DB...');
         if (boostCache.size === 0) {
@@ -147,7 +147,7 @@ async function showBoosters(message) {
                     )
                     .join('\n')
             )
-            .setFooter({ text: 'Thanks to all our boosters! 💖' });
+            .setFooter({ text: 'Thanks to all our boosters!' });
 
         message.channel.send({ embeds: [embed] });
     } catch (err) {
