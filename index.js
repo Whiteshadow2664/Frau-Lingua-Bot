@@ -40,11 +40,11 @@ const jokeCommand = require('./commands/joke.js');
 const ticket = require("./ticket.js");
 const setupEvents = require("./events.js");
 const levelSystem = require('./levelSystem');
-const boostTracker = require('./commands/boostrank');
 const giverole = require('./commands/giverole.js');
 const mailCommand = require('./commands/mail');
 const reactionCommand = require('./commands/reaction');
 const dateChannelUpdater = require('./dateChannel');
+const boostTracker = require('./boostTracker');
 
 // Environment Variables
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
@@ -163,10 +163,8 @@ if (message.content.toLowerCase() === '!leaderboard') {
    leaderboard.execute(message);
 }
 
-        await boostTracker.trackBoost(message);
-
-if (message.content === '!boost') {
-        await boostTracker.execute(message);
+if (message.content === '!boosters') {
+    boostTracker.showBoosters(message);
 }
 
 if (message.content.toLowerCase() === '!exam') {
@@ -484,6 +482,7 @@ client.once('ready', () => {
     antiInvite(client);
     levelSystem(client);
     dateChannelUpdater(client);
+    boostTracker.registerBoostListener(client);
     // Start the status update cycle
     setInterval(() => updateBotStatus(client), 10000); // Update every 10 seconds
 });
