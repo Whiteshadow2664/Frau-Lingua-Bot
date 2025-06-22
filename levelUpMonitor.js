@@ -6,8 +6,8 @@ const LEVEL_50_REGEX = /<@(\d+)> has reached level \*\*50\*\*\. GG!/;
 const LEVEL_100_REGEX = /<@(\d+)> has reached level \*\*100\*\*\. GG!/;
 
 // Replace with your actual role IDs
-const GOLD_CLUB_ROLE_ID = 'YOUR_GOLD_CLUB_ROLE_ID';
-const ELITE_CLUB_ROLE_ID = 'YOUR_ELITE_CLUB_ROLE_ID';
+const GOLD_CLUB_ROLE_ID = '1386210453797212252';
+const ELITE_CLUB_ROLE_ID = '1386211058594615426';
 
 module.exports = {
     monitorLevelUps: (client) => {
