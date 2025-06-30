@@ -15,7 +15,7 @@ module.exports = {
             const hasMedia = message.attachments.size > 0 || message.embeds.some(embed => embed.image || embed.video);
             if (hasMedia) {
                 await message.delete().catch(console.error);
-                message.channel.send(`🚫 <@${message.author.id}> you're not allowed to send media.`)
+                message.channel.send(` <@${message.author.id}> you're not allowed to send media.`)
                     .then(msg => setTimeout(() => msg.delete().catch(() => {}), 300000));
             }
         });
