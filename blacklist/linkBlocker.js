@@ -2,7 +2,7 @@
 const { Events } = require('discord.js');
 
 // Replace with your actual role ID (users WITH this role can't send links)
-const LINK_BLOCK_ROLE_ID = '1389104867577954466';
+const LINK_BLOCK_ROLE_ID = '1389103629964804267';
 
 const LINK_REGEX = /(https?:\/\/[^\s]+)/i;
 
