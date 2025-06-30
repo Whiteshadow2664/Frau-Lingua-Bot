@@ -46,6 +46,8 @@ const reactionCommand = require('./commands/reaction');
 const dateChannelUpdater = require('./dateChannel');
 const boostTracker = require('./commands/boostTracker');
 const levelUpMonitor = require('./levelUpMonitor');
+const linkBlocker = require('./blacklist/linkBlocker');    
+const mediaBlocker = require('./blacklist/mediaBlocker');
 
 // Environment Variables
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
@@ -483,6 +485,8 @@ client.once('ready', () => {
     antiInvite(client);
     levelSystem(client);
     dateChannelUpdater(client);
+    linkBlocker.monitorLinks(client);
+    mediaBlocker.monitorMedia(client);
     levelUpMonitor.monitorLevelUps(client);
     boostTracker.registerBoostListener(client);
     // Start the status update cycle
