@@ -1,7 +1,5 @@
 // mediaBlocker.js
 const { Events } = require('discord.js');
-
-// Replace with your actual role ID (users WITH this role can't send media)
 const MEDIA_BLOCK_ROLE_ID = '1389103774215180368';
 
 module.exports = {
@@ -14,9 +12,18 @@ module.exports = {
 
             const hasMedia = message.attachments.size > 0 || message.embeds.some(embed => embed.image || embed.video);
             if (hasMedia) {
-                await message.delete().catch(console.error);
-                message.channel.send(` <@${message.author.id}> you're not allowed to send media.`)
-                    .then(msg => setTimeout(() => msg.delete().catch(() => {}), 300000));
+                try {
+                    await message.delete();
+                } catch (err) {
+                    console.error('❌ Failed to delete media message:', err.message);
+                }
+
+                try {
+                    const warnMsg = await message.channel.send(`🚫 <@${message.author.id}> you're not allowed to send media.`);
+                    setTimeout(() => warnMsg.delete().catch(() => {}), 5000); // delete after 5s
+                } catch (err) {
+                    console.error('❌ Failed to send/delete media warning:', err.message);
+                }
             }
         });
     }
