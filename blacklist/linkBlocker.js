@@ -16,7 +16,7 @@ module.exports = {
 
             if (LINK_REGEX.test(message.content)) {
                 await message.delete().catch(console.error);
-                message.channel.send(`🚫 <@${message.author.id}> you're not allowed to send links.`)
+                message.channel.send(` <@${message.author.id}> you're not allowed to send links.`)
                     .then(msg => setTimeout(() => msg.delete().catch(() => {}), 300000));
             }
         });
