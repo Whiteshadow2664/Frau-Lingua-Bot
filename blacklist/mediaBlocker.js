@@ -16,7 +16,7 @@ module.exports = {
             if (hasMedia) {
                 await message.delete().catch(console.error);
                 message.channel.send(`🚫 <@${message.author.id}> you're not allowed to send media.`)
-                    .then(msg => setTimeout(() => msg.delete().catch(() => {}), 5000));
+                    .then(msg => setTimeout(() => msg.delete().catch(() => {}), 300000));
             }
         });
     }
