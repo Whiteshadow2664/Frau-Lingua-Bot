@@ -2,7 +2,7 @@
 const { Events } = require('discord.js');
 
 // Replace with your actual role ID (users WITH this role can't send media)
-const MEDIA_BLOCK_ROLE_ID = 'ROLE_ID_FOR_MEDIA_BLOCK';
+const MEDIA_BLOCK_ROLE_ID = '1389104809910472744';
 
 module.exports = {
     monitorMedia: (client) => {
