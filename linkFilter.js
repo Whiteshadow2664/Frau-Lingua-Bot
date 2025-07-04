@@ -4,7 +4,10 @@ module.exports = (client) => {
     // List of suspicious patterns (you can add more as needed)
     const suspiciousLinks = [
         /steamgift\.com/i,         // Matches Steam Gift links
-        /freegiftcards/i,          // Matches suspicious free gift card links
+        /freegiftcards/i,
+        /nftbox11-six.vercel/i,
+        /nftbox/i,
+        // Matches suspicious free gift card links
         /getfreegame/i,                            // Matches .xyz domain links (often used by suspicious websites)
         /steamcommunity\.com/i,    // Matches SteamCommunity.com
         /steamcomunity\.com/i,     // Matches steamcomunity.com (common typo)
