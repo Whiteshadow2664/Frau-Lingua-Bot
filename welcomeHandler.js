@@ -22,7 +22,7 @@ async function sendMessageWithRetry(channel, content, retries = 3) {
 async function handleMemberJoin(member) {
     const guild = member.guild;
     const channel = guild.channels.cache.find(
-        ch => ch.name === 'welcome' && ch instanceof TextChannel
+        ch => ch.name === 'ｌｏｇｓ．' && ch instanceof TextChannel
     );
 
     if (!channel) return;
@@ -39,7 +39,7 @@ Feel free to introduce yourself and join the conversation!`;
 async function handleMemberLeave(member) {
     const guild = member.guild;
     const channel = guild.channels.cache.find(
-        ch => ch.name === 'welcome' && ch instanceof TextChannel
+        ch => ch.name === 'ｌｏｇｓ．' && ch instanceof TextChannel
     );
 
     if (!channel) return;
