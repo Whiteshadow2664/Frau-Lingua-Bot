@@ -1,87 +1,89 @@
 const { EmbedBuilder, PermissionsBitField } = require("discord.js");
 
-// Track messages per user across channels
-const spamTracker = new Map();
-const ALERT_CHANNEL_ID = "1410902661372579863"; // Moderators alert channel
+// Map to store user messages per channel
+const userMessages = new Map();
+
+// Channel ID where bot reports spam to moderators
+const MOD_CHANNEL_ID = "1410902661372579863";
+
+// Function to normalize message content (to catch similar messages)
+function normalizeContent(message) {
+    let content = message.content.trim().toLowerCase();
+
+    // Replace links with placeholder
+    content = content.replace(/https?:\/\/\S+/g, "[LINK]");
+
+    // If the message has attachments (image, gif, file), mark them
+    if (message.attachments.size > 0) {
+        const attachment = message.attachments.first();
+        if (attachment.contentType && attachment.contentType.startsWith("image/")) {
+            return `[IMAGE] ${attachment.url}`;
+        }
+        if (attachment.contentType && attachment.contentType.startsWith("video/")) {
+            return `[VIDEO] ${attachment.url}`;
+        }
+        return `[FILE] ${attachment.url}`;
+    }
+
+    return content;
+}
 
 module.exports = {
-  async execute(message) {
-    try {
-      // Ignore bot messages
-      if (message.author.bot) return;
+    async handleMessage(message) {
+        if (message.author.bot) return; // ignore bots
 
-      const userId = message.author.id;
-      const content = message.content.trim();
+        const userId = message.author.id;
+        const channelId = message.channel.id;
 
-      // Handle text or link
-      let normalizedContent = content || "";
+        const normalized = normalizeContent(message);
 
-      // Check for attachments (files, images, gifs, etc.)
-      if (message.attachments.size > 0) {
-        // Represent files in normalized content for comparison
-        normalizedContent =
-          "FILE_UPLOAD:" + [...message.attachments.values()].map(a => a.name).join(", ");
-      }
-
-      // Initialize tracker if new user
-      if (!spamTracker.has(userId)) {
-        spamTracker.set(userId, new Map());
-      }
-
-      const userMessages = spamTracker.get(userId);
-      const channelSet = userMessages.get(normalizedContent) || new Set();
-
-      channelSet.add(message.channel.id);
-      userMessages.set(normalizedContent, channelSet);
-
-      // If same content/file appears in 3 or more different channels
-      if (channelSet.size >= 3) {
-        // Delete the current spam message
-        await message.delete().catch(() => {});
-
-        // Mute user (only if bot has permission)
-        const member = message.guild.members.cache.get(userId);
-        if (member) {
-          await member.timeout(7 * 24 * 60 * 60 * 1000, "Possible spam account").catch(() => {});
+        if (!userMessages.has(userId)) {
+            userMessages.set(userId, new Map());
         }
 
-        // Prepare preview for mods
-        let previewText = "";
-        if (message.attachments.size > 0) {
-          // Direct file uploads → show filename and 1 URL
-          const attachment = message.attachments.first();
-          previewText = `File Upload: ${attachment.name}\nURL: ${attachment.url}`;
-        } else if (content.startsWith("http")) {
-          previewText = `Link: ${content}`;
-        } else {
-          previewText = `Text: ${content.substring(0, 200)}`;
+        const channelMap = userMessages.get(userId);
+        channelMap.set(channelId, normalized);
+
+        // Get unique messages across channels
+        const uniqueMessages = new Set(channelMap.values());
+
+        if (uniqueMessages.size === 1 && channelMap.size >= 3) {
+            // Possible spam detected
+            try {
+                // Delete the spam message
+                await message.delete();
+
+                // Try to mute the user
+                const member = await message.guild.members.fetch(userId).catch(() => null);
+
+                if (member) {
+                    await member.timeout(
+                        7 * 24 * 60 * 60 * 1000, // 1 week
+                        "Suspected spam across multiple channels"
+                    );
+                }
+
+                // Prepare embed for moderators
+                const embed = new EmbedBuilder()
+                    .setTitle("🚨 Possible Spam Detected")
+                    .setColor("#acf508")
+                    .addFields(
+                        { name: "User", value: `<@${userId}> (${message.author.tag})`, inline: false },
+                        { name: "Message", value: normalized.length > 1024 ? normalized.slice(0, 1020) + "..." : normalized, inline: false }
+                    )
+                    .setFooter({ text: "This user has been muted. Please review manually." })
+                    .setTimestamp();
+
+                const modChannel = await message.guild.channels.fetch(MOD_CHANNEL_ID);
+                if (modChannel) {
+                    await modChannel.send({ embeds: [embed] });
+                }
+
+                // Clear stored data for this user after reporting
+                userMessages.delete(userId);
+            } catch (err) {
+                console.error("Error handling spam:", err);
+            }
         }
-
-        // Send alert embed to mods
-        const alertChannel = message.guild.channels.cache.get(ALERT_CHANNEL_ID);
-        if (alertChannel) {
-          const embed = new EmbedBuilder()
-            .setTitle("⚠️ Possible Spam Account Detected")
-            .setColor("#acf508")
-            .addFields(
-              { name: "User", value: `<@${userId}> (${message.author.tag})`, inline: false },
-              { name: "Message Preview", value: previewText || "N/A", inline: false },
-              {
-                name: "Action Taken",
-                value: "User muted for 1 week (manual unmute by moderators required).",
-                inline: false,
-              }
-            )
-            .setTimestamp();
-
-          await alertChannel.send({ embeds: [embed] });
-        }
-
-        // Reset tracker for this user to avoid repeated spam alerts
-        spamTracker.delete(userId);
-      }
-    } catch (err) {
-      console.error("Error in spamProtection:", err);
-    }
-  },
+    },
 };
