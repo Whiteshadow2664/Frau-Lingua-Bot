@@ -13,7 +13,6 @@ const { shuffleArray } = require('./utilities');
 const help = require('./commands/help');
 const resources = require('./commands/resources');
 const { handleGreeting } = require('./greetingsHandler');
-const { handleMemberJoin, handleMemberLeave } = require('./welcomeHandler');
 const announcement = require('./commands/announcement');
 const { handleBadWords } = require('./badWords');
 const suggestion = require('./commands/suggestion');
@@ -48,6 +47,7 @@ const boostTracker = require('./commands/boostTracker');
 const levelUpMonitor = require('./levelUpMonitor');
 const linkBlocker = require('./blacklist/linkBlocker');    
 const mediaBlocker = require('./blacklist/mediaBlocker');
+const antiSpam = require("./antiSpam");
 
 // Environment Variables
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
@@ -152,6 +152,7 @@ Object.keys(wordOfTheDayTimes).forEach((language) => {
 client.on('messageCreate', async (message) => {
     if (message.author.bot) return;
 
+        await antiSpam.checkSpam(message);
         await handleSpamDetection(message);
  
     await modRank.updateModRank(message.author.id, message.author.username, message.guild);
@@ -491,16 +492,6 @@ client.once('ready', () => {
     boostTracker.registerBoostListener(client);
     // Start the status update cycle
     setInterval(() => updateBotStatus(client), 10000); // Update every 10 seconds
-});
-
-// Event when a member joins the server
-client.on('guildMemberAdd', (member) => {
-    handleMemberJoin(member); // Call the handle join function
-}); 
-
-// Event when a member leaves the server
-client.on('guildMemberRemove', (member) => {
-    handleMemberLeave(member); // Call the handle leave function
 });
 
 client.login(DISCORD_TOKEN);
