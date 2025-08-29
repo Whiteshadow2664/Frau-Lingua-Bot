@@ -47,6 +47,7 @@ const boostTracker = require('./commands/boostTracker');
 const levelUpMonitor = require('./levelUpMonitor');
 const linkBlocker = require('./blacklist/linkBlocker');    
 const mediaBlocker = require('./blacklist/mediaBlocker');
+const antiSpam = require("./antiSpam");
 
 // Environment Variables
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
@@ -151,6 +152,7 @@ Object.keys(wordOfTheDayTimes).forEach((language) => {
 client.on('messageCreate', async (message) => {
     if (message.author.bot) return;
 
+        await antiSpam.checkSpam(message);
         await handleSpamDetection(message);
  
     await modRank.updateModRank(message.author.id, message.author.username, message.guild);
