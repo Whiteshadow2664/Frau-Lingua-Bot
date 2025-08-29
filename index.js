@@ -494,4 +494,4 @@ client.once('ready', () => {
     setInterval(() => updateBotStatus(client), 10000); // Update every 10 seconds
 });
 
-client.login(DISCORD_TOKEN);
+client.login(process.env.DISCORD_TOKEN);
