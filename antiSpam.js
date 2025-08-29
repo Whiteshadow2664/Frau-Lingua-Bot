@@ -12,14 +12,17 @@ module.exports = {
 
         // Normalize message content (text, links, images, gifs)
         let normalizedContent = message.content?.trim() || "";
+        let mediaUrl = null;
+
         if (message.attachments.size > 0) {
-            message.attachments.forEach(att => {
-                if (att.contentType?.startsWith("image/") || att.url.endsWith(".gif")) {
-                    normalizedContent += " [IMAGE/GIF]";
-                } else {
-                    normalizedContent += " [FILE]";
-                }
-            });
+            const att = message.attachments.first(); // take only the first media/file
+            if (att.contentType?.startsWith("image/") || att.url.endsWith(".gif")) {
+                normalizedContent += ` [MEDIA: ${att.url}]`;
+                mediaUrl = att.url;
+            } else {
+                normalizedContent += ` [FILE: ${att.url}]`;
+                mediaUrl = att.url;
+            }
         }
 
         if (!normalizedContent) return;
@@ -66,6 +69,11 @@ module.exports = {
                 // Get Moderator role
                 const modRole = guild.roles.cache.find(r => r.name === "Moderator");
 
+                // Collect spammed channels for reporting
+                const channelList = [...userData[normalizedContent]]
+                    .map(chId => `<#${chId}>`)
+                    .join(", ");
+
                 // Send mod alert embed with spammed message content
                 const embed = new EmbedBuilder()
                     .setColor("#acf508")
@@ -74,7 +82,9 @@ module.exports = {
                         `User <@${userId}> may be spamming.\n\n` +
                         `They sent **the same/similar message** in **3 or more channels**.\n\n` +
                         `🔒 User has been given the **Muted role** (manual removal required).\n\n` +
-                        `📩 Spam Message:\n\`\`\`${normalizedContent}\`\`\``
+                        `📩 Spam Message:\n\`\`\`${message.content || "N/A"}\`\`\`\n` +
+                        (mediaUrl ? `🖼 Media: ${mediaUrl}\n\n` : "") +
+                        `📌 Channels: ${channelList}`
                     )
                     .setTimestamp();
 
