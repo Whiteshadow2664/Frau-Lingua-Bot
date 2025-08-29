@@ -479,6 +479,19 @@ delete activeQuizzes[message.author.id];
 client.once('ready', () => {
     console.log(`${client.user.tag} is online!`);
 
+
+
+const rulesMessage = require("./rulesMessage");
+
+
+rulesMessage(client);
+
+
+
+
+
+
+
     linkFilter(client);
     ticket.setup(client);
     setupEvents(client);
