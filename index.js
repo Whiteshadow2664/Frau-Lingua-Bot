@@ -12,8 +12,6 @@ const { frenchQuizData, frenchWordList } = require('./frenchData');
 const { shuffleArray } = require('./utilities');
 const help = require('./commands/help');
 const resources = require('./commands/resources');
-const { handleGreeting } = require('./greetingsHandler');
-const { handleMemberJoin, handleMemberLeave } = require('./welcomeHandler');
 const announcement = require('./commands/announcement');
 const { handleBadWords } = require('./badWords');
 const suggestion = require('./commands/suggestion');
@@ -491,16 +489,6 @@ client.once('ready', () => {
     boostTracker.registerBoostListener(client);
     // Start the status update cycle
     setInterval(() => updateBotStatus(client), 10000); // Update every 10 seconds
-});
-
-// Event when a member joins the server
-client.on('guildMemberAdd', (member) => {
-    handleMemberJoin(member); // Call the handle join function
-}); 
-
-// Event when a member leaves the server
-client.on('guildMemberRemove', (member) => {
-    handleMemberLeave(member); // Call the handle leave function
 });
 
 client.login(DISCORD_TOKEN);
