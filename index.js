@@ -494,4 +494,6 @@ client.once('ready', () => {
     setInterval(() => updateBotStatus(client), 10000); // Update every 10 seconds
 });
 
-client.login(process.env.DISCORD_TOKEN);
+client.login(process.env.DISCORD_TOKEN)
+  .then(() => console.log("✅ Login request sent to Discord"))
+  .catch(err => console.error("❌ Login failed:", err));
