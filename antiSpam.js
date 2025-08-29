@@ -10,17 +10,31 @@ module.exports = {
         const guild = message.guild;
         const modLogChannelId = "1410902661372579863"; // Mods alert channel
 
-        // Track user messages by content and channel
-        let userData = spamTracker.get(userId) || {};
-        if (!userData[message.content]) {
-            userData[message.content] = new Set();
+        // Normalize message content (text, links, images, gifs)
+        let normalizedContent = message.content?.trim() || "";
+        if (message.attachments.size > 0) {
+            message.attachments.forEach(att => {
+                if (att.contentType?.startsWith("image/") || att.url.endsWith(".gif")) {
+                    normalizedContent += " [IMAGE/GIF]";
+                } else {
+                    normalizedContent += " [FILE]";
+                }
+            });
         }
 
-        userData[message.content].add(message.channel.id);
+        if (!normalizedContent) return;
+
+        // Track user messages by content and channel
+        let userData = spamTracker.get(userId) || {};
+        if (!userData[normalizedContent]) {
+            userData[normalizedContent] = new Set();
+        }
+
+        userData[normalizedContent].add(message.channel.id);
         spamTracker.set(userId, userData);
 
         // If same message appears in 3+ different channels
-        if (userData[message.content].size >= 3) {
+        if (userData[normalizedContent].size >= 3) {
             try {
                 // Delete the spam message
                 await message.delete().catch(() => {});
@@ -58,9 +72,9 @@ module.exports = {
                     .setTitle("🚨 Possible Spam Account Detected")
                     .setDescription(
                         `User <@${userId}> may be spamming.\n\n` +
-                        `They sent **the same message** in **3 or more channels**.\n\n` +
+                        `They sent **the same/similar message** in **3 or more channels**.\n\n` +
                         `🔒 User has been given the **Muted role** (manual removal required).\n\n` +
-                        `📩 Spam Message:\n\`\`\`${message.content}\`\`\``
+                        `📩 Spam Message:\n\`\`\`${normalizedContent}\`\`\``
                     )
                     .setTimestamp();
 
