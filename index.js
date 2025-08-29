@@ -484,7 +484,7 @@ client.once('ready', () => {
 
 
   const rulesMessage = require("./rulesMessage");
-  await rulesMessage(client);
+   rulesMessage(client);
 
 
 
