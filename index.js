@@ -494,4 +494,7 @@ client.once('ready', () => {
     setInterval(() => updateBotStatus(client), 10000); // Update every 10 seconds
 });
 
-client.login(DISCORD_TOKEN);
+
+client.login(DISCORD_TOKEN)
+  .then(() => console.log("✅ Login request sent"))
+  .catch(err => console.error("❌ Login failed:", err));
