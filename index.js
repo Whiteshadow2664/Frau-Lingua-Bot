@@ -12,6 +12,7 @@ const { frenchQuizData, frenchWordList } = require('./frenchData');
 const { shuffleArray } = require('./utilities');
 const help = require('./commands/help');
 const resources = require('./commands/resources');
+const { handleGreeting } = require('./greetingsHandler');
 const announcement = require('./commands/announcement');
 const { handleBadWords } = require('./badWords');
 const suggestion = require('./commands/suggestion');
