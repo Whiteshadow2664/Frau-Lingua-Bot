@@ -1,7 +1,7 @@
 const { EmbedBuilder } = require("discord.js");
 
 module.exports = async (client) => {
-  const channelId = "1410887257635688528"; // rules channel ID
+  const channelId = "1410882983958941780"; // rules channel ID
   const channel = await client.channels.fetch(channelId);
   if (!channel) return console.error("❌ Rules channel not found!");
 
