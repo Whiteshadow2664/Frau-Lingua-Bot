@@ -9,7 +9,6 @@ module.exports = {
         const userId = message.author.id;
         const guild = message.guild;
         const modLogChannelId = "1410902661372579863"; // Mods alert channel
-        const muteDuration = 7 * 24 * 60 * 60 * 1000; // 1 week in ms
 
         // Track user messages by content and channel
         let userData = spamTracker.get(userId) || {};
@@ -48,29 +47,33 @@ module.exports = {
                 const member = guild.members.cache.get(userId);
                 if (member) {
                     await member.roles.add(mutedRole, "Spam detected in multiple channels");
-
-                    // Schedule unmute
-                    setTimeout(async () => {
-                        if (member.roles.cache.has(mutedRole.id)) {
-                            await member.roles.remove(mutedRole, "Auto unmute after 1 week");
-                        }
-                    }, muteDuration);
                 }
 
-                // Send mod alert embed
+                // Get Moderator role
+                const modRole = guild.roles.cache.find(r => r.name === "Moderator");
+
+                // Send mod alert embed with spammed message content
                 const embed = new EmbedBuilder()
                     .setColor("#acf508")
                     .setTitle("🚨 Possible Spam Account Detected")
                     .setDescription(
                         `User <@${userId}> may be spamming.\n\n` +
                         `They sent **the same message** in **3 or more channels**.\n\n` +
-                        `User has been **muted for 1 week**.`
+                        `🔒 User has been given the **Muted role** (manual removal required).\n\n` +
+                        `📩 Spam Message:\n\`\`\`${message.content}\`\`\``
                     )
                     .setTimestamp();
 
                 const logChannel = guild.channels.cache.get(modLogChannelId);
                 if (logChannel) {
-                    await logChannel.send({ embeds: [embed] });
+                    if (modRole) {
+                        await logChannel.send({ 
+                            content: `<@&${modRole.id}> 🚨 Please review this case!`,
+                            embeds: [embed] 
+                        });
+                    } else {
+                        await logChannel.send({ embeds: [embed] });
+                    }
                 }
 
                 // Clear from tracker after action
