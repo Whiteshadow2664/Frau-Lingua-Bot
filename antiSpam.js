@@ -8,7 +8,7 @@ module.exports = {
 
         const userId = message.author.id;
         const guild = message.guild;
-        const modLogChannelId = "1410902661372579863"; // Mods alert channel
+        const modLogChannelId = "1224730855717470299"; // Mods alert channel
 
         // Normalize message content (text, links, images, gifs)
         let normalizedContent = message.content?.trim() || "";
