@@ -1,111 +1,87 @@
-const { EmbedBuilder } = require("discord.js");
+const { EmbedBuilder, PermissionsBitField } = require("discord.js");
+
+// Track messages per user across channels
 const spamTracker = new Map();
+const ALERT_CHANNEL_ID = "1410902661372579863"; // Moderators alert channel
 
 module.exports = {
-    async checkSpam(message) {
-        // Ignore bot messages
-        if (message.author.bot) return;
+  async execute(message) {
+    try {
+      // Ignore bot messages
+      if (message.author.bot) return;
 
-        const userId = message.author.id;
-        const guild = message.guild;
-        const modLogChannelId = "1410902661372579863"; // Mods alert channel
+      const userId = message.author.id;
+      const content = message.content.trim();
 
-        // Normalize message content (text, links, images, gifs)
-        let normalizedContent = message.content?.trim() || "";
-        let mediaUrl = null;
+      // Handle text or link
+      let normalizedContent = content || "";
 
+      // Check for attachments (files, images, gifs, etc.)
+      if (message.attachments.size > 0) {
+        // Represent files in normalized content for comparison
+        normalizedContent =
+          "FILE_UPLOAD:" + [...message.attachments.values()].map(a => a.name).join(", ");
+      }
+
+      // Initialize tracker if new user
+      if (!spamTracker.has(userId)) {
+        spamTracker.set(userId, new Map());
+      }
+
+      const userMessages = spamTracker.get(userId);
+      const channelSet = userMessages.get(normalizedContent) || new Set();
+
+      channelSet.add(message.channel.id);
+      userMessages.set(normalizedContent, channelSet);
+
+      // If same content/file appears in 3 or more different channels
+      if (channelSet.size >= 3) {
+        // Delete the current spam message
+        await message.delete().catch(() => {});
+
+        // Mute user (only if bot has permission)
+        const member = message.guild.members.cache.get(userId);
+        if (member) {
+          await member.timeout(7 * 24 * 60 * 60 * 1000, "Possible spam account").catch(() => {});
+        }
+
+        // Prepare preview for mods
+        let previewText = "";
         if (message.attachments.size > 0) {
-            const att = message.attachments.first(); // take only the first media/file
-            if (att.contentType?.startsWith("image/") || att.url.endsWith(".gif")) {
-                normalizedContent += ` [MEDIA: ${att.url}]`;
-                mediaUrl = att.url;
-            } else {
-                normalizedContent += ` [FILE: ${att.url}]`;
-                mediaUrl = att.url;
-            }
+          // Direct file uploads → show filename and 1 URL
+          const attachment = message.attachments.first();
+          previewText = `File Upload: ${attachment.name}\nURL: ${attachment.url}`;
+        } else if (content.startsWith("http")) {
+          previewText = `Link: ${content}`;
+        } else {
+          previewText = `Text: ${content.substring(0, 200)}`;
         }
 
-        if (!normalizedContent) return;
+        // Send alert embed to mods
+        const alertChannel = message.guild.channels.cache.get(ALERT_CHANNEL_ID);
+        if (alertChannel) {
+          const embed = new EmbedBuilder()
+            .setTitle("⚠️ Possible Spam Account Detected")
+            .setColor("#acf508")
+            .addFields(
+              { name: "User", value: `<@${userId}> (${message.author.tag})`, inline: false },
+              { name: "Message Preview", value: previewText || "N/A", inline: false },
+              {
+                name: "Action Taken",
+                value: "User muted for 1 week (manual unmute by moderators required).",
+                inline: false,
+              }
+            )
+            .setTimestamp();
 
-        // Track user messages by content and channel
-        let userData = spamTracker.get(userId) || {};
-        if (!userData[normalizedContent]) {
-            userData[normalizedContent] = new Set();
+          await alertChannel.send({ embeds: [embed] });
         }
 
-        userData[normalizedContent].add(message.channel.id);
-        spamTracker.set(userId, userData);
-
-        // If same message appears in 3+ different channels
-        if (userData[normalizedContent].size >= 3) {
-            try {
-                // Delete the spam message
-                await message.delete().catch(() => {});
-
-                // Find or create Muted role
-                let mutedRole = guild.roles.cache.find(r => r.name === "Muted");
-                if (!mutedRole) {
-                    mutedRole = await guild.roles.create({
-                        name: "Muted",
-                        color: "#555555",
-                        permissions: []
-                    });
-
-                    guild.channels.cache.forEach(channel => {
-                        channel.permissionOverwrites.create(mutedRole, {
-                            SendMessages: false,
-                            Speak: false,
-                            AddReactions: false
-                        }).catch(() => {});
-                    });
-                }
-
-                // Apply mute
-                const member = guild.members.cache.get(userId);
-                if (member) {
-                    await member.roles.add(mutedRole, "Spam detected in multiple channels");
-                }
-
-                // Get Moderator role
-                const modRole = guild.roles.cache.find(r => r.name === "Moderator");
-
-                // Collect spammed channels for reporting
-                const channelList = [...userData[normalizedContent]]
-                    .map(chId => `<#${chId}>`)
-                    .join(", ");
-
-                // Send mod alert embed with spammed message content
-                const embed = new EmbedBuilder()
-                    .setColor("#acf508")
-                    .setTitle("🚨 Possible Spam Account Detected")
-                    .setDescription(
-                        `User <@${userId}> may be spamming.\n\n` +
-                        `They sent **the same/similar message** in **3 or more channels**.\n\n` +
-                        `🔒 User has been given the **Muted role** (manual removal required).\n\n` +
-                        `📩 Spam Message:\n\`\`\`${message.content || "N/A"}\`\`\`\n` +
-                        (mediaUrl ? `🖼 Media: ${mediaUrl}\n\n` : "") +
-                        `📌 Channels: ${channelList}`
-                    )
-                    .setTimestamp();
-
-                const logChannel = guild.channels.cache.get(modLogChannelId);
-                if (logChannel) {
-                    if (modRole) {
-                        await logChannel.send({ 
-                            content: `<@&${modRole.id}> 🚨 Please review this case!`,
-                            embeds: [embed] 
-                        });
-                    } else {
-                        await logChannel.send({ embeds: [embed] });
-                    }
-                }
-
-                // Clear from tracker after action
-                spamTracker.delete(userId);
-
-            } catch (err) {
-                console.error("Error handling spam:", err);
-            }
-        }
+        // Reset tracker for this user to avoid repeated spam alerts
+        spamTracker.delete(userId);
+      }
+    } catch (err) {
+      console.error("Error in spamProtection:", err);
     }
+  },
 };
