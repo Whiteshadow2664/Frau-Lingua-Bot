@@ -36,8 +36,26 @@ module.exports = {
         // If same message appears in 3+ different channels
         if (userData[normalizedContent].size >= 3) {
             try {
-                // Delete the spam message
-                await message.delete().catch(() => {});
+                // Delete ALL messages from this user in the last 5 minutes across all channels
+                const now = Date.now();
+                const fiveMinutesAgo = now - (5 * 60 * 1000);
+
+                for (const channel of guild.channels.cache.values()) {
+                    if (!channel.isTextBased()) continue;
+                    try {
+                        const messages = await channel.messages.fetch({ limit: 100 });
+                        const userMessages = messages.filter(
+                            m => m.author.id === userId && m.createdTimestamp >= fiveMinutesAgo
+                        );
+                        if (userMessages.size > 0) {
+                            for (const m of userMessages.values()) {
+                                await m.delete().catch(() => {});
+                            }
+                        }
+                    } catch (err) {
+                        // ignore fetch/delete errors silently
+                    }
+                }
 
                 // Find or create Muted role
                 let mutedRole = guild.roles.cache.find(r => r.name === "Muted");
