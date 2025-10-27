@@ -1,16 +1,19 @@
 const { EmbedBuilder } = require("discord.js");
-const spamTracker = new Map();
+
+// Stores user message history: { userId: [ {content, channelId, timestamp} ] }
+const spamHistory = new Map();
 
 module.exports = {
     async checkSpam(message) {
-        // Ignore bot messages
         if (message.author.bot) return;
 
         const userId = message.author.id;
         const guild = message.guild;
-        const modLogChannelId = "1224730855717470299"; // Mods alert channel
+        const modLogChannelId = "1224730855717470299";
 
-        // Normalize message content (text, links, images, gifs)
+        const now = Date.now();
+
+        // Normalize message content
         let normalizedContent = message.content?.trim() || "";
         if (message.attachments.size > 0) {
             message.attachments.forEach(att => {
@@ -24,41 +27,46 @@ module.exports = {
 
         if (!normalizedContent) return;
 
-        // Track user messages by content and channel
-        let userData = spamTracker.get(userId) || {};
-        if (!userData[normalizedContent]) {
-            userData[normalizedContent] = new Set();
-        }
+        // Track history with timestamp
+        if (!spamHistory.has(userId)) spamHistory.set(userId, []);
+        spamHistory.get(userId).push({
+            content: normalizedContent,
+            channelId: message.channel.id,
+            timestamp: now
+        });
 
-        userData[normalizedContent].add(message.channel.id);
-        spamTracker.set(userId, userData);
+        // Keep only last 1 min entries
+        const twoMins = 1 * 60 * 1000;
+        const recent = spamHistory.get(userId).filter(m => now - m.timestamp < twoMins);
+        spamHistory.set(userId, recent);
 
-        // If same message appears in 3+ different channels
-        if (userData[normalizedContent].size >= 3) {
+        // Count unique channels with same message
+        const sameMessages = recent.filter(m => m.content === normalizedContent);
+        const uniqueChannels = new Set(sameMessages.map(m => m.channelId));
+
+        // ✅ SPAM DETECTED
+        if (uniqueChannels.size >= 3) {
             try {
-                // Delete ALL messages from this user in the last 5 minutes across all channels
-                const now = Date.now();
-                const fiveMinutesAgo = now - (5 * 60 * 1000);
+                // Delete messages from last 10 mins
+                const tenMins = 10 * 60 * 1000;
 
                 for (const channel of guild.channels.cache.values()) {
                     if (!channel.isTextBased()) continue;
-                    try {
-                        const messages = await channel.messages.fetch({ limit: 100 });
-                        const userMessages = messages.filter(
-                            m => m.author.id === userId && m.createdTimestamp >= fiveMinutesAgo
-                        );
-                        if (userMessages.size > 0) {
-                            for (const m of userMessages.values()) {
-                                await m.delete().catch(() => {});
-                            }
-                        }
-                    } catch (err) {
-                        // ignore fetch/delete errors silently
+                    const msgs = await channel.messages.fetch({ limit: 100 }).catch(() => {});
+                    if (!msgs) continue;
+
+                    const toDelete = msgs.filter(
+                        m => m.author.id === userId &&
+                        (now - m.createdTimestamp) < tenMins
+                    );
+
+                    for (const m of toDelete.values()) {
+                        await m.delete().catch(() => {});
                     }
                 }
 
-                // Find or create Muted role
-                let mutedRole = guild.roles.cache.find(r => r.name === "Muted");
+                // Mute role
+                let mutedRole = guild.roles.cache.find(r => r.name.toLowerCase().includes("mute"));
                 if (!mutedRole) {
                     mutedRole = await guild.roles.create({
                         name: "Muted",
@@ -75,44 +83,39 @@ module.exports = {
                     });
                 }
 
-                // Apply mute
                 const member = guild.members.cache.get(userId);
                 if (member) {
-                    await member.roles.add(mutedRole, "Spam detected in multiple channels");
+                    await member.roles.add(mutedRole, "Spammer detected");
                 }
 
-                // Get Moderator role
                 const modRole = guild.roles.cache.find(r => r.name === "Moderator");
 
-                // Send mod alert embed with spammed message content
                 const embed = new EmbedBuilder()
                     .setColor("#acf508")
-                    .setTitle("🚨 Possible Spam Account Detected")
+                    .setTitle("🚫 Spammer Detected")
                     .setDescription(
-                        `User <@${userId}> may be spamming.\n\n` +
-                        `They sent **the same/similar message** in **3 or more channels**.\n\n` +
-                        `🔒 User has been given the **Muted role** (manual removal required).\n\n` +
-                        `📩 Spam Message:\n\`\`\`${normalizedContent}\`\`\``
+                        `User <@${userId}> has been flagged as a spammer.\n\n` +
+                        `🔁 Same message in **3+ channels** under **2 mins**.\n\n` +
+                        `🔇 User muted & recent messages deleted.\n\n` +
+                        `📝 Spam Content:\n\`\`\`${normalizedContent}\`\`\``
                     )
                     .setTimestamp();
 
                 const logChannel = guild.channels.cache.get(modLogChannelId);
                 if (logChannel) {
+                    const payload = { embeds: [embed] };
+
                     if (modRole) {
-                        await logChannel.send({ 
-                            content: `<@&${modRole.id}> 🚨 Please review this case!`,
-                            embeds: [embed] 
-                        });
-                    } else {
-                        await logChannel.send({ embeds: [embed] });
+                        payload.content = `<@&${modRole.id}> 🚨`;
                     }
+
+                    await logChannel.send(payload);
                 }
 
-                // Clear from tracker after action
-                spamTracker.delete(userId);
+                spamHistory.delete(userId);
 
             } catch (err) {
-                console.error("Error handling spam:", err);
+                console.error("Spam handling error:", err);
             }
         }
     }
