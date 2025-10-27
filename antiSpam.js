@@ -9,7 +9,7 @@ module.exports = {
 
         const userId = message.author.id;
         const guild = message.guild;
-        const modLogChannelId = "1432326000582066341";
+        const modLogChannelId = "1224730855717470299";
 
         const now = Date.now();
 
@@ -36,7 +36,7 @@ module.exports = {
         });
 
         // Keep only last 1 min entries
-        const twoMins = 1 * 60 * 1000;
+        const twoMins = 1.3 * 60 * 1000;
         const recent = spamHistory.get(userId).filter(m => now - m.timestamp < twoMins);
         spamHistory.set(userId, recent);
 
