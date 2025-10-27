@@ -9,7 +9,7 @@ module.exports = {
 
         const userId = message.author.id;
         const guild = message.guild;
-        const modLogChannelId = "1224730855717470299";
+        const modLogChannelId = "1432326000582066341";
 
         const now = Date.now();
 
