@@ -5,7 +5,7 @@ const cron = require('node-cron');
 const DATE_CHANNEL_ID = '1385132860972728320';
 
 module.exports = (client) => {
-    cron.schedule('12 14 * * *', async () => {
+    cron.schedule('12 18 * * *', async () => {
         console.log('🕒 Running date updater at 12:00 AM IST...');
 
         try {
