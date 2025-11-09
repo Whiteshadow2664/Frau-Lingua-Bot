@@ -18,16 +18,22 @@ module.exports = async (client) => {
         const oldEmbed = message.embeds[0];
         if (!oldEmbed) return console.error('❌ No embed found in that message.');
 
-        // Remove the word “Hindi” from the description
-        const newDescription = oldEmbed.description.replace(/,?\s*Hindi/i, '');
+        // Copy the existing description
+        let description = oldEmbed.description;
 
-        // Rebuild the embed with updated description
-        const updatedEmbed = EmbedBuilder.from(oldEmbed).setDescription(newDescription);
+        // Replace only Rule 7 line (keeping rest identical)
+        description = description.replace(
+            /7\..*?(?=\n8\.)/,
+            '7. Please keep the server to English, German, French or Russian. If you can’t keep to mentioned languages, you will be kicked.\n'
+        );
 
-        // Edit the message
+        // Build updated embed
+        const updatedEmbed = EmbedBuilder.from(oldEmbed).setDescription(description);
+
+        // Edit the original message with updated embed
         await message.edit({ embeds: [updatedEmbed] });
 
-        console.log('✅ Successfully removed “Hindi” and updated the embed!');
+        console.log('✅ Successfully updated Rule #7 while keeping the rest unchanged!');
     } catch (err) {
         console.error('❌ Error editing embed:', err);
     }
