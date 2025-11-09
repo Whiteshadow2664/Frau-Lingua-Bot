@@ -21,33 +21,30 @@ module.exports = async (client) => {
             return;
         }
 
-        // Clone the embed into a mutable structure
         let description = oldEmbed.description;
-
         if (!description) {
             console.error('❌ Embed has no description text.');
             return;
         }
 
-        // Identify the specific Rule 7 text
-        const oldRule =
-            '7. Please keep the server to English, German, French, Russian or Hindi. If you can’t keep to metioned languages, you will be kicked.';
-        const newRule =
-            '7. Please keep the server to English, German, French or Russian. If you can’t keep to metioned languages, you will be kicked.';
+        // Original rule text and the new one
+        const oldRule = '13. Follow Discord Rules.';
+        const newRule = '13. Must follow [Discord Guidelines](https://discord.com/guidelines).';
 
-        // Replace that line (keep rest identical)
+        // Replace rule 13 only
         if (description.includes(oldRule)) {
             description = description.replace(oldRule, newRule);
         } else {
-            console.warn('⚠️ Could not find exact Rule 7 text — trying pattern match...');
-            description = description.replace(/7\..*?(?=\n8\.)/s, `${newRule}\n`);
+            console.warn('⚠️ Could not find exact Rule 13 text — trying pattern match...');
+            description = description.replace(/13\..*$/m, newRule);
         }
 
+        // Build updated embed
         const updatedEmbed = EmbedBuilder.from(oldEmbed).setDescription(description);
 
         await message.edit({ embeds: [updatedEmbed] });
 
-        console.log('✅ Successfully replaced Rule #7 text.');
+        console.log('✅ Successfully replaced Rule #13 with clickable Discord Guidelines link!');
     } catch (err) {
         console.error('❌ Error editing embed:', err);
     }
