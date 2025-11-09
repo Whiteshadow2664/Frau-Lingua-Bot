@@ -49,6 +49,10 @@ const linkBlocker = require('./blacklist/linkBlocker');
 const mediaBlocker = require('./blacklist/mediaBlocker');
 const antiSpam = require("./antiSpam");
 
+
+const editRulesEmbed = require('./editRulesEmbed');
+
+
 // Environment Variables
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
 
@@ -488,6 +492,7 @@ client.once('ready', () => {
     dateChannelUpdater(client);
     linkBlocker.monitorLinks(client);
     mediaBlocker.monitorMedia(client);
+editRulesEmbed(client);
     levelUpMonitor.monitorLevelUps(client);
     boostTracker.registerBoostListener(client);
     // Start the status update cycle
