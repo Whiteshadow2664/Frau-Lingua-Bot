@@ -1,15 +1,15 @@
 const badWords = [
   // English
   'cunt', 'dick', 'nigga', 'horny', 'motherfucker', 'mf', 'cum', 'smd', 'suck my dick',
-  'mutterfucker', 'cock', 'pussy', 'fuck you', 'bitch', 'hitler', 'nazi',
-  'asshole', 'twat', 'shithead', 'douche', 'retard', 'slut', 'whore', 'fucker', 'dumbass',
+  'mutterfucker', 'cock', 'pussy', 'bitch', 'hitler', 'nazi',
+  'asshole', 'twat', 'shithead', 'douche', 'retard', 'slut', 'whore',
   'ballsack', 'screw you', 'suck it', 'fml', 'rape', 'pedophile', 'kill yourself', 'kys',
   'dumbfuck', 'booty', 'buttfuck', 'fuckface', 'shitface', 'bastard', 'tits', 'porn',
   'hentai', 'jerk off', 'wank', 'dickhead', 'fuckhead', 'sucka', 'sucker', 'piss off',
   'stfu', 'gtfo', 'hoe', 'eat shit', 'fag', 'faggot',
   'n1gga', 'fak u', 'fak off', 'ejaculate', 'blowjob',
   '69', 'lick me', 'spank me', 'anal', 'twerk', 'splooge', 'nut', 'boobs',
-  'camel toe', 'balls', 'thot', 'milf',  'orgasm',
+  'camel toe', 'thot', 'milf',  'orgasm',
 
   // French
   'pute', 'salope', 'enculé', 'bite', 'connard', 'connasse', 'nique ta mère',
@@ -17,8 +17,7 @@ const badWords = [
   'sodomie', 'cul', 'pornographie', 'milf', 'sperme', 'éjaculer',
 
   // German
-  'fotze', 'arschloch', 'wichser', 'hurensohn', 'schlampe', 'ficken', 'verpiss dich',
-  'scheiße', 'kacke', 'bumsen', 'blasen', 'titten', 'schwanz', 'arsch', 'porno',
+  'fotze', 'arschloch', 'wichser', 'hurensohn', 'schlampe', 'ficken', 'verpiss dich', 'kacke', 'bumsen', 'blasen', 'titten', 'schwanz', 'arsch', 'porno',
   'hure', 'mutterficker', 'milf', 'sperma', 'ejakulieren', 'wichsen',
 
   // Russian
