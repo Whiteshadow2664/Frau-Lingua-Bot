@@ -56,8 +56,8 @@ const birthdayMessages = [
 
 const reactionEmojis = ["🎉","🥳","🎂","🎈","🎁","✨"];
 
-// 🕒 Save cached birthdays to database daily at 5:20 AM IST
-cron.schedule('56 14 * * *', async () => {
+// 🕒 Save cached birthdays to database daily at 5:18 AM IST
+cron.schedule('18 05 * * *', async () => {
     console.log(`📝 Saving cached birthdays at ${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}...`);
     if (birthdayCache.size === 0) {
         console.log("✅ No new birthdays to save.");
@@ -83,8 +83,8 @@ cron.schedule('56 14 * * *', async () => {
     }
 }, { timezone: "Asia/Kolkata" });
 
-// 🎉 Check daily birthdays at 12:00 AM IST
-cron.schedule('58 14 * * *', async () => {
+// 🎉 Check daily birthdays at 04:33 AM IST
+cron.schedule('33 04 * * *', async () => {
     console.log("🎂 Checking birthdays...");
     const today = new Date().toLocaleDateString('en-IN', {
         day: '2-digit',
