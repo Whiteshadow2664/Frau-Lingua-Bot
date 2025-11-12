@@ -48,9 +48,19 @@ const levelUpMonitor = require('./levelUpMonitor');
 const linkBlocker = require('./blacklist/linkBlocker');    
 const mediaBlocker = require('./blacklist/mediaBlocker');
 const antiSpam = require("./antiSpam");
+const birthday = require('./birthday.js');
 
 // Environment Variables
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
+
+
+
+
+birthday.clientDiscord = client;
+
+
+
+
 
 if (!DISCORD_TOKEN) {
     console.error('Error: DISCORD_TOKEN environment variable is not set.');
@@ -178,6 +188,22 @@ if (message.content.toLowerCase() === '!exam') {
 if (message.content.toLowerCase() === '!tips') {
     studyTips.execute(message);
 }
+
+
+
+
+
+
+
+
+    // Check for birthday command
+    await birthday.execute(message);
+}
+
+
+
+
+
 
 if (message.content.startsWith('!giverole')) {
     giverole.execute(message);
