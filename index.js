@@ -198,7 +198,6 @@ if (message.content.toLowerCase() === '!tips') {
 
     // Check for birthday command
     await birthday.execute(message);
-}
 
 
 
