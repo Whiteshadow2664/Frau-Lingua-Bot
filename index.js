@@ -179,21 +179,8 @@ if (message.content.toLowerCase() === '!exam') {
 if (message.content.toLowerCase() === '!tips') {
     studyTips.execute(message);
 }
-
-
-
-
-
-
-
-
     // Check for birthday command
     birthday.execute(message);
-
-
-
-
-
 
 if (message.content.startsWith('!giverole')) {
     giverole.execute(message);
