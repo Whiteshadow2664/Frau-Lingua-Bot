@@ -77,17 +77,6 @@ app.get('/', (req, res) => {
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
 
-
-
-
-
-birthday.clientDiscord = client;
-
-
-
-
-
-
 // Embed Colors
 const embedColors = {
     russian: '#7907ff',
@@ -517,6 +506,7 @@ client.once('ready', () => {
     mediaBlocker.monitorMedia(client);
     levelUpMonitor.monitorLevelUps(client);
     boostTracker.registerBoostListener(client);
+birthday.clientDiscord = client;
     // Start the status update cycle
     setInterval(() => updateBotStatus(client), 10000); // Update every 10 seconds
 });
