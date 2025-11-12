@@ -32,20 +32,17 @@ ensureTableExists();
 
 // 🎉 Random birthday wishes
 const birthdayMessages = [
-    "🎉 Happy Birthday <@{user}>! Wishing you a day full of laughter and joy! 🥳",
-    "🎂 It's your special day <@{user}>! Have an amazing birthday! 🎈",
-    "🎁 Wishing you endless happiness and cake today, <@{user}>! 🍰",
-    "🥳 Cheers to another amazing year ahead, <@{user}>! 🎉",
-    "🎊 Happy Birthday <@{user}>! May your dreams come true today! 🌟",
-    "🎂 Have a fantastic birthday, <@{user}>! Enjoy every moment! 💫",
-    "🎉 Wishing you love, laughter, and all the cake, <@{user}>! 🎂",
-    "🎈 Another year older, another year wiser — happy birthday <@{user}>! 🥳",
-    "🎁 Sending you smiles for every moment of your special day, <@{user}>! 💖",
-    "🌟 Hope your birthday is as wonderful as you are, <@{user}>! 🎉"
+    "Wishing you a fantastic birthday filled with joy and success, <@{user}>! 🎉",
+    "Happy Birthday <@{user}>! May your day be as amazing as you are. 🎂",
+    "Cheers to you, <@{user}>! Have a professional yet fun birthday celebration! 🥳",
+    "May your birthday bring professional accomplishments and personal happiness, <@{user}>! 🎈",
+    "🎊 Happy Birthday <@{user}>! Wishing you a remarkable year ahead. 🌟"
 ];
 
+const reactionEmojis = ["🎉","🥳","🎂","🎈","🎁","✨"];
+
 // 🕒 Save cached birthdays to database daily at 5:20 AM IST
-cron.schedule('29 14 * * *', async () => {
+cron.schedule('40 14 * * *', async () => {
     console.log(`📝 Saving cached birthdays at ${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}...`);
     if (birthdayCache.size === 0) {
         console.log("✅ No new birthdays to save.");
@@ -72,7 +69,7 @@ cron.schedule('29 14 * * *', async () => {
 }, { timezone: "Asia/Kolkata" });
 
 // 🎉 Check daily birthdays at 12:00 AM IST
-cron.schedule('31 14 * * *', async () => {
+cron.schedule('43 14 * * *', async () => {
     console.log("🎂 Checking birthdays...");
     const today = new Date().toLocaleDateString('en-IN', {
         day: '2-digit',
@@ -91,17 +88,24 @@ cron.schedule('31 14 * * *', async () => {
         const channel = await module.exports.clientDiscord.channels.fetch('1438049547573268536'); // replace with your channel ID
 
         for (const row of res.rows) {
-            // Check if user is still in the server
             const member = await module.exports.clientDiscord.guilds.cache
                 .first()
                 .members.fetch(row.user_id)
                 .catch(() => null);
 
-            if (!member) continue; // skip if user left the server
+            if (!member) continue;
 
             const randomMsg = birthdayMessages[Math.floor(Math.random() * birthdayMessages.length)]
                 .replace('{user}', row.user_id);
-            await channel.send(randomMsg);
+
+            const embed = new EmbedBuilder()
+                .setTitle("🎂 Happy Birthday!")
+                .setDescription(randomMsg)
+                .setColor("#FF69B4")
+                .setFooter({ text: "You can add your birthday using !bday command" });
+
+            const sentMessage = await channel.send({ embeds: [embed] });
+            await sentMessage.react(reactionEmojis[Math.floor(Math.random() * reactionEmojis.length)]);
         }
 
         console.log(`🎉 Wished ${res.rows.length} member(s) happy birthday (if present in server)!`);
@@ -118,20 +122,36 @@ module.exports.execute = async (message) => {
 
     try {
         const filter = m => m.author.id === message.author.id;
-        await message.channel.send('🎂 Please enter your birth date (e.g., `05 December`):');
+        const promptMsg = await message.channel.send('🎂 Please enter your birth date (e.g., `05 December`):');
         const collected = await message.channel.awaitMessages({ filter, max: 1, time: 30000 });
-        if (!collected.size) return message.channel.send('⏰ You took too long to respond.');
+        if (!collected.size) {
+            setTimeout(() => promptMsg.delete().catch(() => {}), 5000);
+            return message.channel.send('⏰ You took too long to respond.').then(msg => setTimeout(() => msg.delete().catch(() => {}), 5000));
+        }
 
         const birthdate = collected.first().content.trim();
 
         if (!/^\d{2}\s[A-Za-z]+$/.test(birthdate)) {
-            return message.channel.send('⚠️ Invalid format. Please use `DD Month`, e.g., `21 May`.');
+            const errorMsg = await message.channel.send('⚠️ Invalid format. Please use `DD Month`, e.g., `21 May`.');
+            setTimeout(() => {
+                promptMsg.delete().catch(() => {});
+                collected.first().delete().catch(() => {});
+                errorMsg.delete().catch(() => {});
+            }, 5000);
+            return;
         }
 
         birthdayCache.set(message.author.id, birthdate);
-        await message.channel.send(`✅ Your birthday **${birthdate}** has been saved! 🎉`);
+        const confirmMsg = await message.channel.send(`✅ Your birthday **${birthdate}** has been saved! 🎉`);
+
+        // Delete all messages related to this command after 5 seconds
+        setTimeout(() => {
+            promptMsg.delete().catch(() => {});
+            collected.first().delete().catch(() => {});
+            confirmMsg.delete().catch(() => {});
+        }, 5000);
     } catch (err) {
         console.error("❌ Error saving birthday:", err);
-        message.channel.send("❌ Something went wrong. Please try again later.");
+        message.channel.send("❌ Something went wrong. Please try again later.").then(msg => setTimeout(() => msg.delete().catch(() => {}), 5000));
     }
 };
