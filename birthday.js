@@ -100,7 +100,7 @@ cron.schedule('33 04 * * *', async () => {
             return;
         }
 
-        const channel = await module.exports.clientDiscord.channels.fetch('1438049547573268536'); // replace with your channel ID
+        const channel = await module.exports.clientDiscord.channels.fetch('818023867372011551'); // replace with your channel ID
 
         for (const row of res.rows) {
             const member = await module.exports.clientDiscord.guilds.cache
