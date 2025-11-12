@@ -45,7 +45,7 @@ const birthdayMessages = [
 ];
 
 // 🕒 Save cached birthdays to database daily at 5:20 AM IST
-cron.schedule('13 14 * * *', async () => {
+cron.schedule('29 14 * * *', async () => {
     console.log(`📝 Saving cached birthdays at ${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}...`);
     if (birthdayCache.size === 0) {
         console.log("✅ No new birthdays to save.");
@@ -72,7 +72,7 @@ cron.schedule('13 14 * * *', async () => {
 }, { timezone: "Asia/Kolkata" });
 
 // 🎉 Check daily birthdays at 12:00 AM IST
-cron.schedule('21 14 * * *', async () => {
+cron.schedule('31 14 * * *', async () => {
     console.log("🎂 Checking birthdays...");
     const today = new Date().toLocaleDateString('en-IN', {
         day: '2-digit',
@@ -88,11 +88,11 @@ cron.schedule('21 14 * * *', async () => {
             return;
         }
 
-        const channel = await birthday.clientDiscord.channels.fetch('1438049547573268536'); // replace with your channel ID
+        const channel = await module.exports.clientDiscord.channels.fetch('1438049547573268536'); // replace with your channel ID
 
         for (const row of res.rows) {
             // Check if user is still in the server
-            const member = await birthday.clientDiscord.guilds.cache
+            const member = await module.exports.clientDiscord.guilds.cache
                 .first()
                 .members.fetch(row.user_id)
                 .catch(() => null);
