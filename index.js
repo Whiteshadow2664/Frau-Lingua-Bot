@@ -53,15 +53,6 @@ const birthday = require('./birthday.js');
 // Environment Variables
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
 
-
-
-
-birthday.clientDiscord = client;
-
-
-
-
-
 if (!DISCORD_TOKEN) {
     console.error('Error: DISCORD_TOKEN environment variable is not set.');
     process.exit(1);
@@ -85,6 +76,17 @@ app.get('/', (req, res) => {
 });
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
+
+
+
+
+
+birthday.clientDiscord = client;
+
+
+
+
+
 
 // Embed Colors
 const embedColors = {
@@ -197,7 +199,7 @@ if (message.content.toLowerCase() === '!tips') {
 
 
     // Check for birthday command
-    await birthday.execute(message);
+    birthday.execute(message);
 
 
 
