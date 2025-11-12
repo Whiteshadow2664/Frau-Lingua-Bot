@@ -57,7 +57,7 @@ const birthdayMessages = [
 const reactionEmojis = ["🎉","🥳","🎂","🎈","🎁","✨"];
 
 // 🕒 Save cached birthdays to database daily at 5:20 AM IST
-cron.schedule('47 14 * * *', async () => {
+cron.schedule('56 14 * * *', async () => {
     console.log(`📝 Saving cached birthdays at ${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}...`);
     if (birthdayCache.size === 0) {
         console.log("✅ No new birthdays to save.");
@@ -84,7 +84,7 @@ cron.schedule('47 14 * * *', async () => {
 }, { timezone: "Asia/Kolkata" });
 
 // 🎉 Check daily birthdays at 12:00 AM IST
-cron.schedule('48 14 * * *', async () => {
+cron.schedule('58 14 * * *', async () => {
     console.log("🎂 Checking birthdays...");
     const today = new Date().toLocaleDateString('en-IN', {
         day: '2-digit',
@@ -146,15 +146,22 @@ module.exports.execute = async (message) => {
 
         const birthdate = collected.first().content.trim();
 
-        if (!/^\d{2}\s[A-Za-z]+$/.test(birthdate)) {
-            const errorMsg = await message.channel.send('⚠️ Invalid format. Please use `DD Month`, e.g., `21 May`.');
-            setTimeout(() => {
-                promptMsg.delete().catch(() => {});
-                collected.first().delete().catch(() => {});
-                errorMsg.delete().catch(() => {});
-            }, 5000);
-            return;
-        }
+        const validMonths = [
+    "January","February","March","April","May","June",
+    "July","August","September","October","November","December"
+];
+
+const [day, month] = birthdate.split(' ');
+
+if (!/^\d{2}$/.test(day) || !validMonths.includes(month)) {
+    const errorMsg = await message.channel.send('⚠️ Invalid format. Please use `DD Month`, e.g., `21 May`.');
+    setTimeout(() => {
+        promptMsg.delete().catch(() => {});
+        collected.first().delete().catch(() => {});
+        errorMsg.delete().catch(() => {});
+    }, 5000);
+    return;
+}
 
         birthdayCache.set(message.author.id, birthdate);
         const confirmMsg = await message.channel.send(`✅ Your birthday **${birthdate}** has been saved! 🎉`);
