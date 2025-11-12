@@ -36,13 +36,28 @@ const birthdayMessages = [
     "Happy Birthday <@{user}>! May your day be as amazing as you are. 🎂",
     "Cheers to you, <@{user}>! Have a professional yet fun birthday celebration! 🥳",
     "May your birthday bring professional accomplishments and personal happiness, <@{user}>! 🎈",
-    "🎊 Happy Birthday <@{user}>! Wishing you a remarkable year ahead. 🌟"
+    "🎊 Happy Birthday <@{user}>! Wishing you a remarkable year ahead. 🌟",
+    "Happy Birthday <@{user}>! May your year be filled with achievements and joy. 🏆",
+    "Wishing you a wonderful birthday and continued success, <@{user}>! 🎂",
+    "🎉 Happy Birthday <@{user}>! Hope your day is filled with happiness and laughter.",
+    "May your birthday be the start of a year full of good luck, health, and happiness, <@{user}>! 🍰",
+    "Happy Birthday <@{user}>! Wishing you a day of celebration and a year of success. 🌟",
+    "Cheers to another year of excellence and happiness, <@{user}>! 🥳",
+    "🎂 Wishing you a birthday as special as you are, <@{user}>! Enjoy your day.",
+    "Happy Birthday <@{user}>! May your personal and professional life shine even brighter this year. ✨",
+    "Wishing you a memorable birthday filled with laughter and great memories, <@{user}>! 🎈",
+    "🎉 Happy Birthday <@{user}>! Hope your day is as bright and inspiring as you are.",
+    "May this birthday bring you closer to your goals and dreams, <@{user}>! 🏆",
+    "Happy Birthday <@{user}>! Celebrate your day with joy, love, and happiness. 💖",
+    "Wishing you a prosperous and joyful year ahead, <@{user}>! 🎂",
+    "🎊 Happy Birthday <@{user}>! May every moment today be as special as you are.",
+    "Cheers <@{user}>! Have a wonderful birthday and a year full of achievements. 🥳"
 ];
 
 const reactionEmojis = ["🎉","🥳","🎂","🎈","🎁","✨"];
 
 // 🕒 Save cached birthdays to database daily at 5:20 AM IST
-cron.schedule('40 14 * * *', async () => {
+cron.schedule('47 14 * * *', async () => {
     console.log(`📝 Saving cached birthdays at ${new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' })}...`);
     if (birthdayCache.size === 0) {
         console.log("✅ No new birthdays to save.");
@@ -69,7 +84,7 @@ cron.schedule('40 14 * * *', async () => {
 }, { timezone: "Asia/Kolkata" });
 
 // 🎉 Check daily birthdays at 12:00 AM IST
-cron.schedule('43 14 * * *', async () => {
+cron.schedule('48 14 * * *', async () => {
     console.log("🎂 Checking birthdays...");
     const today = new Date().toLocaleDateString('en-IN', {
         day: '2-digit',
