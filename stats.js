@@ -61,23 +61,26 @@ module.exports = {
             const colors = Object.values(colorSet);
 
             // Draw pie slices with black border
-            data.forEach((value, i) => {
-                const slice = (value / total) * (Math.PI * 2);
+            const centerX = width / 2 + 80; // shift right for legend
+const centerY = height / 2;
 
-                ctx.beginPath();
-                ctx.moveTo(width / 2, height / 2);
-                ctx.arc(width / 2, height / 2, 250, start, start + slice);
-                ctx.closePath();
+data.forEach((value, i) => {
+    const slice = (value / total) * (Math.PI * 2);
 
-                ctx.fillStyle = colors[i];
-                ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(centerX, centerY);
+    ctx.arc(centerX, centerY, 250, start, start + slice);
+    ctx.closePath();
 
-                ctx.lineWidth = 3; // border thickness
-                ctx.strokeStyle = "#000000"; // black border
-                ctx.stroke();
+    ctx.fillStyle = colors[i];
+    ctx.fill();
 
-                start += slice;
-            });
+    ctx.lineWidth = 3; // border thickness
+    ctx.strokeStyle = "#000000"; // black border
+    ctx.stroke();
+
+    start += slice;
+});
 
             // Draw legend box
             const legendX = 20;
