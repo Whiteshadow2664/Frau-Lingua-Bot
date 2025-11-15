@@ -73,7 +73,7 @@ module.exports = {
             });
 
             ctx.fillStyle = "#ffffff";
-            ctx.font = "bold 28px Arial";
+            ctx.font = "bold 28px 'Times New Roman'";
 
             labels.forEach((label, i) => {
                 ctx.fillText(`${label}: ${data[i]}`, 20, 40 + i * 40);
