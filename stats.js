@@ -122,13 +122,13 @@ module.exports = {
         // ---------- EMBED PAGE 1 ----------
         const embed1 = new EmbedBuilder()
             .setTitle("📊 Language Roles Statistics")
-            .setColor("#ffffff")
+            .setColor("#acf508")
             .setImage("attachment://language_roles.png");
 
         // ---------- EMBED PAGE 2 ----------
         const embed2 = new EmbedBuilder()
             .setTitle("📊 Native Roles Statistics")
-            .setColor("#ffffff")
+            .setColor("#acf508")
             .setImage("attachment://native_roles.png");
 
         let currentPage = 0;
