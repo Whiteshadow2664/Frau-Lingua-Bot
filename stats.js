@@ -5,9 +5,7 @@ const {
     ButtonStyle,
     EmbedBuilder
 } = require("discord.js");
-
-const { ChartJSNodeCanvas } = require("chartjs-node-canvas");
-require("chart.js/auto");
+const { createCanvas } = require("canvas");
 
 module.exports = {
     name: "stat",
@@ -36,62 +34,80 @@ module.exports = {
         const nativeFrenchCount = guild.members.cache.filter(m => m.roles.cache.has(nativeFrenchId)).size;
         const nativeRussianCount = guild.members.cache.filter(m => m.roles.cache.has(nativeRussianId)).size;
 
-        // ---------- PIE CHART COLORS ----------
-        const languageColors = ["#e67e22", "#0043ff", "#3498db"];
-        const nativeColors = ["#f4ed09", "#09ebf6", "#7907ff"];
+        // ---------- COLORS ----------
+        const languageColors = {
+            german: '#e67e22',
+            french: '#0043ff',
+            russian: '#3498db'
+        };
 
-        // CREATE CANVAS
-        const creator = new ChartJSNodeCanvas({
-            width: 600,
-            height: 600,
-            backgroundColour: "transparent"
-        });
+        const nativeColors = {
+            german: '#f4ed09',
+            french: '#09ebf6',
+            russian: '#7907ff'
+        };
 
-        // PIE CHART GENERATOR
-        async function generatePie(labels, data, colors) {
-            const config = {
-                type: "pie",
-                data: {
-                    labels,
-                    datasets: [{
-                        data,
-                        backgroundColor: colors
-                    }]
-                },
-                options: {
-                    plugins: {
-                        legend: {
-                            labels: {
-                                color: "white",
-                                font: { size: 18 }
-                            }
-                        }
-                    }
-                }
-            };
+        // ---------- PIE CHART CREATOR ----------
+        function createPieChart(data, labels, colorSet, filename) {
+            const width = 600;
+            const height = 600;
+            const canvas = createCanvas(width, height);
+            const ctx = canvas.getContext("2d");
 
-            return creator.renderToBuffer(config);
+            ctx.clearRect(0, 0, width, height);
+
+            const total = data.reduce((a, b) => a + b, 0);
+            let start = -0.5 * Math.PI;
+            const colors = Object.values(colorSet);
+
+            data.forEach((value, i) => {
+                const slice = (value / total) * (Math.PI * 2);
+
+                ctx.beginPath();
+                ctx.moveTo(width / 2, height / 2);
+                ctx.fillStyle = colors[i];
+                ctx.arc(width / 2, height / 2, 250, start, start + slice);
+                ctx.fill();
+
+                start += slice;
+            });
+
+            ctx.fillStyle = "#ffffff";
+            ctx.font = "bold 28px Arial";
+
+            labels.forEach((label, i) => {
+                ctx.fillText(`${label}: ${data[i]}`, 20, 40 + i * 40);
+            });
+
+            return new AttachmentBuilder(canvas.toBuffer(), { name: filename });
         }
 
-        const img1 = await generatePie(
-            ["German", "French", "Russian"],
+        // --- CHARTS ---
+        const chart1 = createPieChart(
             [germanCount, frenchCount, russianCount],
-            languageColors
+            ["German", "French", "Russian"],
+            languageColors,
+            "language_roles.png"
         );
 
-        const img2 = await generatePie(
-            ["Native German", "Native French", "Native Russian"],
+        const chart2 = createPieChart(
             [nativeGermanCount, nativeFrenchCount, nativeRussianCount],
-            nativeColors
+            ["Native German", "Native French", "Native Russian"],
+            nativeColors,
+            "native_roles.png"
         );
-
-        const chart1 = new AttachmentBuilder(img1, { name: "language_roles.png" });
-        const chart2 = new AttachmentBuilder(img2, { name: "native_roles.png" });
 
         // ---------- BUTTONS ----------
         const row = new ActionRowBuilder().addComponents(
-            new ButtonBuilder().setCustomId("prev").setLabel("◀️").setStyle(ButtonStyle.Secondary),
-            new ButtonBuilder().setCustomId("next").setLabel("▶️").setStyle(ButtonStyle.Secondary)
+            new ButtonBuilder()
+                .setCustomId("prev")
+                .setLabel("◀️")
+                .setStyle(ButtonStyle.Secondary),
+
+            new ButtonBuilder()
+                .setCustomId("next")
+                .setLabel("▶️")
+                .setStyle(ButtonStyle.Secondary)
         );
 
         // ---------- EMBEDS ----------
@@ -105,43 +121,54 @@ module.exports = {
             .setColor("#acf508")
             .setImage("attachment://native_roles.png");
 
+        let currentPage = 0;
         const pages = [
             { embed: embed1, files: [chart1] },
             { embed: embed2, files: [chart2] }
         ];
 
-        let page = 0;
-
+        // ---------- SEND FIRST PAGE ----------
         const msg = await message.reply({
             embeds: [pages[0].embed],
             files: pages[0].files,
             components: [row]
         });
 
+        // ---------- COLLECTOR ----------
         const collector = msg.createMessageComponentCollector({ time: 30000 });
 
-        collector.on("collect", async interaction => {
-            if (interaction.user.id !== message.author.id)
-                return interaction.reply({ content: "Not for you.", ephemeral: true });
+        collector.on("collect", async (interaction) => {
+            if (interaction.user.id !== message.author.id) {
+                return interaction.reply({ content: "This panel is not for you!", ephemeral: true });
+            }
 
-            page = interaction.customId === "next"
-                ? (page + 1) % pages.length
-                : (page - 1 + pages.length) % pages.length;
+            currentPage = interaction.customId === "next"
+                ? (currentPage + 1) % pages.length
+                : (currentPage - 1 + pages.length) % pages.length;
 
             await interaction.update({
-                embeds: [pages[page].embed],
-                files: pages[page].files,
+                embeds: [pages[currentPage].embed],
+                files: pages[currentPage].files,
                 components: [row]
             });
         });
 
         collector.on("end", async () => {
-            const disabled = new ActionRowBuilder().addComponents(
-                new ButtonBuilder().setCustomId("prev").setLabel("◀️").setStyle(ButtonStyle.Secondary).setDisabled(true),
-                new ButtonBuilder().setCustomId("next").setLabel("▶️").setStyle(ButtonStyle.Secondary).setDisabled(true)
+            const disabledRow = new ActionRowBuilder().addComponents(
+                new ButtonBuilder()
+                    .setCustomId("prev")
+                    .setLabel("◀️")
+                    .setStyle(ButtonStyle.Secondary)
+                    .setDisabled(true),
+
+                new ButtonBuilder()
+                    .setCustomId("next")
+                    .setLabel("▶️")
+                    .setStyle(ButtonStyle.Secondary)
+                    .setDisabled(true)
             );
 
-            await msg.edit({ components: [disabled] });
+            await msg.edit({ components: [disabledRow] });
         });
     }
 };
