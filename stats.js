@@ -60,23 +60,41 @@ module.exports = {
             let start = -0.5 * Math.PI;
             const colors = Object.values(colorSet);
 
+            // Draw pie slices with black border
             data.forEach((value, i) => {
                 const slice = (value / total) * (Math.PI * 2);
 
                 ctx.beginPath();
                 ctx.moveTo(width / 2, height / 2);
-                ctx.fillStyle = colors[i];
                 ctx.arc(width / 2, height / 2, 250, start, start + slice);
+                ctx.closePath();
+
+                ctx.fillStyle = colors[i];
                 ctx.fill();
+
+                ctx.lineWidth = 3; // border thickness
+                ctx.strokeStyle = "#000000"; // black border
+                ctx.stroke();
 
                 start += slice;
             });
 
-            ctx.fillStyle = "#ffffff";
-            ctx.font = "bold 28px 'Times New Roman'";
+            // Draw legend box
+            const legendX = 20;
+            let legendY = 40;
+            ctx.font = "bold 22px 'Times New Roman'";
+            ctx.textAlign = "left";
 
             labels.forEach((label, i) => {
-                ctx.fillText(`${label}: ${data[i]}`, 20, 40 + i * 40);
+                // colored square
+                ctx.fillStyle = colors[i];
+                ctx.fillRect(legendX, legendY - 18, 30, 18);
+
+                // label text
+                ctx.fillStyle = "#ffffff";
+                ctx.fillText(`${label}: ${data[i]}`, legendX + 40, legendY);
+
+                legendY += 40;
             });
 
             return new AttachmentBuilder(canvas.toBuffer(), { name: filename });
