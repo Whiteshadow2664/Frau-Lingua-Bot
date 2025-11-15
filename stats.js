@@ -146,11 +146,17 @@ module.exports = {
         ];
 
         // ---------- SEND FIRST PAGE ----------
-        const msg = await message.reply({
-            embeds: [pages[0].embed],
-            files: pages[0].files,
-            components: [row]
-        });
+        let msg;
+        try {
+            msg = await message.reply({
+                embeds: [pages[0].embed],
+                files: pages[0].files,
+                components: [row]
+            });
+        } catch (err) {
+            console.error("Failed to send stat embed:", err);
+            return;
+        }
 
         // ---------- COLLECTOR ----------
         const collector = msg.createMessageComponentCollector({ time: 30000 });
@@ -164,11 +170,15 @@ module.exports = {
                 ? (currentPage + 1) % pages.length
                 : (currentPage - 1 + pages.length) % pages.length;
 
-            await interaction.update({
-                embeds: [pages[currentPage].embed],
-                files: pages[currentPage].files,
-                components: [row]
-            });
+            try {
+                await interaction.update({
+                    embeds: [pages[currentPage].embed],
+                    files: pages[currentPage].files,
+                    components: [row]
+                });
+            } catch (err) {
+                console.error("Failed to update message:", err);
+            }
         });
 
         collector.on("end", async () => {
@@ -178,7 +188,6 @@ module.exports = {
                     .setLabel("◀️")
                     .setStyle(ButtonStyle.Secondary)
                     .setDisabled(true),
-
                 new ButtonBuilder()
                     .setCustomId("next")
                     .setLabel("▶️")
@@ -186,7 +195,11 @@ module.exports = {
                     .setDisabled(true)
             );
 
-            await msg.edit({ components: [disabledRow] });
+            try {
+                await msg.edit({ components: [disabledRow] });
+            } catch (err) {
+                console.error("Failed to disable buttons:", err);
+            }
         });
     }
 };
