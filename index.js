@@ -50,6 +50,13 @@ const mediaBlocker = require('./blacklist/mediaBlocker');
 const antiSpam = require("./antiSpam");
 const birthday = require('./birthday.js');
 
+
+
+const statsCommand = require("./stats.js");
+
+
+
+
 // Environment Variables
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
 
@@ -196,6 +203,24 @@ if (message.content.toLowerCase() === '!cefr') {
 if (message.content.toLowerCase().startsWith("!ban")) {
     banCommand.execute(message);
 }
+
+
+
+
+
+// STATISTICS COMMAND
+if (message.content.toLowerCase() === "!stat") {
+    return statsCommand.execute(message, client);
+}
+
+
+
+
+
+
+
+
+
 
 if (message.content.toLowerCase().startsWith("!kick")) {
     kickCommand.execute(message);
