@@ -49,13 +49,8 @@ const linkBlocker = require('./blacklist/linkBlocker');
 const mediaBlocker = require('./blacklist/mediaBlocker');
 const antiSpam = require("./antiSpam");
 const birthday = require('./birthday.js');
-
-
-
 const statsCommand = require("./stats.js");
-
-
-
+const autoReactHello = require("./autoReactHello");
 
 // Environment Variables
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
@@ -204,23 +199,9 @@ if (message.content.toLowerCase().startsWith("!ban")) {
     banCommand.execute(message);
 }
 
-
-
-
-
-// STATISTICS COMMAND
 if (message.content.toLowerCase() === "!stat") {
     return statsCommand.execute(message, client);
 }
-
-
-
-
-
-
-
-
-
 
 if (message.content.toLowerCase().startsWith("!kick")) {
     kickCommand.execute(message);
@@ -517,8 +498,9 @@ client.once('ready', () => {
     linkBlocker.monitorLinks(client);
     mediaBlocker.monitorMedia(client);
     levelUpMonitor.monitorLevelUps(client);
-    boostTracker.registerBoostListener(client);
+   boostTracker.registerBoostListener(client);
 birthday.clientDiscord = client;
+autoReactHello.init(client);
     // Start the status update cycle
     setInterval(() => updateBotStatus(client), 10000); // Update every 10 seconds
 });
