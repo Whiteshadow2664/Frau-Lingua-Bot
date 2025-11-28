@@ -129,7 +129,7 @@ module.exports = (client) => {
             // Fixed Diwali dates for next 30 years
 const DIWALI_DATES = {
     2025: "11-01",
-    2026: "11-10",
+    2026: "11-08",
     2027: "10-30",
     2028: "10-18",
     2029: "11-06",
