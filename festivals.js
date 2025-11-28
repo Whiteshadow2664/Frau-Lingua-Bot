@@ -153,17 +153,21 @@ module.exports = (client) => {
             try {
                 const channel = await client.channels.fetch(FESTIVAL_CHANNEL);
 
-                const embed = new EmbedBuilder()
-                    .setTitle(festival.title)
-                    .setDescription(festival.message)
-                    .setImage(festival.img)
-                    .setColor("#acf508")
-                    .setTimestamp();
+                // Create an attachment for the local image
+const attachment = new AttachmentBuilder(festival.img);
 
-                const msg = await channel.send({
-                    content: "@everyone",
-                    embeds: [embed]
-                });
+const embed = new EmbedBuilder()
+    .setTitle(festival.title)
+    .setDescription(festival.message)
+    .setImage(`attachment://${festival.img.split("/").pop()}`) // uses the attached file
+    .setColor("#acf508")
+    .setTimestamp();
+
+const msg = await channel.send({
+    content: "@everyone",
+    embeds: [embed],
+    files: [attachment] // attach the image
+});
 
                 // Auto reactions
                 const celebrationEmojis = ["🎉","✨","💛","🎊","🥳"];
