@@ -1,7 +1,7 @@
 const cron = require("node-cron");
 const { EmbedBuilder, AttachmentBuilder } = require("discord.js");
 
-const FESTIVAL_CHANNEL = "1443874625091010697"; // new channel ID
+const FESTIVAL_CHANNEL = "1279821768785137686"; // new channel ID
 
 // Utility: Calculate 4th Thursday of November (Thanksgiving)
 function getThanksgivingDate(year) {
@@ -51,11 +51,7 @@ function getFestivalData() {
             title: "🎉 Happy New Year!",
             message: "Wishing everyone a year filled with success, joy, and new beginnings.",
             img: "./images/1.jpg"
-        },"11-28": {
-    title: "🤖 Bot Testing!",
-    message: "Today we celebrate our amazing bot features and testing day. Wishing smooth performance and happy coding!",
-    img: "./images/13.jpg"
-},
+        },
         "12-25": {
             title: "🎄 Merry Christmas!",
             message: "Warm wishes of joy, peace, and harmony to everyone celebrating today.",
@@ -116,7 +112,7 @@ function getFestivalData() {
 
 module.exports = (client) => {
     cron.schedule(
-        "23 15 * * *", // runs daily at 09:00 IST
+        "00 09 * * *", // runs daily at 09:00 IST
         async () => {
             const today = new Date().toLocaleDateString("en-IN", {
                 timeZone: "Asia/Kolkata",
@@ -157,11 +153,10 @@ module.exports = (client) => {
 const attachment = new AttachmentBuilder(festival.img);
 
 const embed = new EmbedBuilder()
-    .setTitle(festival.title)
+    .setTitle(festival.title.toUpperCase())
     .setDescription(festival.message)
     .setImage(`attachment://${festival.img.split("/").pop()}`) // uses the attached file
-    .setColor("#acf508")
-    .setTimestamp();
+    .setColor("#acf508");
 
 const msg = await channel.send({
     content: "@everyone",
