@@ -31,19 +31,6 @@ function getEasterDate(year) {
     return new Date(year, month - 1, day);
 }
 
-// Utility: Approximate Diwali (Kartika Amavasya)
-function getDiwaliDate(year) {
-    // Approximate: new moon in October/November
-    let start = new Date(year, 9, 20); // Oct 20
-    let end = new Date(year, 10, 20);  // Nov 20
-    for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
-        if (d.getDay() === 0) continue; // crude check: skip Sundays
-        // Ideally, precise lunar calculation needed; using placeholder approximate
-        if (d.getDate() % 5 === 0) return new Date(d);
-    }
-    return new Date(year, 10, 4); // fallback
-}
-
 // All festivals
 function getFestivalData() {
     return {
@@ -139,10 +126,43 @@ module.exports = (client) => {
             const easterKey = `${String(easter.getMonth() + 1).padStart(2, "0")}-${String(easter.getDate()).padStart(2, "0")}`;
             if (todayKey === easterKey) festival = festivals["EASTER"];
 
-            // Dynamic: Diwali
-            const diwali = getDiwaliDate(year);
-            const diwaliKey = `${String(diwali.getMonth() + 1).padStart(2, "0")}-${String(diwali.getDate()).padStart(2, "0")}`;
-            if (todayKey === diwaliKey) festival = festivals["11-12"]; // Diwali image
+            // Fixed Diwali dates for next 30 years
+const DIWALI_DATES = {
+    2025: "11-01",
+    2026: "11-10",
+    2027: "10-30",
+    2028: "10-18",
+    2029: "11-06",
+    2030: "10-26",
+    2031: "11-14",
+    2032: "11-03",
+    2033: "10-24",
+    2034: "11-12",
+    2035: "11-01",
+    2036: "10-20",
+    2037: "11-09",
+    2038: "10-29",
+    2039: "10-18",
+    2040: "11-06",
+    2041: "10-27",
+    2042: "11-15",
+    2043: "11-04",
+    2044: "10-23",
+    2045: "11-12",
+    2046: "11-01",
+    2047: "10-21",
+    2048: "11-09",
+    2049: "10-30",
+    2050: "10-19",
+    2051: "11-07",
+    2052: "10-26",
+    2053: "11-15",
+    2054: "11-04",
+};
+
+if (DIWALI_DATES[year] === todayKey) {
+    festival = festivals["11-12"];
+}
 
             if (!festival) return;
 
