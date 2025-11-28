@@ -116,7 +116,7 @@ function getFestivalData() {
 
 module.exports = (client) => {
     cron.schedule(
-        "18 15 * * *", // runs daily at 09:00 IST
+        "21 15 * * *", // runs daily at 09:00 IST
         async () => {
             const today = new Date().toLocaleDateString("en-IN", {
                 timeZone: "Asia/Kolkata",
