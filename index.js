@@ -51,12 +51,7 @@ const antiSpam = require("./antiSpam");
 const birthday = require('./birthday.js');
 const statsCommand = require("./stats.js");
 const autoReactHello = require("./autoReactHello");
-
-
-
 const festivalWisher = require("./festivals");
-
-
 
 // Environment Variables
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
@@ -502,10 +497,7 @@ client.once('ready', () => {
     levelSystem(client);
     dateChannelUpdater(client);
     linkBlocker.monitorLinks(client);
-
-
-festivalWisher(client);
-
+    festivalWisher(client);
     mediaBlocker.monitorMedia(client);
     levelUpMonitor.monitorLevelUps(client);
    boostTracker.registerBoostListener(client);
