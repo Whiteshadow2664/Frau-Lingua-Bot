@@ -51,7 +51,11 @@ function getFestivalData() {
             title: "🎉 Happy New Year!",
             message: "Wishing everyone a year filled with success, joy, and new beginnings.",
             img: "./images/1.jpg"
-        },
+        },"11-28": {
+    title: "🤖 Bot Testing!",
+    message: "Today we celebrate our amazing bot features and testing day. Wishing smooth performance and happy coding!",
+    img: "./images/13.jpg"
+},
         "12-25": {
             title: "🎄 Merry Christmas!",
             message: "Warm wishes of joy, peace, and harmony to everyone celebrating today.",
@@ -112,7 +116,7 @@ function getFestivalData() {
 
 module.exports = (client) => {
     cron.schedule(
-        "00 09 * * *", // runs daily at 09:00 IST
+        "11 15 * * *", // runs daily at 09:00 IST
         async () => {
             const today = new Date().toLocaleDateString("en-IN", {
                 timeZone: "Asia/Kolkata",
