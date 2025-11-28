@@ -1,5 +1,5 @@
 const cron = require("node-cron");
-const { EmbedBuilder } = require("discord.js");
+const { EmbedBuilder, AttachmentBuilder } = require("discord.js");
 
 const FESTIVAL_CHANNEL = "1443874625091010697"; // new channel ID
 
