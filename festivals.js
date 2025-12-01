@@ -61,7 +61,7 @@ function getFestivalData() {
         },
         "08-15": {
             title: "INDIA INDEPENDENCE DAY 🇮🇳",
-            message: "Happy Independence Day to all our Indian members! May the spirit of freedom and unity always light our way.",
+            message: "May the tricolor always fly high in our hearts and inspire us to build a stronger, more prosperous India together. Happy Independence Day.",
             img: "./images/13.jpg"
         },"07-04": {
             title: "HAPPY 4TH OF JULY 🇺🇲",
