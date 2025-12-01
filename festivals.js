@@ -60,17 +60,17 @@ function getFestivalData() {
             img: "./images/5.jpg"
         },
         "08-15": {
-            title: "INDIA INDEPENDENCE DAY 🇮🇳",
+            title: "🇮🇳 INDIA INDEPENDENCE DAY",
             message: "May the tricolor always fly high in our hearts and inspire us to build a stronger, more prosperous India together. Happy Independence Day.",
             img: "./images/13.jpg"
         },"07-04": {
-            title: "HAPPY 4TH OF JULY 🇺🇲",
+            title: "🇺🇲 HAPPY 4TH OF JULY",
             message: "Happy 4th of July to our American friends in the server! Wishing you all a safe, joyous, and celebratory Independence Day.",
             img: "./images/14.jpg"
         },
 
 "05-10": {
-            title: "HAPPY MOTHER'S DAY",
+            title: "💜 HAPPY MOTHER'S DAY",
             message: "Happy Mother's Day to all the amazing moms in the server! We celebrate the endless love and dedication you bring every day.",
             img: "./images/15.jpg"
         },
