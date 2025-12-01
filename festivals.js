@@ -59,6 +59,21 @@ function getFestivalData() {
             message: "Your health is your most valuable asset—take care, stay strong, and live well.",
             img: "./images/5.jpg"
         },
+        "08-15": {
+            title: "INDIA INDEPENDENCE DAY 🇮🇳",
+            message: "Happy Independence Day to all our Indian members! May the spirit of freedom and unity always light our way.",
+            img: "./images/13.jpg"
+        },"07-04": {
+            title: "HAPPY 4TH OF JULY 🇺🇲",
+            message: "Happy 4th of July to our American friends in the server! Wishing you all a safe, joyous, and celebratory Independence Day.",
+            img: "./images/14.jpg"
+        },
+
+"05-10": {
+            title: "HAPPY MOTHER'S DAY",
+            message: "Happy Mother's Day to all the amazing moms in the server! We celebrate the endless love and dedication you bring every day.",
+            img: "./images/15.jpg"
+        },
         "02-14": {
             title: "❤️ Happy Valentine’s Day!",
             message: "May your day be filled with love, kindness, and meaningful connections.",
