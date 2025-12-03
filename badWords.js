@@ -12,7 +12,7 @@ const badWords = [
   'camel toe', 'thot', 'milf',  'orgasm',
 
   // French
-  'pute', 'salope', 'enculé', 'bite', 'connard', 'connasse', 'nique ta mère',
+  'pute', 'salope', 'enculé', 'connard', 'connasse', 'nique ta mère',
   'bordel', 'pd', 'sucer', 'fils de pute', 'branler', 'branlette', 'chatte', 'merde',
   'sodomie', 'cul', 'pornographie', 'milf', 'sperme', 'éjaculer',
 
