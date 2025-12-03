@@ -115,7 +115,7 @@ module.exports = {
       setTimeout(async () => {
         const channel = await interaction.guild.channels.fetch(ticketChannel.id).catch(() => null);
         if (channel) {
-          channel.send(`@Moderator please assist ${user.username}'s ticket!`);
+          channel.send(`<@&852906005640642570> please assist ${user.username}'s ticket!`);
         }
       }, 300000);
 
