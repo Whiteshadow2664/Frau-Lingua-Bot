@@ -135,7 +135,7 @@ const embed = new EmbedBuilder()
 const wordOfTheDayTimes = {
   russian: '30 03 * * *',  // 03:30 AM IST for Russian
   german: '30 04 * * *',   // 04:30 AM IST for German
-  french: '33 04 * * *',   // 04:33 AM IST for French
+  french: '40 04 * * *',   // 04:33 AM IST for French
 };
 
 Object.keys(wordOfTheDayTimes).forEach((language) => {
