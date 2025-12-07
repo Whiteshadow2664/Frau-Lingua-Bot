@@ -26,9 +26,9 @@ module.exports = {
 
                     '**2. Word of the Day**\n' +
                     '• The bot sends a new word daily in the respective language channels:\n' +
-                    `   - **German**: Sent at <t:1737673200:t> (according to your time zone)\n` +
-                    `   - **French**: Sent at <t:1737673200:t> (according to your time zone)\n` +
-                    `   - **Russian**: Sent at <t:1737669600:t> (according to your time zone)\n\n` +
+                    `   - **German**: Sent at <t:1765069500:t>  (according to your time zone)\n` +
+                    `   - **French**: Sent at <t:1765069800:t>  (according to your time zone)\n` +
+                    `   - **Russian**: Sent at <t:1765069200:t> (according to your time zone)\n\n` +
 
                     '**3. Study Resources**\n' +
                     '• Use the command **!resources** to get helpful study resources for Russian, German, and French.\n' +
