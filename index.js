@@ -48,7 +48,6 @@ const levelUpMonitor = require('./levelUpMonitor');
 const linkBlocker = require('./blacklist/linkBlocker');    
 const mediaBlocker = require('./blacklist/mediaBlocker');
 const antiSpam = require("./antiSpam");
-const birthday = require('./birthday.js');
 const statsCommand = require("./stats.js");
 const autoReactHello = require("./autoReactHello");
 const festivalWisher = require("./festivals");
@@ -182,9 +181,7 @@ if (message.content.toLowerCase() === '!exam') {
 if (message.content.toLowerCase() === '!tips') {
     studyTips.execute(message);
 }
-    // Check for birthday command
-    birthday.execute(message);
-
+   
 if (message.content.startsWith('!giverole')) {
     giverole.execute(message);
 }
@@ -501,7 +498,6 @@ client.once('ready', () => {
     mediaBlocker.monitorMedia(client);
     levelUpMonitor.monitorLevelUps(client);
    boostTracker.registerBoostListener(client);
-birthday.clientDiscord = client;
 autoReactHello.init(client);
     // Start the status update cycle
     setInterval(() => updateBotStatus(client), 10000); // Update every 10 seconds
