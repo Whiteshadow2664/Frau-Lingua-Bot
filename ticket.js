@@ -29,7 +29,7 @@ module.exports = {
 
     const embed = new EmbedBuilder()
       .setTitle("🎫 Support Ticket System")
-      .setDescription("Click the button below to create a support ticket.")
+      .setDescription("Click the button below to create a support ticket and don't abuse the feature.")
       .setColor("#acf508");
 
     const row = new ActionRowBuilder().addComponents(
