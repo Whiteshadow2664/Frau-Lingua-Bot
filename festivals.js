@@ -44,30 +44,6 @@ function getFestivalData() {
             message: "Warm wishes of joy, peace, and harmony to everyone celebrating today.",
             img: "./images/2.jpg"
         },
-        "06-05": {
-            title: "🌿 World Environment Day",
-            message: "A greener and cleaner future begins with each one of us.",
-            img: "./images/3.jpg"
-        },
-        "04-22": {
-            title: "🌱 Earth Day",
-            message: "Let’s come together to protect, preserve, and appreciate our beautiful planet.",
-            img: "./images/4.jpg"
-        },
-        "04-07": {
-            title: "🌍 World Health Day",
-            message: "Your health is your most valuable asset—take care, stay strong, and live well.",
-            img: "./images/5.jpg"
-        },
-        "08-15": {
-            title: "🇮🇳 INDIA INDEPENDENCE DAY",
-            message: "May the tricolor always fly high in our hearts and inspire us to build a stronger, more prosperous India together. Happy Independence Day.",
-            img: "./images/13.jpg"
-        },"07-04": {
-            title: "🇺🇲 HAPPY 4TH OF JULY",
-            message: "Happy 4th of July to our American friends in the server! Wishing you all a safe, joyous, and celebratory Independence Day.",
-            img: "./images/14.jpg"
-        },
 
 "05-10": {
             title: "💜 HAPPY MOTHER'S DAY",
