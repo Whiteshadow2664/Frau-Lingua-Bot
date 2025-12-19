@@ -50,11 +50,6 @@ function getFestivalData() {
             message: "Happy Mother's Day to all the amazing moms in the server! We celebrate the endless love and dedication you bring every day.",
             img: "./images/15.jpg"
         },
-        "02-14": {
-            title: "❤️ Happy Valentine’s Day!",
-            message: "May your day be filled with love, kindness, and meaningful connections.",
-            img: "./images/6.jpg"
-        },
         "06-21": {
             title: "👨‍🦱 International Men's Day",
             message: "Celebrating the achievements, contributions, and well-being of men everywhere.",
