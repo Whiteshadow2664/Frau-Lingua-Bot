@@ -1,7 +1,12 @@
-const cron = require("node-cron");
-const { EmbedBuilder, AttachmentBuilder } = require("discord.js");
+const fs = require("fs");
+const path = require("path"); // for AttachmentBuilder if you want
+const LOCK_FILE = "./festival.lock"; // lock file to prevent multiple sends
 
-const FESTIVAL_CHANNEL = "1279821768785137686"; // new channel ID
+
+const cron = require("node-cron");
+const { AttachmentBuilder } = require("discord.js");
+
+const FESTIVAL_CHANNEL = "1453626819990257739"; // new channel ID
 
 // Utility: Calculate 4th Thursday of November (Thanksgiving)
 function getThanksgivingDate(year) {
@@ -85,15 +90,24 @@ function getFestivalData() {
 
 module.exports = (client) => {
     cron.schedule(
-        "00 09 * * *", // runs daily at 09:00 IST
+        "48 12 * * *", // runs daily at 09:00 IST
         async () => {
-            const today = new Date().toLocaleDateString("en-IN", {
-                timeZone: "Asia/Kolkata",
-                month: "2-digit",
-                day: "2-digit"
-            });
-            const [day, month] = today.split("/");
-            const todayKey = `${month}-${day}`;
+            const todayFull = new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
+
+// Check if we already sent the festival today
+if (fs.existsSync(LOCK_FILE)) {
+    const lastDate = fs.readFileSync(LOCK_FILE, "utf8");
+    if (lastDate === todayFull) return; // Already sent today
+}
+
+// Now calculate todayKey for selecting festival
+const today = new Date().toLocaleDateString("en-IN", {
+    timeZone: "Asia/Kolkata",
+    month: "2-digit",
+    day: "2-digit"
+});
+const [day, month] = today.split("/");
+const todayKey = `${month}-${day}`;
 
             const festivals = getFestivalData();
             let festival = festivals[todayKey];
@@ -156,18 +170,14 @@ if (DIWALI_DATES[year] === todayKey) {
                 const channel = await client.channels.fetch(FESTIVAL_CHANNEL);
 
                 // Create an attachment for the local image
-const attachment = new AttachmentBuilder(festival.img);
+const attachment = new AttachmentBuilder(path.resolve(__dirname, festival.img));
 
-const embed = new EmbedBuilder()
-    .setTitle(festival.title.toUpperCase())
-    .setDescription(festival.message)
-    .setImage(`attachment://${festival.img.split("/").pop()}`) // uses the attached file
-    .setColor("#acf508");
+
+
 
 const msg = await channel.send({
-    content: "@everyone",
-    embeds: [embed],
-    files: [attachment] // attach the image
+    content: `@everyone\n\n${festival.title}\n\n${festival.message}`,
+    files: [attachment]
 });
 
                 // Auto reactions
@@ -177,7 +187,8 @@ const msg = await channel.send({
                     await msg.react(emoji).catch(() => {});
                 }
 
-                console.log(`🎉 Festival message sent: ${festival.title}`);
+                fs.writeFileSync(LOCK_FILE, todayFull); // Mark that festival has been sent today
+console.log(`🎉 Festival message sent: ${festival.title}`);
             } catch (err) {
                 console.error("❌ Festival message error:", err);
             }
