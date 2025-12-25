@@ -75,12 +75,12 @@ function getMothersDayDate(year) {
 function getFestivalData() {
     return {
         "01-01": {
-            title: "🎉 Happy New Year!",
+            title: "# HAPPY NEW YEAR! 🎉 #",
             message: "Wishing everyone a year filled with success, joy, and new beginnings.",
             img: "./images/1.jpg"
         },
         "12-25": {
-            title: "🎄 Merry Christmas!",
+            title: "# MERRY CHRISTMAS! 🎄 #",
             message: "Warm wishes of joy, peace, and harmony to everyone celebrating today.",
             img: "./images/2.jpg"
         },
@@ -91,7 +91,7 @@ function getFestivalData() {
 
 
 "MOTHERSDAY": {
-    title: "💜 HAPPY MOTHER'S DAY",
+    title: "# HAPPY MOTHER'S DAY! 💜 #",
     message: "Happy Mother's Day to all the amazing moms in the server! We celebrate the endless love and dedication you bring every day.",
     img: "./images/15.jpg"
 },
@@ -99,32 +99,32 @@ function getFestivalData() {
 
 
         "06-21": {
-            title: "👨‍🦱 International Men's Day",
+            title: "# INTERNATIONAL MEN'S DAY! #",
             message: "Celebrating the achievements, contributions, and well-being of men everywhere.",
             img: "./images/7.jpg"
         },
         "03-08": {
-            title: "🌸 International Women's Day",
+            title: "# INTERNATIONAL WOMEN'S DAY! #",
             message: "Celebrating the strength, achievements, and contributions of women worldwide.",
             img: "./images/8.jpg"
         },
         "11-12": {
-            title: "🪔 Diwali",
+            title: "# HAPPY DIWALI! #",
             message: "Wishing everyone light, positivity, and endless happiness.",
             img: "./images/9.jpg"
         },
         "EASTER": {
-            title: "✝️ Happy Easter!",
+            title: "# HAPPY EASTER! #",
             message: "Wishing joy, renewal, and hope on this Easter Sunday.",
             img: "./images/10.jpg"
         },
         "THANKSGIVING": {
-            title: "🦃 Happy Thanksgiving!",
+            title: "# HAPPY THANKSGIVING DAY! #",
             message: "Warm wishes of gratitude, togetherness, and joy to everyone in our community.",
             img: "./images/11.jpg"
         },
         "10-31": {
-            title: "🎃 Happy Halloween!",
+            title: "# HAPPY HALLOWEEN! 🎃 #",
             message: "Wishing everyone a fun, exciting, and spooky Halloween night!",
             img: "./images/12.jpg"
         }
@@ -133,7 +133,7 @@ function getFestivalData() {
 
 module.exports = (client) => {
     cron.schedule(
-        "41 13 * * *", // runs daily at 09:00 IST
+        "49 13 * * *", // runs daily at 09:00 IST
         async () => {
             const todayFull = new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
 
