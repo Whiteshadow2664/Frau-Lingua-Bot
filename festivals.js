@@ -90,7 +90,7 @@ function getFestivalData() {
 
 module.exports = (client) => {
     cron.schedule(
-        "58 12 * * *", // runs daily at 09:00 IST
+        "04 13 * * *", // runs daily at 09:00 IST
         async () => {
             const todayFull = new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
 
@@ -179,6 +179,11 @@ const msg = await channel.send({
     content: `@everyone\n\n${festival.title}\n\n${festival.message}`,
     files: [attachment]
 });
+
+// Mark that festival has been sent today
+fs.writeFileSync(LOCK_FILE, todayFull);
+
+
 
                 // Auto reactions
                 const celebrationEmojis = ["🎉","✨","💛","🎊","🥳"];
