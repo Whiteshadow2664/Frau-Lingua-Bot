@@ -52,6 +52,14 @@ const statsCommand = require("./stats.js");
 const autoReactHello = require("./autoReactHello");
 const festivalWisher = require("./festivals");
 
+
+
+
+const { deleteMessages } = require("./deleteMessages");
+
+
+
+
 // Environment Variables
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
 
@@ -493,6 +501,12 @@ client.once('ready', () => {
     antiInvite(client);
     levelSystem(client);
     dateChannelUpdater(client);
+
+
+
+deleteMessages(client);
+
+
     linkBlocker.monitorLinks(client);
     festivalWisher(client);
     mediaBlocker.monitorMedia(client);
