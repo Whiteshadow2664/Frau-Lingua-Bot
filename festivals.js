@@ -1,18 +1,7 @@
 const cron = require("node-cron");
-const fs = require("fs");
-const path = require("path");
+const { EmbedBuilder, AttachmentBuilder } = require("discord.js");
 
-const { AttachmentBuilder } = require("discord.js");
-
-
-const FESTIVAL_CHANNEL = "1453626819990257739"; // new channel ID
-
-
-
-const LOCK_FILE = "./festival.lock";
-
-
-
+const FESTIVAL_CHANNEL = "1279821768785137686"; // new channel ID
 
 // Utility: Calculate 4th Thursday of November (Thanksgiving)
 function getThanksgivingDate(year) {
@@ -42,26 +31,6 @@ function getEasterDate(year) {
     return new Date(year, month - 1, day);
 }
 
-
-
-
-
-
-function getMothersDay(year) {
-    const date = new Date(year, 4, 1); // May 1
-    let sundayCount = 0;
-
-    while (true) {
-        if (date.getDay() === 0) sundayCount++;
-        if (sundayCount === 2) break;
-        date.setDate(date.getDate() + 1);
-    }
-
-    return date;
-}
-
-
-
 // All festivals
 function getFestivalData() {
     return {
@@ -74,6 +43,12 @@ function getFestivalData() {
             title: "🎄 Merry Christmas!",
             message: "Warm wishes of joy, peace, and harmony to everyone celebrating today.",
             img: "./images/2.jpg"
+        },
+
+"05-10": {
+            title: "💜 HAPPY MOTHER'S DAY",
+            message: "Happy Mother's Day to all the amazing moms in the server! We celebrate the endless love and dedication you bring every day.",
+            img: "./images/15.jpg"
         },
         "06-21": {
             title: "👨‍🦱 International Men's Day",
@@ -110,12 +85,8 @@ function getFestivalData() {
 
 module.exports = (client) => {
     cron.schedule(
-        "28 12 * * *", // runs daily at 09:00 IST
+        "00 09 * * *", // runs daily at 09:00 IST
         async () => {
-
-console.log("⏰ Festival cron triggered:", new Date().toISOString());
-
-
             const today = new Date().toLocaleDateString("en-IN", {
                 timeZone: "Asia/Kolkata",
                 month: "2-digit",
@@ -123,12 +94,6 @@ console.log("⏰ Festival cron triggered:", new Date().toISOString());
             });
             const [day, month] = today.split("/");
             const todayKey = `${month}-${day}`;
-
-
-const todayFull = new Date().toLocaleDateString("en-CA", {
-    timeZone: "Asia/Kolkata"
-});
-
 
             const festivals = getFestivalData();
             let festival = festivals[todayKey];
@@ -146,27 +111,6 @@ const todayFull = new Date().toLocaleDateString("en-CA", {
             const easter = getEasterDate(year);
             const easterKey = `${String(easter.getMonth() + 1).padStart(2, "0")}-${String(easter.getDate()).padStart(2, "0")}`;
             if (todayKey === easterKey) festival = festivals["EASTER"];
-
-
-
-
-
-// Dynamic: Mother's Day (2nd Sunday of May)
-const mothersDay = getMothersDay(year);
-const mothersKey = `${String(mothersDay.getMonth() + 1).padStart(2, "0")}-${String(
-    mothersDay.getDate()
-).padStart(2, "0")}`;
-
-if (todayKey === mothersKey) {
-    festival = {
-        title: "💜 HAPPY MOTHER'S DAY",
-        message: "Happy Mother's Day to all the amazing moms in the server! We celebrate the endless love and dedication you bring every day.",
-        img: "./images/15.jpg"
-    };
-}
-
-
-
 
             // Fixed Diwali dates for next 30 years
 const DIWALI_DATES = {
@@ -208,48 +152,30 @@ if (DIWALI_DATES[year] === todayKey) {
 
             if (!festival) return;
 
-
-if (fs.existsSync(LOCK_FILE)) {
-    const lastDate = fs.readFileSync(LOCK_FILE, "utf8");
-    if (lastDate === todayFull) {
-        console.log("⚠️ Festival already sent today, skipping...");
-        return;
-    }
-}
-
-
             try {
                 const channel = await client.channels.fetch(FESTIVAL_CHANNEL);
 
                 // Create an attachment for the local image
+const attachment = new AttachmentBuilder(festival.img);
 
-
-const attachment = new AttachmentBuilder(
-    path.resolve(__dirname, festival.img)
-);
+const embed = new EmbedBuilder()
+    .setTitle(festival.title.toUpperCase())
+    .setDescription(festival.message)
+    .setImage(`attachment://${festival.img.split("/").pop()}`) // uses the attached file
+    .setColor("#acf508");
 
 const msg = await channel.send({
-    content: `@everyone\n\n${festival.title}\n\n${festival.message}`,
-    files: [attachment]
+    content: "@everyone",
+    embeds: [embed],
+    files: [attachment] // attach the image
 });
- 
 
-
-
-
-
-
-
-
-               // Auto reactions
+                // Auto reactions
                 const celebrationEmojis = ["🎉","✨","💛","🎊","🥳"];
                 const flagEmojis = ["🇩🇪","🇷🇺","🇫🇷","🇮🇳","🇺🇸","🇬🇧","🇮🇹","🇦🇺","🇳🇿","🇪🇸","🇦🇹"];
                 for (const emoji of [...celebrationEmojis, ...flagEmojis]) {
                     await msg.react(emoji).catch(() => {});
                 }
-
-fs.writeFileSync(LOCK_FILE, todayFull);
-
 
                 console.log(`🎉 Festival message sent: ${festival.title}`);
             } catch (err) {
