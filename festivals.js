@@ -1,8 +1,6 @@
 const fs = require("fs");
 const path = require("path"); // for AttachmentBuilder if you want
 const LOCK_FILE = "./festival.lock"; // lock file to prevent multiple sends
-
-
 const cron = require("node-cron");
 const { AttachmentBuilder } = require("discord.js");
 
@@ -42,15 +40,6 @@ function getEasterDate(year) {
     return new Date(year, month - 1, day);
 }
 
-
-
-
-
-
-
-
-
-
 // Utility: Calculate 2nd Sunday of May (Mother's Day)
 function getMothersDayDate(year) {
     let date = new Date(year, 4, 1); // May 1 (month is 0-based)
@@ -65,12 +54,6 @@ function getMothersDayDate(year) {
     return date;
 }
 
-
-
-
-
-
-
 // All festivals
 function getFestivalData() {
     return {
@@ -84,20 +67,11 @@ function getFestivalData() {
             message: "Warm wishes of joy, peace, and harmony to everyone celebrating today.",
             img: "./images/2.jpg"
         },
-
-
-
-
-
-
 "MOTHERSDAY": {
     title: "# HAPPY MOTHER'S DAY! 💜 #",
     message: "Happy Mother's Day to all the amazing moms in the server! We celebrate the endless love and dedication you bring every day.",
     img: "./images/15.jpg"
 },
-
-
-
         "06-21": {
             title: "# INTERNATIONAL MEN'S DAY! #",
             message: "Celebrating the achievements, contributions, and well-being of men everywhere.",
@@ -133,7 +107,7 @@ function getFestivalData() {
 
 module.exports = (client) => {
     cron.schedule(
-        "49 13 * * *", // runs daily at 09:00 IST
+        "30 06 * * *", // runs daily at 06:30 IST
         async () => {
             const todayFull = new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Kolkata" });
 
@@ -164,14 +138,10 @@ const todayKey = `${month}-${day}`;
             ).padStart(2, "0")}`;
             if (todayKey === thanksKey) festival = festivals["THANKSGIVING"];
 
-
-
-
 // Dynamic: Mother's Day
 const mothersDay = getMothersDayDate(year);
 const mothersDayKey = `${String(mothersDay.getMonth() + 1).padStart(2, "0")}-${String(mothersDay.getDate()).padStart(2, "0")}`;
 if (todayKey === mothersDayKey) festival = festivals["MOTHERSDAY"];
-
 
             // Dynamic: Easter
             const easter = getEasterDate(year);
@@ -224,9 +194,6 @@ if (DIWALI_DATES[year] === todayKey) {
                 // Create an attachment for the local image
 const attachment = new AttachmentBuilder(path.resolve(__dirname, festival.img));
 
-
-
-
 const msg = await channel.send({
     content: `@everyone\n\n${festival.title}\n\n${festival.message}`,
     files: [attachment]
@@ -235,15 +202,12 @@ const msg = await channel.send({
 // Mark that festival has been sent today
 fs.writeFileSync(LOCK_FILE, todayFull);
 
-
-
                 // Auto reactions
                 const celebrationEmojis = ["🎉","✨","💛","🎊","🥳"];
                 const flagEmojis = ["🇩🇪","🇷🇺","🇫🇷","🇮🇳","🇺🇸","🇬🇧","🇮🇹","🇦🇺","🇳🇿","🇪🇸","🇦🇹"];
                 for (const emoji of [...celebrationEmojis, ...flagEmojis]) {
                     await msg.react(emoji).catch(() => {});
                 }
-
                 
 console.log(`🎉 Festival message sent: ${festival.title}`);
             } catch (err) {
