@@ -163,7 +163,11 @@ const attachment = new AttachmentBuilder(festival.img);
 const msg = await channel.send(
     `@everyone\n\n${festival.title}\n\n${festival.message}`
 );
-                // Auto reactions
+ 
+
+lastFestivalSentDate = todayFull;
+
+               // Auto reactions
                 const celebrationEmojis = ["🎉","✨","💛","🎊","🥳"];
                 const flagEmojis = ["🇩🇪","🇷🇺","🇫🇷","🇮🇳","🇺🇸","🇬🇧","🇮🇹","🇦🇺","🇳🇿","🇪🇸","🇦🇹"];
                 for (const emoji of [...celebrationEmojis, ...flagEmojis]) {
