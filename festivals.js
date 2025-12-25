@@ -44,6 +44,33 @@ function getEasterDate(year) {
 
 
 
+
+
+
+
+
+
+
+// Utility: Calculate 2nd Sunday of May (Mother's Day)
+function getMothersDayDate(year) {
+    let date = new Date(year, 4, 1); // May 1 (month is 0-based)
+    let sundayCount = 0;
+
+    while (true) {
+        if (date.getDay() === 0) sundayCount++; // Sunday = 0
+        if (sundayCount === 2) break; // second Sunday
+        date.setDate(date.getDate() + 1);
+    }
+
+    return date;
+}
+
+
+
+
+
+
+
 // All festivals
 function getFestivalData() {
     return {
@@ -58,11 +85,19 @@ function getFestivalData() {
             img: "./images/2.jpg"
         },
 
-"05-10": {
-            title: "💜 HAPPY MOTHER'S DAY",
-            message: "Happy Mother's Day to all the amazing moms in the server! We celebrate the endless love and dedication you bring every day.",
-            img: "./images/15.jpg"
-        },
+
+
+
+
+
+"MOTHERSDAY": {
+    title: "💜 HAPPY MOTHER'S DAY",
+    message: "Happy Mother's Day to all the amazing moms in the server! We celebrate the endless love and dedication you bring every day.",
+    img: "./images/15.jpg"
+},
+
+
+
         "06-21": {
             title: "👨‍🦱 International Men's Day",
             message: "Celebrating the achievements, contributions, and well-being of men everywhere.",
@@ -128,6 +163,15 @@ const todayKey = `${month}-${day}`;
                 thanksgiving.getDate()
             ).padStart(2, "0")}`;
             if (todayKey === thanksKey) festival = festivals["THANKSGIVING"];
+
+
+
+
+// Dynamic: Mother's Day
+const mothersDay = getMothersDayDate(year);
+const mothersDayKey = `${String(mothersDay.getMonth() + 1).padStart(2, "0")}-${String(mothersDay.getDate()).padStart(2, "0")}`;
+if (todayKey === mothersDayKey) festival = festivals["MOTHERSDAY"];
+
 
             // Dynamic: Easter
             const easter = getEasterDate(year);
