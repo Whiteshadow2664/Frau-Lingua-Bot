@@ -3,6 +3,8 @@ const { EmbedBuilder, AttachmentBuilder } = require("discord.js");
 
 const FESTIVAL_CHANNEL = "1279821768785137686"; // new channel ID
 
+let lastFestivalSentDate = null;
+
 // Utility: Calculate 4th Thursday of November (Thanksgiving)
 function getThanksgivingDate(year) {
     let date = new Date(year, 10, 1); // November 1
@@ -158,18 +160,9 @@ if (DIWALI_DATES[year] === todayKey) {
                 // Create an attachment for the local image
 const attachment = new AttachmentBuilder(festival.img);
 
-const embed = new EmbedBuilder()
-    .setTitle(festival.title.toUpperCase())
-    .setDescription(festival.message)
-    .setImage(`attachment://${festival.img.split("/").pop()}`) // uses the attached file
-    .setColor("#acf508");
-
-const msg = await channel.send({
-    content: "@everyone",
-    embeds: [embed],
-    files: [attachment] // attach the image
-});
-
+const msg = await channel.send(
+    `@everyone\n\n${festival.title}\n\n${festival.message}`
+);
                 // Auto reactions
                 const celebrationEmojis = ["🎉","✨","💛","🎊","🥳"];
                 const flagEmojis = ["🇩🇪","🇷🇺","🇫🇷","🇮🇳","🇺🇸","🇬🇧","🇮🇹","🇦🇺","🇳🇿","🇪🇸","🇦🇹"];
