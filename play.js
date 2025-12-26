@@ -2,92 +2,78 @@ const {
     joinVoiceChannel,
     createAudioPlayer,
     createAudioResource,
-    AudioPlayerStatus
+    AudioPlayerStatus,
+    NoSubscriberBehavior,
+    getVoiceConnection
 } = require("@discordjs/voice");
+
 const ytdl = require("ytdl-core");
 
-const VOICE_CHANNEL_ID = "1453626819990257740"; // General VC
+const VC_ID = "1453626819990257740"; // General VC ID
 
-let connection = null;
-let player = null;
+let player = createAudioPlayer({
+    behaviors: {
+        noSubscriber: NoSubscriberBehavior.Pause,
+    },
+});
 
 module.exports = {
     async execute(message) {
-        if (message.author.bot) return;
+        if (!message.content.startsWith("!")) return;
 
         const args = message.content.split(" ");
-        const command = args[0];
+        const command = args[0].toLowerCase();
 
-        /* ================= PLAY ================= */
+        // ---------------- PLAY ----------------
         if (command === "!play") {
             const url = args[1];
-
             if (!url || !ytdl.validateURL(url)) {
-                return message.reply("❌ Provide a valid YouTube link.");
+                return message.reply("❌ Please provide a valid YouTube link.");
             }
 
-            const channel = message.guild.channels.cache.get(VOICE_CHANNEL_ID);
-            if (!channel || channel.type !== 2) {
-                return message.reply("❌ Voice channel not found.");
-            }
-
-            // Join VC if not already
-            if (!connection) {
-                connection = joinVoiceChannel({
-                    channelId: channel.id,
+            try {
+                const connection = joinVoiceChannel({
+                    channelId: VC_ID,
                     guildId: message.guild.id,
                     adapterCreator: message.guild.voiceAdapterCreator,
-                    selfDeaf: false
                 });
-            }
 
-            // Create player if not exists
-            if (!player) {
-                player = createAudioPlayer();
+                const stream = ytdl(url, {
+                    filter: "audioonly",
+                    quality: "highestaudio",
+                    highWaterMark: 1 << 25,
+                });
+
+                stream.on("error", err => {
+                    console.error("❌ YTDL STREAM ERROR:", err);
+                });
+
+                const resource = createAudioResource(stream);
+                player.play(resource);
                 connection.subscribe(player);
+
+                message.reply("▶️ Now playing audio.");
+
+            } catch (err) {
+                console.error("❌ PLAY ERROR:", err);
+                message.reply("❌ Failed to play audio.");
             }
-
-            const stream = ytdl(url, {
-                filter: "audioonly",
-                quality: "highestaudio",
-                highWaterMark: 1 << 25
-            });
-
-            const resource = createAudioResource(stream);
-            player.play(resource);
-
-            message.channel.send("▶️ **Playing audio...**");
-
-            player.once(AudioPlayerStatus.Idle, () => {
-                connection.destroy();
-                connection = null;
-                player = null;
-            });
         }
 
-        /* ================= PAUSE ================= */
+        // ---------------- PAUSE ----------------
         if (command === "!pause") {
-            if (!player) {
-                return message.reply("❌ Nothing is playing.");
-            }
-
             player.pause();
-            message.channel.send("⏸️ **Paused**");
+            message.reply("⏸️ Paused.");
         }
 
-        /* ================= STOP ================= */
+        // ---------------- STOP ----------------
         if (command === "!stop") {
-            if (!player || !connection) {
-                return message.reply("❌ Nothing to stop.");
-            }
-
             player.stop();
-            connection.destroy();
 
-            player = null;
-            connection = null;
+            const connection = getVoiceConnection(message.guild.id);
+            if (connection) connection.destroy();
 
-            message.channel.send("⏹️ **Stopped and left voice channel**");
+            message.reply("⏹️ Stopped and left voice channel.");
         }
     }
 };
