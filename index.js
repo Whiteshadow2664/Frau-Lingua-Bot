@@ -232,11 +232,13 @@ if (message.content.toLowerCase() === "!ws") {
 
 
 
-    const args = message.content.split(" ").slice(1);
-    const command = message.content.split(" ")[0].toLowerCase();
 
-    if (["!play", "!pause", "!stop"].includes(command)) {
-        return playCommand.execute(message, args, client, command);
+const args = message.content.split(" ").slice(1);
+const command = message.content.split(" ")[0].toLowerCase();
+
+if (["!play", "!pause", "!stop"].includes(command)) {
+    return playCommand.execute(message, args, client, command);
+} // <-- Add this closing brace
     
 
 
