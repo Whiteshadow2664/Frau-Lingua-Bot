@@ -228,7 +228,27 @@ if (message.content.toLowerCase() === "!ws") {
 
 
 
-    playCommand.execute(message);
+    
+
+
+if (message.content.startsWith('!play') ||
+    message.content === '!pause' ||
+    message.content === '!stop') {
+
+    playCommand.handle(message, client);
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
