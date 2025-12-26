@@ -4,7 +4,7 @@ const LOCK_FILE = "./festival.lock"; // lock file to prevent multiple sends
 const cron = require("node-cron");
 const { AttachmentBuilder } = require("discord.js");
 
-const FESTIVAL_CHANNEL = "1453626819990257739"; // new channel ID
+const FESTIVAL_CHANNEL = "1279821768785137686"; // new channel ID
 
 // Utility: Calculate 4th Thursday of November (Thanksgiving)
 function getThanksgivingDate(year) {
@@ -57,7 +57,7 @@ function getMothersDayDate(year) {
 // All festivals
 function getFestivalData() {
     return {
-        "12-26": {
+        "01-01": {
             title: "# HAPPY NEW YEAR! 🎉 #",
             message: "Wishing everyone a year filled with success, joy, and new beginnings.",
             img: "./images/1.jpg"
