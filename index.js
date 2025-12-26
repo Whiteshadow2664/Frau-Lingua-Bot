@@ -231,12 +231,13 @@ if (message.content.toLowerCase() === "!ws") {
     
 
 
-if (message.content.startsWith('!play') ||
-    message.content === '!pause' ||
-    message.content === '!stop') {
 
-    playCommand.handle(message, client);
-}
+    const args = message.content.split(" ").slice(1);
+    const command = message.content.split(" ")[0].toLowerCase();
+
+    if (["!play", "!pause", "!stop"].includes(command)) {
+        return playCommand.execute(message, args, client, command);
+    
 
 
 
