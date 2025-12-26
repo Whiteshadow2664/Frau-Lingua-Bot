@@ -3,8 +3,8 @@ const {
     createAudioPlayer,
     createAudioResource,
     AudioPlayerStatus,
-    StreamType,
-    NoSubscriberBehavior
+    NoSubscriberBehavior,
+    getVoiceConnection
 } = require("@discordjs/voice");
 
 const ytdl = require("ytdl-core");
@@ -12,91 +12,87 @@ const ffmpeg = require("ffmpeg-static");
 
 const VC_ID = "1453626819990257740"; // General VC ID
 
-let player;
-let connection;
+let player = null;
 
-module.exports = async (client, message) => {
-    if (!message.content.startsWith("!")) return;
+module.exports = {
+    name: "play",
 
-    const args = message.content.split(" ");
-    const command = args[0].toLowerCase();
+    async execute(message, args, client) {
+        const command = message.content.split(" ")[0];
 
-    // ---------------- PLAY ----------------
-    if (command === "!play") {
-        const url = args[1];
-        if (!url || !ytdl.validateURL(url)) {
-            return message.reply("❌ Please provide a valid YouTube link.");
-        }
-
-        try {
-            // Join VC
-            connection = joinVoiceChannel({
-                channelId: VC_ID,
-                guildId: message.guild.id,
-                adapterCreator: message.guild.voiceAdapterCreator,
-                selfDeaf: true
-            });
-
-            // Create player only once
-            if (!player) {
-                player = createAudioPlayer({
-                    behaviors: {
-                        noSubscriber: NoSubscriberBehavior.Pause
-                    }
-                });
-
-                connection.subscribe(player);
+        // ================= PLAY =================
+        if (command === "!play") {
+            const url = args[0];
+            if (!url || !ytdl.validateURL(url)) {
+                return message.reply("❌ Please provide a valid YouTube link.");
             }
 
-            // Create stream
-            const stream = ytdl(url, {
-                filter: "audioonly",
-                quality: "highestaudio",
-                highWaterMark: 1 << 25
-            });
+            try {
+                const voiceChannel = await client.channels.fetch(VC_ID);
 
-            const resource = createAudioResource(stream, {
-                inputType: StreamType.Arbitrary
-            });
+                const connection = joinVoiceChannel({
+                    channelId: voiceChannel.id,
+                    guildId: message.guild.id,
+                    adapterCreator: message.guild.voiceAdapterCreator,
+                    selfDeaf: false
+                });
 
-            player.play(resource);
+                if (!player) {
+                    player = createAudioPlayer({
+                        behaviors: {
+                            noSubscriber: NoSubscriberBehavior.Pause
+                        }
+                    });
 
-            player.once(AudioPlayerStatus.Playing, () => {
-                message.channel.send("▶️ Now playing!");
-            });
+                    connection.subscribe(player);
+                }
 
-            player.once(AudioPlayerStatus.Idle, () => {
-                // Auto stop after song ends
-                connection.destroy();
+                const stream = ytdl(url, {
+                    filter: "audioonly",
+                    quality: "highestaudio",
+                    highWaterMark: 1 << 25
+                });
+
+                const resource = createAudioResource(stream, {
+                    inlineVolume: true
+                });
+
+                resource.volume.setVolume(1);
+
+                player.play(resource);
+
+                player.once(AudioPlayerStatus.Idle, () => {
+                    connection.destroy();
+                    player = null;
+                });
+
+                await message.reply("▶️ **Now playing audio**");
+
+            } catch (err) {
+                console.error(err);
+                message.reply("❌ Failed to play audio.");
+            }
+        }
+
+        // ================= PAUSE =================
+        if (command === "!pause") {
+            if (!player) return message.reply("⚠️ Nothing is playing.");
+            player.pause();
+            return message.reply("⏸️ Paused.");
+        }
+
+        // ================= STOP =================
+        if (command === "!stop") {
+            const connection = getVoiceConnection(message.guild.id);
+
+            if (player) {
+                player.stop();
                 player = null;
-                connection = null;
-            });
+            }
 
-        } catch (err) {
-            console.error(err);
-            message.reply("❌ Failed to play audio.");
+            if (connection) connection.destroy();
+
+            return message.reply("⏹️ Stopped and left voice channel.");
         }
-    }
-
-    // ---------------- PAUSE ----------------
-    if (command === "!pause") {
-        if (!player) return message.reply("❌ Nothing is playing.");
-        player.pause();
-        message.reply("⏸️ Paused.");
-    }
-
-    // ---------------- STOP ----------------
-    if (command === "!stop") {
-        if (!player || !connection) {
-            return message.reply("❌ Nothing to stop.");
-        }
-
-        player.stop();
-        connection.destroy();
-
-        player = null;
-        connection = null;
-
-        message.reply("⏹️ Stopped and left voice channel.");
     }
 };
