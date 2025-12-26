@@ -52,12 +52,6 @@ const statsCommand = require("./stats.js");
 const autoReactHello = require("./autoReactHello");
 const festivalWisher = require("./festivals");
 
-
-
-
-const playCommand = require("./play");
-
-
 // Environment Variables
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
 
@@ -222,43 +216,6 @@ if (message.content.toLowerCase() === '!joke') {
 if (message.content.toLowerCase() === "!ws") {
     handleWorksheet(message, client);
 }
-
-
-
-
-
-
-    
-
-
-
-
-
-
-    // Split command and args
-    const args = message.content.split(" ").slice(1);
-    const command = message.content.split(" ")[0].toLowerCase();
-
-    // Voice commands
-    if (["!play", "!pause", "!stop"].includes(command)) {
-        return playCommand.execute(message, args, client, command);
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 if (message.content.toLowerCase() === '!mail') {
     mailCommand.execute(message);
