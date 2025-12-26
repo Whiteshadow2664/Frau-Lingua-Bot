@@ -1,85 +1,80 @@
 // play.js
-const { joinVoiceChannel, createAudioPlayer, createAudioResource, AudioPlayerStatus, NoSubscriberBehavior } = require('@discordjs/voice');
-const ytdl = require('ytdl-core');
+const { joinVoiceChannel, createAudioPlayer, createAudioResource, AudioPlayerStatus } = require('@discordjs/voice');
+const ytdl = require('ytdl-core-discord');
 
-// Map to store player data per guild
-const playerMap = new Map();
+// Store server audio data
+const servers = {};
 
-module.exports.execute = async (message, args, client, command) => {
-    try {
-        // General VC channel ID
-        const vcChannelId = "1453626819990257740"; 
-        const vcChannel = client.channels.cache.get(vcChannelId);
+module.exports = {
+    execute: async (message, args, client, command) => {
+        const voiceChannel = message.member.voice.channel;
+        if (!voiceChannel) return message.reply('You need to join a voice channel first!');
 
-        if (!vcChannel) return message.reply("❌ Voice channel not found.");
+        // Initialize server data if not exists
+        if (!servers[message.guild.id]) {
+            servers[message.guild.id] = {
+                player: createAudioPlayer(),
+                resource: null,
+                connection: null,
+            };
 
-        // Get or create player for this guild
-        let playerData = playerMap.get(message.guild.id);
-        if (!playerData) {
-            const player = createAudioPlayer({
-                behaviors: {
-                    noSubscriber: NoSubscriberBehavior.Pause,
-                },
+            // Cleanup when player goes idle
+            servers[message.guild.id].player.on(AudioPlayerStatus.Idle, () => {
+                servers[message.guild.id].resource = null;
             });
-
-            const connection = joinVoiceChannel({
-                channelId: vcChannel.id,
-                guildId: message.guild.id,
-                adapterCreator: message.guild.voiceAdapterCreator,
-            });
-
-            connection.subscribe(player);
-
-            playerData = { player, connection, resource: null };
-            playerMap.set(message.guild.id, playerData);
         }
 
-        const { player } = playerData;
+        const server = servers[message.guild.id];
 
-        // PLAY command
-        if (command === "!play") {
-            if (!args[0]) return message.reply("❌ Please provide a YouTube link.");
-            const url = args[0];
+        switch (command) {
+            case '!play':
+                if (!args[0]) return message.reply('Please provide a YouTube URL to play.');
+                try {
+                    // Join voice channel if not connected
+                    if (!server.connection) {
+                        server.connection = joinVoiceChannel({
+                            channelId: voiceChannel.id,
+                            guildId: message.guild.id,
+                            adapterCreator: message.guild.voiceAdapterCreator,
+                        });
+                        server.connection.subscribe(server.player);
+                    }
 
-            if (!ytdl.validateURL(url)) return message.reply("❌ Invalid YouTube URL.");
+                    const url = args[0];
+                    if (!ytdl.validateURL(url)) return message.reply('Invalid YouTube URL.');
 
-            const stream = ytdl(url, { filter: 'audioonly', quality: 'highestaudio', highWaterMark: 1 << 25 });
-            const resource = createAudioResource(stream);
-            player.play(resource);
-            playerData.resource = resource;
+                    // Stream audio
+                    const stream = await ytdl(url, { filter: 'audioonly', highWaterMark: 1 << 25 });
+                    const resource = createAudioResource(stream);
 
-            await message.channel.send(`▶️ Now playing: ${url}`);
-        }
+                    server.resource = resource;
+                    server.player.play(resource);
 
-        // PAUSE command
-        if (command === "!pause") {
-            if (player.state.status !== AudioPlayerStatus.Playing) {
-                return message.reply("⏸️ Nothing is playing currently.");
-            }
-            player.pause();
-            await message.channel.send("⏸️ Paused the audio.");
-        }
-
-        // STOP command
-        if (command === "!stop") {
-            player.stop();
-            await message.channel.send("⏹️ Stopped the audio.");
-        }
-
-        // Auto disconnect logic if idle for 5 minutes
-        player.on(AudioPlayerStatus.Idle, () => {
-            setTimeout(() => {
-                if (player.state.status === AudioPlayerStatus.Idle) {
-                    const connection = playerData.connection;
-                    connection.destroy();
-                    playerMap.delete(message.guild.id);
-                    message.channel.send("🔌 Disconnected due to inactivity.");
+                    message.channel.send(`🎶 Now playing: ${url}`);
+                } catch (error) {
+                    console.error(error);
+                    message.channel.send('An error occurred while trying to play the audio.');
                 }
-            }, 5 * 60 * 1000); // 5 minutes
-        });
+                break;
 
-    } catch (err) {
-        console.error("❌ Error in play.js:", err);
-        message.reply("❌ Something went wrong with the audio player.");
+            case '!pause':
+                if (!server.player) return message.reply('Nothing is playing right now.');
+                server.player.pause();
+                message.channel.send('⏸ Paused the audio.');
+                break;
+
+            case '!stop':
+                if (!server.player) return message.reply('Nothing is playing right now.');
+                server.player.stop();
+                if (server.connection) {
+                    server.connection.destroy();
+                    server.connection = null;
+                }
+                message.channel.send('⏹ Stopped and left the voice channel.');
+                break;
+
+            default:
+                message.reply('Command recognized but not implemented yet.');
+        }
     }
 };
