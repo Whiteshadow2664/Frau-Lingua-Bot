@@ -1,98 +1,75 @@
 const {
-    joinVoiceChannel,
-    createAudioPlayer,
-    createAudioResource,
-    AudioPlayerStatus,
-    NoSubscriberBehavior,
-    getVoiceConnection
-} = require("@discordjs/voice");
+  joinVoiceChannel,
+  createAudioPlayer,
+  createAudioResource,
+  AudioPlayerStatus,
+  NoSubscriberBehavior
+} = require('@discordjs/voice');
 
-const ytdl = require("ytdl-core");
-const ffmpeg = require("ffmpeg-static");
+const ytdl = require('ytdl-core');
 
-const VC_ID = "1453626819990257740"; // General VC ID
+const VC_ID = '1453626819990257740'; // General VC
+let connection;
+let player;
 
-let player = null;
+async function handle(message, client) {
+  const [command, ...args] = message.content.split(' ');
 
-module.exports = {
-    name: "play",
-
-    async execute(message, args, client) {
-        const command = message.content.split(" ")[0];
-
-        // ================= PLAY =================
-        if (command === "!play") {
-            const url = args[0];
-            if (!url || !ytdl.validateURL(url)) {
-                return message.reply("❌ Please provide a valid YouTube link.");
-            }
-
-            try {
-                const voiceChannel = await client.channels.fetch(VC_ID);
-
-                const connection = joinVoiceChannel({
-                    channelId: voiceChannel.id,
-                    guildId: message.guild.id,
-                    adapterCreator: message.guild.voiceAdapterCreator,
-                    selfDeaf: false
-                });
-
-                if (!player) {
-                    player = createAudioPlayer({
-                        behaviors: {
-                            noSubscriber: NoSubscriberBehavior.Pause
-                        }
-                    });
-
-                    connection.subscribe(player);
-                }
-
-                const stream = ytdl(url, {
-                    filter: "audioonly",
-                    quality: "highestaudio",
-                    highWaterMark: 1 << 25
-                });
-
-                const resource = createAudioResource(stream, {
-                    inlineVolume: true
-                });
-
-                resource.volume.setVolume(1);
-
-                player.play(resource);
-
-                player.once(AudioPlayerStatus.Idle, () => {
-                    connection.destroy();
-                    player = null;
-                });
-
-                await message.reply("▶️ **Now playing audio**");
-
-            } catch (err) {
-                console.error(err);
-                message.reply("❌ Failed to play audio.");
-            }
-        }
-
-        // ================= PAUSE =================
-        if (command === "!pause") {
-            if (!player) return message.reply("⚠️ Nothing is playing.");
-            player.pause();
-            return message.reply("⏸️ Paused.");
-        }
-
-        // ================= STOP =================
-        if (command === "!stop") {
-            const connection = getVoiceConnection(message.guild.id);
-
-            if (player) {
-                player.stop();
-                player = null;
-            }
-
-            if (connection) connection.destroy();
-
-            return message.reply("⏹️ Stopped and left voice channel.");
-        }
+  // ---------- PLAY ----------
+  if (command === '!play') {
+    if (!args[0]) {
+      return message.reply('❌ Please provide a YouTube link.');
     }
-};
+
+    if (!ytdl.validateURL(args[0])) {
+      return message.reply('❌ Invalid YouTube URL.');
+    }
+
+    connection = joinVoiceChannel({
+      channelId: VC_ID,
+      guildId: message.guild.id,
+      adapterCreator: message.guild.voiceAdapterCreator
+    });
+
+    player = createAudioPlayer({
+      behaviors: {
+        noSubscriber: NoSubscriberBehavior.Pause
+      }
+    });
+
+    const stream = ytdl(args[0], {
+      filter: 'audioonly',
+      quality: 'highestaudio',
+      highWaterMark: 1 << 25
+    });
+
+    const resource = createAudioResource(stream);
+    player.play(resource);
+    connection.subscribe(player);
+
+    player.on(AudioPlayerStatus.Playing, () => {
+      message.channel.send('▶️ Now playing audio');
+    });
+
+    player.on(AudioPlayerStatus.Idle, () => {
+      connection.destroy();
+    });
+  }
+
+  // ---------- PAUSE ----------
+  if (command === '!pause') {
+    if (!player) return message.reply('⚠️ Nothing is playing.');
+    player.pause();
+    message.reply('⏸️ Paused');
+  }
+
+  // ---------- STOP ----------
+  if (command === '!stop') {
+    if (!player) return message.reply('⚠️ Nothing is playing.');
+    player.stop();
+    connection.destroy();
+    message.reply('⏹️ Stopped and left VC');
+  }
+}
+
+module.exports = { handle };
