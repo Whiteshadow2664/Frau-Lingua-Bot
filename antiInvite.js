@@ -1,7 +1,10 @@
 const { Events } = require("discord.js");
 
 const warnedUsers = new Map(); // Track warnings
-const allowedChannelId = "1326458294994210877"; // Allowed channel for invites
+const allowedChannelIds = [
+    "1326458294994210877",
+    "1454548779020845248"
+]; // Allowed channels for invites 
 const allowedServerId = "793744179066699787"; // Replace with your server ID
 
 module.exports = (client) => {
@@ -23,7 +26,7 @@ module.exports = (client) => {
                 if (invite && invite.guild.id === allowedServerId) return;
 
                 // Ignore if the message is in the allowed channel
-                if (message.channel.id === allowedChannelId) return;
+                if (allowedChannelIds.includes(message.channel.id)) return;
 
                 await message.delete(); // Delete the invite message
 
