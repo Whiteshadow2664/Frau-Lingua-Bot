@@ -2,7 +2,7 @@ const { Events } = require("discord.js");
 
 const warnedUsers = new Map(); // Track warnings
 const allowedChannelIds = [
-    "1326458294994210877",
+    "1326458294994210877","1279821768785137686",
     "1454548779020845248"
 ]; // Allowed channels for invites 
 const allowedServerId = "793744179066699787"; // Replace with your server ID
