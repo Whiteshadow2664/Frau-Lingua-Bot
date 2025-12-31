@@ -57,7 +57,7 @@ function getMothersDayDate(year) {
 // All festivals
 function getFestivalData() {
     return {
-        "01-01": {
+        "12-01": {
             title: "# HAPPY NEW YEAR! 🎉 #",
             message: "Wishing everyone a year filled with success, joy, and new beginnings.",
             img: "./images/1.jpg"
