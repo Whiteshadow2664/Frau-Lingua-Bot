@@ -28,7 +28,7 @@ module.exports = {
             content:
                 "🔔 **Status Update**\n\n" +
                 "White Shadow is currently **AFK** and will respond after the scheduled time:\n" +
-                "**⏰ <t::R>**",
+                "**<t:1771569000:D>**",
             allowedMentions: { repliedUser: false }
         });
     }
