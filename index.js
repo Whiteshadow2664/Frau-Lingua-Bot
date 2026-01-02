@@ -51,6 +51,7 @@ const antiSpam = require("./antiSpam");
 const statsCommand = require("./stats.js");
 const autoReactHello = require("./autoReactHello");
 const festivalWisher = require("./festivals");
+const whiteShadowAFK = require("./whiteShadowAFK");
 
 // Environment Variables
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
@@ -165,6 +166,8 @@ client.on('messageCreate', async (message) => {
     }
 
         await handleBanCommand(message);
+
+        await whiteShadowAFK.execute(message);
    
 if (message.content.toLowerCase() === '!leaderboard') {
    leaderboard.execute(message);
