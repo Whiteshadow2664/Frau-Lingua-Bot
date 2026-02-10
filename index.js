@@ -51,7 +51,6 @@ const antiSpam = require("./antiSpam");
 const statsCommand = require("./stats.js");
 const autoReactHello = require("./autoReactHello");
 const festivalWisher = require("./festivals");
-const whiteShadowAFK = require("./whiteShadowAFK");
 
 // Environment Variables
 const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
