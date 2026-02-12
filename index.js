@@ -166,7 +166,7 @@ client.on('messageCreate', async (message) => {
 
         await handleBanCommand(message);
 
-        await whiteShadowAFK.execute(message);
+        
    
 if (message.content.toLowerCase() === '!leaderboard') {
    leaderboard.execute(message);
