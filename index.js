@@ -505,4 +505,26 @@ autoReactHello.init(client);
     setInterval(() => updateBotStatus(client), 10000); // Update every 10 seconds
 });
 
-client.login(DISCORD_TOKEN);
+
+
+
+async function startBot() {
+    try {
+        await client.login(DISCORD_TOKEN);
+    } catch (err) {
+        console.error("Login failed, retrying in 10s", err);
+        setTimeout(startBot, 10000);
+    }
+}
+startBot();
+
+
+
+
+// ---- HARD WATCHDOG ----
+setInterval(() => {
+    if (!client.isReady()) {
+        console.error("Discord client not ready → forcing restart");
+        process.exit(1);
+    }
+}, 30000);
