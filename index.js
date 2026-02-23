@@ -524,8 +524,8 @@ async function startBot() {
     try {
         await client.login(DISCORD_TOKEN);
     } catch (err) {
-        console.error("Login failed, retrying in 10s", err);
-        setTimeout(startBot, 10000);
+        console.error("Login failed, retrying in 20s", err);
+        setTimeout(startBot, 20000);
     }
 }
 startBot();
@@ -534,9 +534,17 @@ startBot();
 
 
 // ---- HARD WATCHDOG ----
+let readyAtLeastOnce = false;
+
+client.once("ready", () => {
+    readyAtLeastOnce = true;
+});
+
 setInterval(() => {
+    if (!readyAtLeastOnce) return; // don't kill during first startup
+
     if (!client.isReady()) {
-        console.error("Discord client not ready → forcing restart");
+        console.error("Discord lost connection → restarting");
         process.exit(1);
     }
-}, 30000);
+}, 60000);
