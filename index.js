@@ -40,7 +40,6 @@ const ticket = require("./ticket.js");
 const setupEvents = require("./events.js");
 const levelSystem = require('./levelSystem');
 const giverole = require('./commands/giverole.js');
-const mailCommand = require('./commands/mail');
 const reactionCommand = require('./commands/reaction');
 const dateChannelUpdater = require('./dateChannel');
 const boostTracker = require('./commands/boostTracker');
@@ -229,10 +228,6 @@ if (message.content.toLowerCase() === '!joke') {
 
 if (message.content.toLowerCase() === "!ws") {
     handleWorksheet(message, client);
-}
-
-if (message.content.toLowerCase() === '!mail') {
-    mailCommand.execute(message);
 }
 
 if (message.content.toLowerCase() === '!reactrole') {
