@@ -71,6 +71,18 @@ GatewayIntentBits.GuildMembers,
     partials: [Partials.Message, Partials.Channel, Partials.Reaction],
 });
 
+
+
+
+client.on("error", console.error);
+client.on("warn", console.warn);
+client.on("shardError", err => {
+    console.error("Shard error:", err);
+});
+
+
+
+
 // Express Server to Keep Bot Alive
 const app = express();
 app.get('/', (req, res) => {
